@@ -6,7 +6,7 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Requirements Specification |
-| Version | 1.4 (Draft) |
+| Version | 1.5 (Draft) |
 | Status | Draft |
 | Owner | Product & Engineering Team |
 | Last Updated | 2026-09-02 |
@@ -31,6 +31,7 @@
 | 1.2 | 2026-08-11 | Product Team | Complete ORG domain functional requirements (ORG-FR-001 – ORG-FR-011); ConfigurationUpdated defaults FR deferred; Hierarchy/Status advanced controls V2 |
 | 1.3 | 2026-09-02 | Product Team | Complete DASH domain functional requirements (DASH-FR-001 – DASH-FR-013); consumer/presentation boundaries; AI assistive-only; Saved Views V2 / Layouts V3 deferred |
 | 1.4 | 2026-09-02 | Product Team | Complete ALERT domain functional requirements (ALERT-FR-001 – ALERT-FR-012); RISK/INVEST boundaries; MVP event contract; escalation and deferred integrations excluded |
+| 1.5 | 2026-09-02 | Product Team | Complete RISK domain functional requirements (RISK-FR-001 – RISK-FR-013); ALERT/DASH producer contracts preserved; MVP events RiskCalculated and HighRiskDetected; external TransactionReceived ingest; deferred wallet/alert/device consumes excluded |
 
 ---
 
@@ -416,9 +417,9 @@ AUTH-FR-005 Session Timeout
 
 Risk Intelligence
 
-RISK-FR-001 Risk Calculation
-RISK-FR-002 Risk Explanation
-RISK-FR-003 Behavioral Analysis
+RISK-FR-001 Manage Risk Rules And Configuration
+RISK-FR-002 Evaluate Risk Rules
+RISK-FR-003 Calculate Transaction Risk Score
 
 Investigation Management
 
@@ -564,7 +565,7 @@ These placeholders allow the document to grow without restructuring domain numbe
 
 ## Requirement Traceability Matrix
 
-CORE, AUTH, AUTHZ, USER, ORG, DASH, and ALERT domain requirements are listed below. Additional domains will be appended as they are authored.
+CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, and RISK domain requirements are listed below. Additional domains will be appended as they are authored.
 
 | FR ID | Title | BR Reference | Type | Priority | Release | API | DB | UI | Tests | Status |
 |-------|-------|--------------|------|----------|---------|-----|----|----|-------|--------|
@@ -678,8 +679,21 @@ CORE, AUTH, AUTHZ, USER, ORG, DASH, and ALERT domain requirements are listed bel
 | ALERT-FR-010 | Restrict Alert Access To Authorized Actors | RI-BR-001, RI-BR-002 | Security | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 | ALERT-FR-011 | Refresh And Generate Alerts From Upstream Risk Events | RI-BR-001, RI-BR-002 | Integration | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 | ALERT-FR-012 | Provide Alert Triage Assistance | RI-BR-001, RI-BR-002 | Functional | Medium | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-001 | Manage Risk Rules And Configuration | RI-BR-001 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-002 | Evaluate Risk Rules | RI-BR-001 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-003 | Calculate Transaction Risk Score | RI-BR-001, RI-BR-002 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-004 | Perform Device Risk Analysis | RI-BR-001 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-005 | Perform Behavioral Risk Analysis | RI-BR-001 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-006 | Generate Risk Explanation | RI-BR-001, RI-BR-003 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-007 | Produce Risk-Derived Priority Signals | RI-BR-001, RI-BR-002 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-008 | Retrieve And Discover Risk Assessments | RI-BR-001, RI-BR-002, RI-BR-003 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-009 | Ingest External Transaction Inputs For Risk Evaluation | RI-BR-001 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-010 | Enforce Risk Event Publication Contract | RI-BR-001, RI-BR-002, RI-BR-003 | Integration | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-011 | Record Risk Management Audit Outcomes | RI-BR-001, RI-BR-003 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-012 | Restrict Risk Data And Configuration Access To Authorized Actors | RI-BR-001, RI-BR-002, RI-BR-003 | Security | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| RISK-FR-013 | Provide Risk Analysis Assistance | RI-BR-001, RI-BR-003 | Functional | Medium | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 
-CORE, AUTH, AUTHZ, USER, ORG, DASH, and ALERT domain requirements are included above. Additional domains will be appended as they are authored.
+CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, and RISK domain requirements are included above. Additional domains will be appended as they are authored.
 
 As Functional Requirements are authored for subsequent domains, each row shall be updated to maintain end-to-end traceability.
 
@@ -20853,3 +20867,2514 @@ ALERT-FR-001 – ALERT-FR-012 are the approved ALERT requirements for the curren
 No ALERT-FR-013 is defined.
 
 ALERT does not own RISK scoring, investigation cases, authorization decisions, organization lifecycle, dashboard presentation, or platform notifications. AI agents in ALERT are assistive only; humans decide.
+
+# Chapter — RISK Domain Requirements
+
+> Domain reference: [Functional Domain Specification — RISK](FunctionalDomainSpecification.md#domain--risk-risk-intelligence)
+>
+> Related Business Requirements: `RI-BR-001`, `RI-BR-002`, `RI-BR-003`
+> Related Business Objectives: `BO-001`, `BO-002`, `BO-004`, `BO-008`
+> Depends on: `CORE`, `AUTH`, `AUTHZ`, `USER`, `ORG` (contextual — tenant/organization scope; lifecycle owned by ORG)
+
+This chapter defines the Functional Requirements for the RISK (Risk Intelligence) domain.
+
+RISK owns risk scoring, risk rules and configuration, rule evaluation, device risk analysis, behavioral risk analysis, risk explanations, risk-derived priority signals, and risk assessment data. ALERT owns operational alert records, operational alert priority, assignment, and lifecycle. INVEST owns investigation cases and workflow. COMP owns sanctions and compliance workflows. DASH owns workspace and dashboard presentation. AUTH authenticates; AUTHZ authorizes; ORG provides contextual tenant scope. CORE owns shared platform primitives including audit context.
+
+RISK-FR-001 – RISK-FR-013 are the approved RISK requirements for the current draft baseline. Wallet Risk Scoring, Risk Timeline, Risk History, Risk Dashboard, ML-based Scoring, Graph-enhanced Risk Signals, Adaptive Risk Models, Adaptive Learning, Cross-Exchange Intelligence, Federated Risk Sharing, wallet-event consumption, `AlertCreated` consumption, `DeviceSignalReceived` consumption, `RiskUpdated`, `RiskExplanationGenerated`, sanctions workflow, continuous monitoring automation, and autonomous AI enforcement remain deferred. No RISK-FR-014 is defined.
+
+## RISK Domain Requirement Index
+
+### Feature-covering requirements
+
+| ID | Title | Priority | Release | FDS Feature Coverage |
+|----|-------|----------|---------|----------------------|
+| RISK-FR-001 | Manage Risk Rules And Configuration | Critical | MVP | Rule Engine / Risk Configuration |
+| RISK-FR-002 | Evaluate Risk Rules | Critical | MVP | Rule Engine / Risk Configuration |
+| RISK-FR-003 | Calculate Transaction Risk Score | Critical | MVP | Transaction Risk Scoring |
+| RISK-FR-004 | Perform Device Risk Analysis | Critical | MVP | Device Risk Analysis |
+| RISK-FR-005 | Perform Behavioral Risk Analysis | High | MVP | Behavioral Risk Analysis |
+| RISK-FR-006 | Generate Risk Explanation | Critical | MVP | Risk Explanation |
+| RISK-FR-007 | Produce Risk-Derived Priority Signals | Critical | MVP | Risk Prioritization (risk-derived priority signals) |
+| RISK-FR-008 | Retrieve And Discover Risk Assessments | High | MVP | Risk assessment data access (supporting owned data; not Risk Dashboard) |
+| RISK-FR-009 | Ingest External Transaction Inputs For Risk Evaluation | High | MVP | External Exchange Event Stream ingestion (`TransactionReceived`) |
+
+### Supporting RISK Requirements
+
+These requirements are **not** named baseline FDS RISK features. They are supporting / cross-domain integrity requirements.
+
+| ID | Title | Priority | Release | Classification |
+|----|-------|----------|---------|----------------|
+| RISK-FR-010 | Enforce Risk Event Publication Contract | High | MVP | Supporting — FDS event contract integrity |
+| RISK-FR-011 | Record Risk Management Audit Outcomes | High | MVP | Supporting — audit integrity |
+| RISK-FR-012 | Restrict Risk Data And Configuration Access To Authorized Actors | Critical | MVP | Supporting — AUTHZ boundary integrity |
+| RISK-FR-013 | Provide Risk Analysis Assistance | Medium | MVP | Supporting — AI assist (Risk Analysis Agent) |
+
+## 1. Rule Engine / Risk Configuration
+
+# RISK-FR-001 — Manage Risk Rules And Configuration
+
+## Summary
+
+The system shall enable authorized administrators to create, update, and retrieve risk rules and risk configuration.
+
+---
+
+## Description
+
+The system shall enable an authorized administrator to manage risk rules and risk configuration used for centralized risk assessment, without owning authorization role definitions, alert lifecycle, investigation cases, sanctions workflow, wallet profiles, or dashboard presentation.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+Authenticated User
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Rule Engine / Risk Configuration)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH).
+- The actor is authorized to manage risk rules and configuration (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+An authorized administrator requests creation, update, or retrieval of risk rules or risk configuration.
+
+---
+
+## Normal Flow
+
+1. The system receives a risk-rule or risk-configuration management request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope.
+3. The system validates the requested rule or configuration content.
+4. The system creates, updates, or returns the authorized risk rules or configuration.
+5. The system records the outcome for audit handling (RISK-FR-011).
+
+---
+
+## Alternative Flow
+
+If the request is retrieval-only:
+- The system returns authorized active risk rules or configuration without modifying them.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The system denies the request (AUTHZ).
+
+If required rule or configuration inputs are missing or invalid:
+- The system rejects the change.
+
+If the request would exceed authorized organization scope:
+- The system denies the change.
+
+---
+
+## Postconditions
+
+- Authorized risk rules or configuration exist in the requested state, or the request is denied or rejected.
+
+---
+
+## Business Rules
+
+- RISK owns risk rules and risk configuration.
+- AUTHZ evaluates whether the actor may manage rules; RISK enforces authorized outcomes.
+- RISK does not define authorization roles or policies (AUTHZ).
+- RISK does not publish `RiskUpdated` in MVP.
+- Rule and configuration changes do not autonomously create alerts, investigation cases, or enforcement actions.
+
+---
+
+## Validation Rules
+
+- Risk-rule and configuration requests shall include sufficient authorized context to create, update, or retrieve configuration within permitted scope.
+
+---
+
+## Acceptance Criteria
+
+- Authorized administrators can create, update, and retrieve risk rules and configuration.
+- Unauthorized management attempts are denied.
+- Invalid rule or configuration content is rejected.
+- Management does not publish `RiskUpdated` and does not create alerts or investigation cases.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); RISK-FR-011; RISK-FR-012
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+None required as a baseline RISK publish event. MVP does not include `RiskUpdated`.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Covers FDS Rule Engine / Risk Configuration. Privileged configuration remains AUTHZ-gated.
+
+# RISK-FR-002 — Evaluate Risk Rules
+
+## Summary
+
+The system shall evaluate applicable risk rules against authorized risk-evaluation inputs.
+
+---
+
+## Description
+
+The system shall evaluate applicable risk rules and configuration against authorized inputs used for risk assessment. Rule evaluation is a RISK-owned deterministic capability and does not depend on mandatory AI assistance, alert lifecycle behavior, or investigation case creation.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Rule Engine / Risk Configuration)
+
+---
+
+## Preconditions
+
+- Applicable risk rules or configuration are available (RISK-FR-001).
+- Authorized risk-evaluation inputs are available from permitted scoring or ingestion paths.
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+The system receives authorized inputs that require risk-rule evaluation.
+
+---
+
+## Normal Flow
+
+1. The system identifies applicable risk rules and configuration for the authorized input.
+2. The system evaluates the input against those rules.
+3. The system records rule-evaluation results for use by scoring, explanation, and risk-derived priority handling.
+4. The system proceeds to permitted scoring or analysis requirements without creating alerts or cases.
+
+---
+
+## Alternative Flow
+
+If optional attributes are absent but required rule inputs are present:
+- The system evaluates using available authorized inputs without inventing missing facts.
+
+---
+
+## Exception Flow
+
+If required rule-evaluation inputs are missing or invalid:
+- The system rejects evaluation for that input.
+
+If evaluation would exceed authorized organization scope:
+- The system denies evaluation.
+
+---
+
+## Postconditions
+
+- Rule-evaluation results exist for the authorized input, or evaluation is rejected or denied.
+
+---
+
+## Business Rules
+
+- RISK owns rule evaluation.
+- Critical rule evaluation remains operable without mandatory AI dependency.
+- Rule evaluation does not assign operational alert priority (ALERT-FR-003).
+- Rule evaluation does not create investigation cases (INVEST).
+- Rule evaluation does not perform sanctions screening (COMP).
+
+---
+
+## Validation Rules
+
+- Evaluation inputs shall be sufficient to apply authorized rules within permitted scope.
+
+---
+
+## Acceptance Criteria
+
+- Applicable risk rules can be evaluated against authorized inputs.
+- Invalid or unauthorized evaluation attempts are rejected or denied.
+- Evaluation does not create alerts, investigation cases, or sanctions outcomes.
+- Evaluation does not require the Risk Analysis Agent.
+
+---
+
+## Dependencies
+
+CORE; AUTHZ; ORG (contextual); RISK-FR-001; RISK-FR-011; RISK-FR-012
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+None independently. Evaluation results feed scoring and analysis outcomes published under RISK-FR-010 when applicable.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Deterministic rule evaluation. Not ML-based scoring and not a mandatory AI path.
+
+## 2. Transaction Risk Scoring
+
+# RISK-FR-003 — Calculate Transaction Risk Score
+
+## Summary
+
+The system shall calculate transaction risk scores from authorized transaction-oriented inputs.
+
+---
+
+## Description
+
+The system shall calculate a transaction risk score for authorized transaction-oriented evaluation inputs, including inputs received through external `TransactionReceived` ingestion (RISK-FR-009). Eligible assessment outcomes are published as `RiskCalculated` through RISK-FR-010. Qualifying high-risk conditions are signaled as risk-derived priority through RISK-FR-007 and may result in `HighRiskDetected` through RISK-FR-010. This requirement does not independently invent additional MVP events.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001, RI-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Transaction Risk Scoring)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- Applicable risk rules can be evaluated (RISK-FR-002).
+- Authorized transaction-oriented inputs are available, including external `TransactionReceived` inputs where applicable (RISK-FR-009).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+The system receives an authorized transaction-oriented input that requires risk scoring.
+
+---
+
+## Normal Flow
+
+1. The system receives an authorized transaction-oriented evaluation input.
+2. The system evaluates applicable risk rules (RISK-FR-002).
+3. The system calculates a transaction risk score.
+4. The system records the assessment outcome, including explanation material when produced (RISK-FR-006).
+5. Eligible outcomes are published as `RiskCalculated` (RISK-FR-010).
+6. Qualifying high-risk conditions are handled as risk-derived priority signals (RISK-FR-007) and may result in `HighRiskDetected` (RISK-FR-010).
+
+---
+
+## Alternative Flow
+
+If optional transaction attributes are unavailable:
+- The system scores using available authorized inputs without inventing missing transaction facts or wallet-profile data.
+
+---
+
+## Exception Flow
+
+If required transaction-scoring inputs are missing or invalid:
+- The system rejects scoring for that input.
+
+If scoring would exceed authorized organization scope:
+- The system denies scoring.
+
+---
+
+## Postconditions
+
+- A transaction risk assessment exists, or scoring is rejected or denied.
+
+---
+
+## Business Rules
+
+- RISK owns transaction risk scoring.
+- Eligible scoring outcomes are published as `RiskCalculated` through RISK-FR-010, not as an independent second publish path.
+- Qualifying high-risk signaling uses `HighRiskDetected` through RISK-FR-007 and RISK-FR-010. No second high-risk event is defined.
+- RISK does not own operational alert priority, alert queues, alert assignment, or alert lifecycle (ALERT).
+- RISK does not create investigation cases (INVEST).
+- Wallet Risk Scoring and wallet-event consumption are Version 2 and are not part of this requirement.
+- Transaction scoring remains operable without mandatory AI dependency.
+
+---
+
+## Validation Rules
+
+- Transaction scoring inputs shall include sufficient authorized context to produce a score within permitted scope.
+
+---
+
+## Acceptance Criteria
+
+- Transaction risk scores can be calculated from authorized transaction-oriented inputs.
+- Eligible outcomes result in `RiskCalculated` publication (RISK-FR-010).
+- Qualifying high-risk conditions may result in `HighRiskDetected` through RISK-FR-007 and RISK-FR-010.
+- Scoring does not assign operational alert priority or create investigation cases.
+- Scoring does not consume wallet events or `DeviceSignalReceived`.
+
+---
+
+## Dependencies
+
+CORE; AUTHZ; ORG (contextual); RISK-FR-002; RISK-FR-006; RISK-FR-007; RISK-FR-009; RISK-FR-010; RISK-FR-011; RISK-FR-012
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+Eligible outcomes are published as `RiskCalculated` via RISK-FR-010. Qualifying high-risk conditions may result in `HighRiskDetected` via RISK-FR-007 and RISK-FR-010. This requirement does not publish events independently of RISK-FR-010.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+FDS Transaction Risk Scoring. Downstream ALERT/DASH consume published events; this FR does not own alert or dashboard behavior.
+
+# RISK-FR-009 — Ingest External Transaction Inputs For Risk Evaluation
+
+## Summary
+
+The system shall ingest external TransactionReceived inputs for transaction risk evaluation.
+
+---
+
+## Description
+
+The system shall ingest permitted external transaction-oriented inputs classified as `TransactionReceived` from the Exchange Event Stream and make them available for transaction risk evaluation (RISK-FR-003). `TransactionReceived` is an external integration input. It is not published by RISK and is not published by any Sentinel domain in the current FDS baseline. RISK does not invent an upstream domain publisher for this input.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (external Exchange Event Stream ingestion; TransactionReceived)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- Permitted external Exchange Event Stream inputs are available.
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+The system receives a permitted external `TransactionReceived` input from the Exchange Event Stream boundary.
+
+---
+
+## Normal Flow
+
+1. The system receives a permitted external `TransactionReceived` input.
+2. The system validates the input as an authorized external transaction-oriented ingestion.
+3. The system accepts the input for transaction risk evaluation (RISK-FR-003).
+4. Subsequent eligible scoring outcomes are published as `RiskCalculated` through RISK-FR-010.
+
+---
+
+## Alternative Flow
+
+If optional attributes are present on the external input:
+- The system retains available authorized attributes for evaluation without inventing missing facts or wallet-profile data.
+
+---
+
+## Exception Flow
+
+If the input is missing, invalid, or not a permitted `TransactionReceived` ingestion:
+- The system rejects the input.
+
+If ingestion would exceed authorized organization scope:
+- The system denies ingestion.
+
+---
+
+## Postconditions
+
+- The external input is accepted for evaluation, or ingestion is rejected or denied.
+
+---
+
+## Business Rules
+
+- `TransactionReceived` is an external Exchange Event Stream input only.
+- RISK does not publish `TransactionReceived`.
+- This requirement does not consume wallet events, `AlertCreated`, or `DeviceSignalReceived`.
+- Ingestion does not create operational alerts (ALERT) or investigation cases (INVEST).
+- Ingestion does not perform sanctions screening (COMP).
+
+---
+
+## Validation Rules
+
+- External inputs shall be identifiable as permitted `TransactionReceived` ingestions within authorized scope.
+
+---
+
+## Acceptance Criteria
+
+- Permitted `TransactionReceived` inputs can be ingested for transaction risk evaluation.
+- Invalid or unauthorized inputs are rejected or denied.
+- `TransactionReceived` is not published by RISK.
+- Ingestion does not consume wallet events, `AlertCreated`, or `DeviceSignalReceived`.
+
+---
+
+## Dependencies
+
+CORE; AUTHZ; ORG (contextual); RISK-FR-003; RISK-FR-010; RISK-FR-011; RISK-FR-012
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+Consumes external `TransactionReceived` only. Does not publish `TransactionReceived`. Subsequent scoring publication occurs via RISK-FR-010 as `RiskCalculated` when applicable.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+External ingestion boundary. No upstream Sentinel publisher is invented.
+
+## 3. Device Risk Analysis
+
+# RISK-FR-004 — Perform Device Risk Analysis
+
+## Summary
+
+The system shall perform device risk analysis using authorized device-oriented inputs.
+
+---
+
+## Description
+
+The system shall perform device risk analysis for authorized device-oriented inputs. Device Fingerprinting may be used as an external signal/input boundary already specified by the FDS. This requirement does not consume `DeviceSignalReceived`, does not invent a device-signal event, and does not create a separate device-ingestion functional requirement.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Device Risk Analysis)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- Applicable risk rules can be evaluated (RISK-FR-002).
+- Authorized device-oriented inputs are available through permitted RISK evaluation paths.
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+The system receives authorized device-oriented inputs that require device risk analysis.
+
+---
+
+## Normal Flow
+
+1. The system receives authorized device-oriented evaluation inputs.
+2. The system evaluates applicable risk rules (RISK-FR-002).
+3. The system performs device risk analysis and records the assessment outcome.
+4. Eligible outcomes are published as `RiskCalculated` (RISK-FR-010), with explanation material when produced (RISK-FR-006).
+5. Qualifying high-risk conditions are handled as risk-derived priority signals (RISK-FR-007) when applicable.
+
+---
+
+## Alternative Flow
+
+If Device Fingerprinting inputs are available as an external signal/input boundary:
+- The system may use those authorized inputs for device risk analysis without consuming `DeviceSignalReceived` and without inventing a new event.
+
+---
+
+## Exception Flow
+
+If required device-analysis inputs are missing or invalid:
+- The system rejects analysis for that input.
+
+If analysis would exceed authorized organization scope:
+- The system denies analysis.
+
+---
+
+## Postconditions
+
+- A device risk assessment exists, or analysis is rejected or denied.
+
+---
+
+## Business Rules
+
+- RISK owns device risk analysis.
+- `DeviceSignalReceived` is not an MVP RISK consume event.
+- No separate device-signal ingestion FR is defined.
+- Eligible outcomes are published as `RiskCalculated` through RISK-FR-010.
+- Device risk analysis does not own operational alert priority or alert records (ALERT).
+- Device risk analysis does not create investigation cases (INVEST).
+- Device risk analysis remains operable without mandatory AI dependency.
+
+---
+
+## Validation Rules
+
+- Device-analysis inputs shall include sufficient authorized context to perform analysis within permitted scope.
+
+---
+
+## Acceptance Criteria
+
+- Device risk analysis can be performed from authorized device-oriented inputs.
+- Eligible outcomes result in `RiskCalculated` publication (RISK-FR-010).
+- Analysis does not consume `DeviceSignalReceived`.
+- Analysis does not create alerts or investigation cases.
+
+---
+
+## Dependencies
+
+CORE; AUTHZ; ORG (contextual); RISK-FR-002; RISK-FR-006; RISK-FR-007; RISK-FR-010; RISK-FR-011; RISK-FR-012
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+Eligible outcomes are published as `RiskCalculated` via RISK-FR-010. This requirement does not consume `DeviceSignalReceived` and does not publish events independently of RISK-FR-010.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+FDS Device Risk Analysis. Device Fingerprinting is an external input boundary only.
+
+## 4. Behavioral Risk Analysis
+
+# RISK-FR-005 — Perform Behavioral Risk Analysis
+
+## Summary
+
+The system shall perform behavioral risk analysis using authorized behavioral inputs.
+
+---
+
+## Description
+
+The system shall perform behavioral risk analysis for authorized user, account, or activity-behavior inputs. Behavioral analysis is a RISK-owned assessment capability and does not require a mandatory Behavior Analysis Agent. AI assistance, where used, remains optional and is specified in RISK-FR-013.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Behavioral Risk Analysis)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- Applicable risk rules can be evaluated (RISK-FR-002).
+- Authorized behavioral inputs are available through permitted RISK evaluation paths.
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+The system receives authorized behavioral inputs that require behavioral risk analysis.
+
+---
+
+## Normal Flow
+
+1. The system receives authorized behavioral evaluation inputs.
+2. The system evaluates applicable risk rules (RISK-FR-002).
+3. The system performs behavioral risk analysis and records the assessment outcome.
+4. Eligible outcomes are published as `RiskCalculated` (RISK-FR-010), with explanation material when produced (RISK-FR-006).
+5. Qualifying high-risk conditions are handled as risk-derived priority signals (RISK-FR-007) when applicable.
+
+---
+
+## Alternative Flow
+
+If optional behavioral attributes are unavailable:
+- The system analyzes using available authorized behavioral inputs without inventing missing behavior facts.
+
+---
+
+## Exception Flow
+
+If required behavioral-analysis inputs are missing or invalid:
+- The system rejects analysis for that input.
+
+If analysis would exceed authorized organization scope:
+- The system denies analysis.
+
+---
+
+## Postconditions
+
+- A behavioral risk assessment exists, or analysis is rejected or denied.
+
+---
+
+## Business Rules
+
+- RISK owns behavioral risk analysis and behavioral risk features.
+- Behavioral analysis is not mandatory-AI-dependent and does not require a Behavior Analysis Agent to produce an assessment.
+- Eligible outcomes are published as `RiskCalculated` through RISK-FR-010.
+- Behavioral analysis does not consume `AlertCreated` and does not implement a rescoring feedback loop in MVP.
+- Behavioral analysis does not own operational alert priority (ALERT) and does not create investigation cases (INVEST).
+- Continuous monitoring automation and background re-evaluation are not part of this MVP requirement.
+
+---
+
+## Validation Rules
+
+- Behavioral-analysis inputs shall include sufficient authorized context to perform analysis within permitted scope.
+
+---
+
+## Acceptance Criteria
+
+- Behavioral risk analysis can be performed from authorized behavioral inputs.
+- Eligible outcomes result in `RiskCalculated` publication (RISK-FR-010).
+- Analysis remains operable without a Behavior Analysis Agent.
+- Analysis does not consume `AlertCreated` or wallet events.
+
+---
+
+## Dependencies
+
+CORE; AUTHZ; ORG (contextual); RISK-FR-002; RISK-FR-006; RISK-FR-007; RISK-FR-010; RISK-FR-011; RISK-FR-012
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+Eligible outcomes are published as `RiskCalculated` via RISK-FR-010. This requirement does not consume `AlertCreated` and does not publish events independently of RISK-FR-010.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+FDS Behavioral Risk Analysis. Deterministic-capable; AI assist is RISK-FR-013 only.
+
+## 5. Risk Explanation
+
+# RISK-FR-006 — Generate Risk Explanation
+
+## Summary
+
+The system shall generate risk explanations and embed them in eligible RiskCalculated outcomes.
+
+---
+
+## Description
+
+The system shall generate understandable risk explanations for eligible risk assessments and carry those explanation outputs within MVP `RiskCalculated` outcomes. A separate `RiskExplanationGenerated` publish event is not part of the MVP baseline. RISK owns the explanation domain capability; this requirement does not establish an Explanation Agent inside RISK.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001, RI-BR-003
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002, BO-004, BO-008
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Risk Explanation)
+
+---
+
+## Preconditions
+
+- A risk assessment outcome is being produced (RISK-FR-003, RISK-FR-004, or RISK-FR-005).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+The system produces an eligible risk assessment that requires explanation outputs.
+
+---
+
+## Normal Flow
+
+1. The system identifies an eligible risk assessment requiring explanation.
+2. The system generates an explanation covering authorized contributing factors sufficient for analyst review.
+3. The system embeds the explanation in the `RiskCalculated` outcome published through RISK-FR-010.
+4. The system records the explanation outcome for audit handling (RISK-FR-011).
+
+---
+
+## Alternative Flow
+
+If optional AI assistance is available (RISK-FR-013):
+- The system may use assistive suggestions to support explanation wording for human review without making AI a mandatory dependency and without publishing `RiskExplanationGenerated`.
+
+---
+
+## Exception Flow
+
+If explanation would expose unauthorized sensitive internals:
+- The system omits or redacts unauthorized content.
+
+If an eligible assessment cannot include a required explanation:
+- The system does not present the outcome as a complete explainable `RiskCalculated` result until authorized explanation content is available or the attempt is rejected per policy.
+
+---
+
+## Postconditions
+
+- Eligible `RiskCalculated` outcomes include embedded explanation outputs, or the outcome is withheld or rejected per policy.
+
+---
+
+## Business Rules
+
+- RISK owns risk explanations.
+- Explanations are embedded in MVP `RiskCalculated` outcomes.
+- `RiskExplanationGenerated` is deferred and is not an MVP publish event.
+- RISK does not establish a duplicate Explanation Agent platform capability. AI Platform owns agent lifecycle and orchestration.
+- Explanations shall not expose unauthorized sensitive internals beyond analyst need.
+- Core scoring remains operable without mandatory AI; this requirement does not make explanation generation AI-mandatory.
+
+---
+
+## Validation Rules
+
+- Explanation outputs shall remain within authorized organization and need-to-know scope.
+
+---
+
+## Acceptance Criteria
+
+- Eligible risk assessments include explanation outputs within `RiskCalculated`.
+- No `RiskExplanationGenerated` event is published.
+- Explanations do not expose unauthorized sensitive internals.
+- Explanation generation does not require an Explanation Agent inside RISK.
+
+---
+
+## Dependencies
+
+CORE; AUTHZ; RISK-FR-003; RISK-FR-004; RISK-FR-005; RISK-FR-010; RISK-FR-011; RISK-FR-012
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+Explanation outputs are carried within `RiskCalculated` published via RISK-FR-010. `RiskExplanationGenerated` is not published.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+FDS Risk Explanation. Embedded in RiskCalculated for MVP.
+
+## 6. Risk Prioritization
+
+# RISK-FR-007 — Produce Risk-Derived Priority Signals
+
+## Summary
+
+The system shall produce risk-derived priority signals from eligible risk assessments.
+
+---
+
+## Description
+
+The system shall produce risk-derived priority signals from eligible risk assessment outcomes to support downstream attention to higher-risk activity (RI-BR-002). When an applicable high-risk condition is met, `HighRiskDetected` is published through RISK-FR-010. RISK determines risk-derived high-risk signaling only. RISK does not own operational alert priority, alert queue priority, alert assignment priority, alert severity, alert lifecycle, or alert records. ALERT operationalizes permitted risk signals into alerts and owns operational alert priority (frozen ALERT-FR-003).
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001, RI-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Risk Prioritization — risk-derived priority signals)
+
+---
+
+## Preconditions
+
+- An eligible risk assessment outcome exists (RISK-FR-003, RISK-FR-004, or RISK-FR-005).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+An eligible risk assessment outcome is available for risk-derived prioritization.
+
+---
+
+## Normal Flow
+
+1. The system receives an eligible risk assessment outcome.
+2. The system derives a risk-derived priority signal from authorized assessment results.
+3. The system records the signal with the assessment outcome.
+4. When the applicable high-risk condition is met, the system causes `HighRiskDetected` to be published (RISK-FR-010).
+5. Downstream ALERT may consume `RiskCalculated` and `HighRiskDetected` to generate or refresh operational alerts without this requirement defining alert priority or lifecycle.
+
+---
+
+## Alternative Flow
+
+If the assessment does not meet the high-risk condition:
+- The system still records the risk-derived priority signal with the assessment. `HighRiskDetected` is not published for that outcome.
+
+---
+
+## Exception Flow
+
+If required assessment results are missing:
+- The system does not produce a high-risk signal.
+
+If signaling would exceed authorized organization scope:
+- The system denies signal production.
+
+---
+
+## Postconditions
+
+- A risk-derived priority signal exists for the eligible assessment, and `HighRiskDetected` is published only when the high-risk condition is met.
+
+---
+
+## Business Rules
+
+- RISK owns risk-derived priority signals (RI-BR-002).
+- ALERT owns operational alert priority and handling state (frozen ALERT-FR-003).
+- This requirement does not claim ownership of operational alert priority, alert queue priority, alert assignment priority, alert severity, alert lifecycle, or alert records.
+- `HighRiskDetected` is the only high-risk publish event. No second event is defined.
+- RISK produces risk signals; ALERT operationalizes those signals into alerts.
+- RISK does not create investigation cases (INVEST) and does not own dashboard presentation (DASH).
+
+---
+
+## Validation Rules
+
+- Priority-signal production shall use authorized assessment outcomes within permitted scope.
+
+---
+
+## Acceptance Criteria
+
+- Risk-derived priority signals can be produced from eligible assessments.
+- `HighRiskDetected` is published through RISK-FR-010 when the applicable high-risk condition is met.
+- The requirement does not assign operational alert priority or manage alert records.
+- No additional high-risk event is introduced.
+
+---
+
+## Dependencies
+
+CORE; AUTHZ; ORG (contextual); RISK-FR-003; RISK-FR-004; RISK-FR-005; RISK-FR-010; RISK-FR-011; RISK-FR-012
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+When the applicable high-risk condition is met, `HighRiskDetected` is published via RISK-FR-010. This requirement does not publish operational alert events and does not publish events independently of RISK-FR-010.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+FDS Risk Prioritization. Strict split from frozen ALERT-FR-003 operational alert priority.
+
+## 7. Retrieve And Discover Risk Assessments
+
+# RISK-FR-008 — Retrieve And Discover Risk Assessments
+
+## Summary
+
+The system shall enable authorized actors to retrieve and discover risk assessments.
+
+---
+
+## Description
+
+The system shall enable authorized actors to retrieve and discover risk assessment records owned by RISK, including scores, explanations, rules-evaluation context, and risk-derived priority signals within permitted scope. This requirement provides data access for analyst review. It does not own dashboard or workspace presentation (DASH) and does not implement a RISK Dashboard feature.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+Authenticated User
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001, RI-BR-002, RI-BR-003
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002, BO-004
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (supporting retrieval of owned risk assessment data)
+
+---
+
+## Preconditions
+
+- The actor is authenticated (AUTH).
+- The actor is authorized to retrieve or discover risk assessments (AUTHZ).
+- Risk assessment records exist or the authorized result set may be empty.
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+An authorized actor requests retrieval or discovery of risk assessments.
+
+---
+
+## Normal Flow
+
+1. The system receives a retrieval or discovery request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope.
+3. The system returns authorized matching risk assessments.
+4. The system does not return unauthorized assessments.
+
+---
+
+## Alternative Flow
+
+If no authorized assessments match:
+- The system returns an empty authorized result set.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The system denies the request (AUTHZ).
+
+If the request would expose unauthorized assessments:
+- The system denies the request or omits unauthorized items.
+
+---
+
+## Postconditions
+
+- Authorized risk assessments are returned, or the request is denied.
+
+---
+
+## Business Rules
+
+- RISK owns risk assessment data returned by this requirement.
+- DASH owns workspace and dashboard presentation, including any visual risk presentation (frozen DASH-FR-011 consumes `RiskCalculated` for presentation refresh).
+- Risk Dashboard is not an MVP RISK-owned presentation capability.
+- Retrieval does not create alerts or investigation cases.
+- Risk History and Risk Timeline features are Version 2 and are not authored here.
+
+---
+
+## Validation Rules
+
+- Retrieval and discovery requests shall be scoped sufficiently to apply authorization boundaries.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can retrieve and discover risk assessments within permitted scope.
+- Unauthorized retrieval is denied.
+- Retrieval does not implement a RISK Dashboard and does not own DASH presentation behavior.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); RISK-FR-012; RISK-FR-011
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+None required as a baseline RISK publish event.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Data access only. Presentation remains DASH-owned.
+
+## 8. Supporting Risk Management Requirements
+
+# RISK-FR-010 — Enforce Risk Event Publication Contract
+
+## Summary
+
+The system shall publish RiskCalculated and HighRiskDetected according to the FDS MVP contract.
+
+---
+
+## Description
+
+The system shall publish `RiskCalculated` and `HighRiskDetected` when the corresponding RISK outcomes occur, consistent with the FDS RISK domain MVP event contract. `RiskCalculated` includes embedded risk explanation outputs for MVP. The MVP publish set is limited to these two events. `RiskUpdated` and `RiskExplanationGenerated` are not published.
+
+---
+
+## Type
+
+Integration
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001, RI-BR-002, RI-BR-003
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002, BO-004
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Supporting — FDS event contract integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- A RISK outcome eligible for publication has occurred.
+- Shared platform event publication capabilities are available (CORE).
+
+---
+
+## Trigger
+
+A risk-calculation, explanation-bearing assessment, or qualifying high-risk signaling outcome occurs that is defined for MVP publication.
+
+---
+
+## Normal Flow
+
+1. The system identifies the RISK outcome eligible for publication.
+2. The system composes the event according to the FDS MVP contract, embedding explanation outputs in `RiskCalculated` when available or required.
+3. The system publishes `RiskCalculated` for eligible assessment outcomes.
+4. The system publishes `HighRiskDetected` when the applicable high-risk condition is met (RISK-FR-007).
+5. Dependent consumers may react without RISK redefining their behavior: ALERT consumes `RiskCalculated` and `HighRiskDetected` (frozen ALERT-FR-001, ALERT-FR-011); DASH consumes `RiskCalculated` (frozen DASH-FR-011); INVEST and COMP consume `RiskCalculated`; AI may consume `RiskCalculated` for assistive workflows.
+
+---
+
+## Alternative Flow
+
+If an eligible assessment does not meet the high-risk condition:
+- The system publishes `RiskCalculated` where applicable and does not publish `HighRiskDetected` for that outcome.
+
+---
+
+## Exception Flow
+
+If publication fails:
+- The system handles failure according to platform policy without bypassing authorization or exposing unauthorized risk content.
+
+---
+
+## Postconditions
+
+- Required MVP RISK events are published or failure is handled per platform policy.
+
+---
+
+## Business Rules
+
+- MVP publish set is limited to `RiskCalculated` and `HighRiskDetected`.
+- `RiskUpdated` is not part of this baseline.
+- `RiskExplanationGenerated` is not part of this baseline.
+- No additional MVP RISK publish events are introduced.
+- `RiskCalculated` supports frozen ALERT-FR-001, ALERT-FR-011, and frozen DASH-FR-011 downstream consumption.
+- `HighRiskDetected` supports frozen ALERT-FR-001 and ALERT-FR-011 downstream consumption.
+- Publication does not consume `AlertCreated`, wallet events, or `DeviceSignalReceived`.
+
+---
+
+## Validation Rules
+
+- Published events shall include required contract fields for the outcome type.
+
+---
+
+## Acceptance Criteria
+
+- `RiskCalculated` is published for eligible scoring and analysis outcomes (RISK-FR-003, RISK-FR-004, RISK-FR-005), including embedded explanations where applicable (RISK-FR-006).
+- `HighRiskDetected` is published when the applicable high-risk condition is met (RISK-FR-007).
+- MVP publish set is not expanded beyond `RiskCalculated` and `HighRiskDetected`.
+- `RiskUpdated` and `RiskExplanationGenerated` are not published.
+
+---
+
+## Dependencies
+
+CORE; RISK-FR-003; RISK-FR-004; RISK-FR-005; RISK-FR-006; RISK-FR-007
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+Publishes `RiskCalculated` and `HighRiskDetected` per FDS MVP contract only.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting requirement. FDS event contract integrity. Single publication authority for MVP RISK events.
+
+# RISK-FR-011 — Record Risk Management Audit Outcomes
+
+## Summary
+
+The system shall record audit outcomes for relevant risk management actions.
+
+---
+
+## Description
+
+The system shall record audit outcomes for relevant risk-rule configuration, evaluation, scoring, explanation, signaling, retrieval, and access-denial actions, using shared CORE audit-context capabilities where applicable. This requirement does not invent a separate platform audit framework.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001, RI-BR-003
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-004
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Supporting — audit integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- A relevant RISK management or assessment action has occurred or been denied.
+- Shared audit-context capabilities are available where applicable (CORE).
+
+---
+
+## Trigger
+
+A relevant risk management, assessment, configuration, or access-control outcome occurs.
+
+---
+
+## Normal Flow
+
+1. The system identifies a RISK action eligible for audit recording.
+2. The system records the audit outcome with sufficient authorized context to support later review.
+3. The system preserves the record within permitted organization scope.
+
+---
+
+## Alternative Flow
+
+If the outcome is a denial of unauthorized access (RISK-FR-012):
+- The system records the denial without returning protected unauthorized risk content.
+
+---
+
+## Exception Flow
+
+If audit recording fails:
+- The system handles failure according to platform policy without bypassing authorization.
+
+---
+
+## Postconditions
+
+- An audit outcome is recorded for the relevant action, or failure is handled per platform policy.
+
+---
+
+## Business Rules
+
+- RISK records risk-management audit outcomes; CORE owns shared audit-context primitives.
+- Audit records shall not become a substitute for operational alert records (ALERT) or investigation cases (INVEST).
+- Explanations and scores that are audited remain within authorized scope.
+
+---
+
+## Validation Rules
+
+- Audit outcomes shall include sufficient authorized context to identify the action and actor where applicable.
+
+---
+
+## Acceptance Criteria
+
+- Relevant RISK configuration, assessment, and access outcomes can be audited.
+- Denied unauthorized access can be audited without exposing protected foreign risk data.
+- The requirement relies on CORE audit capabilities and does not invent a separate audit platform.
+
+---
+
+## Dependencies
+
+CORE; RISK-FR-001; RISK-FR-003; RISK-FR-006; RISK-FR-012
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+None required as a baseline RISK publish event. Denials and configuration changes may be audited without publishing `RiskUpdated`.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting requirement. Relies on CORE audit capabilities.
+
+# RISK-FR-012 — Restrict Risk Data And Configuration Access To Authorized Actors
+
+## Summary
+
+The system shall prevent unauthorized access to risk data, explanations, and risk configuration.
+
+---
+
+## Description
+
+The system shall prevent unauthorized actors from retrieving, discovering, managing, or otherwise accessing risk scores, risk rules, risk configuration, explanations, behavioral risk features, and risk-derived priority signals outside permitted authorization and organization scope.
+
+---
+
+## Type
+
+Security
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001, RI-BR-002, RI-BR-003
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002, BO-004
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Supporting — AUTHZ boundary integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- A risk-data, explanation, or configuration access or management request is attempted.
+
+---
+
+## Trigger
+
+The system prepares to return risk information or perform a risk management action.
+
+---
+
+## Normal Flow
+
+1. The system identifies the risk access or management action requested.
+2. The system determines whether the actor is permitted (AUTHZ).
+3. The system allows the action only when authorized within permitted organization scope.
+4. The system denies unauthorized access or actions.
+
+---
+
+## Alternative Flow
+
+If only part of a requested risk-assessment set is authorized:
+- The system returns or acts on authorized items only when policy allows partial visibility.
+
+---
+
+## Exception Flow
+
+If authorization cannot be determined for protected risk content:
+- The system denies access or action.
+
+If unauthorized access is attempted:
+- The system does not return protected foreign risk information.
+
+---
+
+## Postconditions
+
+- Risk information, explanations, and configuration remain within authorized boundaries.
+
+---
+
+## Business Rules
+
+- This requirement states what must be prevented: unauthorized risk-data and configuration access and actions.
+- This requirement does not prescribe infrastructure, caching technology, or authorization implementation mechanisms.
+- AUTHZ evaluates whether the actor may perform the action; RISK enforces authorized outcomes.
+- AUTHZ owns role and permission definitions; RISK does not define roles.
+- ORG provides tenant context; RISK does not manage organization lifecycle.
+- Risk explanations shall not expose unauthorized sensitive internals beyond analyst need.
+
+---
+
+## Validation Rules
+
+- Risk requests shall be scoped sufficiently to apply authorization boundaries.
+
+---
+
+## Acceptance Criteria
+
+- Unauthorized actors cannot access or modify protected risk data, explanations, or configuration.
+- Denied attempts do not return protected unauthorized risk data.
+- The requirement remains implementation-independent.
+
+---
+
+## Dependencies
+
+AUTH; AUTHZ; ORG (contextual); RISK-FR-001; RISK-FR-008
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+None required as a baseline publish event. Denials may be audited under RISK-FR-011.
+
+---
+
+## Related AI Agents
+
+N/A — No AI agents are associated with this requirement beyond assistive agents where explicitly referenced.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting security integrity requirement. Specifies prevention outcomes only — not authorization architecture.
+
+# RISK-FR-013 — Provide Risk Analysis Assistance
+
+## Summary
+
+The system shall provide assistive risk analysis suggestions for human review.
+
+---
+
+## Description
+
+The system shall provide assistive risk analysis suggestions through the Risk Analysis Agent for an authorized user reviewing risk assessments. The assistant is assistive, non-mandatory, and decision-support only. It shall not autonomously enforce controls, block transactions, create alerts, replace deterministic risk evaluation, or become a mandatory dependency for scoring. Core RISK scoring and rule evaluation remain operable without this assistant.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Medium
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Risk Intelligence Team
+
+---
+
+## Actor
+
+Authenticated User
+
+---
+
+## Business Requirement Reference
+
+RI-BR-001, RI-BR-003
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-004, BO-008
+
+---
+
+## FDS Domain Reference
+
+RISK — Risk Intelligence (Supporting — AI assist: Risk Analysis Agent. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- The user is authenticated (AUTH).
+- The user is authorized for risk analysis assistance (AUTHZ).
+- Permitted risk-assessment context is available.
+- Deterministic scoring and rule evaluation remain available independently of this assistant.
+
+---
+
+## Trigger
+
+An authorized user requests risk analysis assistance for a permitted risk assessment.
+
+---
+
+## Normal Flow
+
+1. The system receives a risk analysis assistance request.
+2. The system authorizes the request (AUTHZ).
+3. The Risk Analysis Agent generates assistive analysis or explanation suggestions from permitted risk context.
+4. The system presents suggestions for human review without automatic enforcement, blocking, alert creation, or scoring replacement.
+
+---
+
+## Alternative Flow
+
+If the assistant is unavailable:
+- Deterministic risk scoring and rule evaluation continue to operate. Assistance is omitted without blocking RISK MVP assessment behavior.
+
+---
+
+## Exception Flow
+
+If the user is not authorized:
+- Assistance is denied (AUTHZ).
+
+If assistance would expose unauthorized risk content:
+- The system denies or redacts the assistance output.
+
+---
+
+## Postconditions
+
+- Assistive suggestions are presented for human review, assistance is denied, or assistance is omitted while deterministic scoring remains operable.
+
+---
+
+## Business Rules
+
+- Risk Analysis Agent is assistive only and is not a mandatory scoring dependency.
+- Humans retain decision authority. The assistant shall not autonomously enforce controls, block transactions, disposition alerts, or create investigation cases.
+- The assistant shall not create alerts autonomously outside RISK's defined deterministic and event behavior. Alert generation remains ALERT-owned from published risk events.
+- RISK does not establish an Explanation Agent. RISK-FR-006 owns explanation outputs embedded in `RiskCalculated`. AI Platform owns agent lifecycle and orchestration.
+- Behavior Analysis Agent scoring is not mandatory. RISK-FR-005 remains operable without that agent.
+- Autonomous AI enforcement is out of scope.
+
+---
+
+## Validation Rules
+
+- Assistance requests shall be scoped to authorized risk-assessment context.
+
+---
+
+## Acceptance Criteria
+
+- Authorized users can receive assistive risk analysis suggestions.
+- Suggestions are presented for human review only.
+- Assistance does not autonomously enforce, block, or create alerts.
+- Core scoring and rule evaluation remain operable when the assistant is unavailable.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; RISK-FR-008; RISK-FR-012
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS RISK domain.
+
+---
+
+## Related Events
+
+None required as a baseline RISK publish event. Assistance does not publish `RiskExplanationGenerated` and does not consume `AlertCreated`.
+
+---
+
+## Related AI Agents
+
+Risk Analysis Agent (primary agent; assistive only). Behavior Analysis Agent may provide optional assistive support and is not required for scoring. AI Platform owns agent lifecycle and orchestration. No Explanation Agent is established inside RISK.
+
+---
+
+## Related UI Screens
+
+Risk-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting AI assist requirement. Humans decide. Non-mandatory for scoring.
+
+## Intentionally Deferred RISK Scope
+
+| FDS Item | Disposition |
+|----------|-------------|
+| Wallet Risk Scoring | Version 2 — not authored in RISK-FR-001–013 |
+| Wallet-event consumption (`WalletProfileUpdated` and related wallet events) | Version 2 with WALLET — not authored in RISK-FR-001–013 |
+| Risk Timeline | Version 2 — not authored in RISK-FR-001–013 |
+| Risk History / Risk History Expansion | Version 2 — not authored in RISK-FR-001–013 |
+| Risk Dashboard | Not RISK-owned; DASH owns workspace/dashboard presentation |
+| ML-based Scoring | Version 2 — not authored in RISK-FR-001–013 |
+| Graph-enhanced Risk Signals | Version 2 — not authored in RISK-FR-001–013 |
+| Adaptive Risk Models | Future / Version 2+ — not authored in RISK-FR-001–013 |
+| Adaptive Learning | Version 3 — not authored in RISK-FR-001–013 |
+| Cross-Exchange Intelligence | Version 3 — not authored in RISK-FR-001–013 |
+| Federated Risk Sharing | Version 3 — not authored in RISK-FR-001–013 |
+| `RiskUpdated` | Deferred — not an MVP RISK publish event |
+| `RiskExplanationGenerated` | Deferred — explanations are embedded in `RiskCalculated` |
+| `AlertCreated` consumption / rescoring feedback loop | Deferred — not an MVP RISK consume |
+| `DeviceSignalReceived` consumption | Deferred — not an MVP RISK consume; no separate device-signal ingestion FR |
+| Sanctions screening workflow | Remains COMP-owned — not a RISK requirement |
+| Blockchain intelligence MVP integration | Not an MVP RISK integration requirement |
+| Sanctions-provider MVP integration | Not an MVP RISK integration requirement |
+| Continuous monitoring automation / background re-evaluation | Deferred — not authored in RISK-FR-001–013 |
+| Mandatory Behavior Analysis Agent scoring | Not in baseline — RISK-FR-005 remains operable without that agent |
+| RISK-owned Explanation Agent | Not in baseline — RISK-FR-006 owns explanation outputs; AI Platform owns agent orchestration |
+| Autonomous AI enforcement / transaction blocking | Never in RISK — humans decide |
+| Operational alert priority, alert records, and alert lifecycle | Remains ALERT-owned (frozen ALERT-FR-003) — not a RISK requirement |
+| Investigation case creation/ownership | Remains INVEST-owned — not a RISK requirement |
+
+## RISK Baseline Status
+
+RISK-FR-001 – RISK-FR-013 are the approved RISK requirements for the current draft baseline.
+
+No RISK-FR-014 is defined.
+
+RISK does not own operational alert priority, alert lifecycle, investigation cases, sanctions workflow, dashboard presentation, wallet profiles, authorization role definitions, or autonomous enforcement. AI agents in RISK are assistive only and are not a mandatory scoring dependency; humans decide.
+
+MVP RISK publishes only `RiskCalculated` and `HighRiskDetected`. MVP RISK consumes only external `TransactionReceived`. `RiskUpdated`, `RiskExplanationGenerated`, `AlertCreated` consumption, wallet-event consumption, and `DeviceSignalReceived` consumption are not part of this baseline.
