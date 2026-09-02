@@ -6,7 +6,7 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Domain Specification |
-| Version | 1.2 (Draft) |
+| Version | 1.3 (Draft) |
 | Status | Draft |
 | Owner | Product & Engineering Team |
 | Last Updated | 2026-09-02 |
@@ -29,6 +29,7 @@
 | 1.0 | 2026-09-02 | Product Team | INVEST domain correction: MVP/V2 event and BR traceability reconciliation, frozen downstream contract alignment, AI ownership clarification, and dependency/roadmap boundary cleanup |
 | 1.1 | 2026-09-02 | Product Team | WALLET: Version 2 event/boundary correction; interaction matrix reconciled; USER/ORG contextual dependencies; AI ownership clarified; platform MVP hooks none; FR planning baseline ~10; downstream consumer deferral for `AddressReputationChanged` and `SuspiciousWalletDetected` |
 | 1.2 | 2026-09-02 | Product Team | COMP: MVP event/boundary correction; interaction matrix reconciled; USER/ORG contextual dependencies; AI assistive-only (not hard dependency); AI ownership clarified; FR planning baseline ~11; downstream consumer deferral; `EvidenceAttached` excluded from MVP consume set |
+| 1.3 | 2026-09-02 | Product Team | SEC: Version 2 event/boundary correction; interaction matrix reconciled; USER/ORG contextual dependencies; AI assistive-only (not hard dependency); AI ownership clarified; FR planning baseline ~10; downstream consumer deferral; `DeviceSignalReceived` excluded from SEC V2 contract |
 
 ---
 
@@ -135,12 +136,12 @@ This document intentionally excludes:
 | INVEST | Investigation Management | Investigation Platform Team | 50 (planning guideline; not a forced count) | Critical | MVP | FI-BR-001, FI-BR-002 (MVP); FI-BR-003 (V2) |
 | WALLET | Wallet Intelligence | Financial Crime Intelligence Team | ~10 (planning guideline; not a forced count) | Medium | Version 2 | WI-BR-001 |
 | COMP | Compliance & Travel Rule | Compliance Engineering | ~11 (planning guideline; not a forced count) | High | MVP | CP-BR-001, CP-BR-002 |
-| SEC | Security Intelligence | Security Engineering | 30 | Medium | Version 2 | SEC-BR-001, SEC-BR-002 |
+| SEC | Security Intelligence | Security Engineering | ~10 (planning guideline; not a forced count) | Medium | Version 2 | SEC-BR-001, SEC-BR-002 |
 | AI | AI Platform | AI Platform Team | 60 | High | MVP | AI-BR-001, AI-BR-002 |
 | REPORT | Reporting & Analytics | Analytics & Insights Team | 20 | Medium | Version 2 | RA-BR-001 |
 | ADMIN | Administration | Platform Engineering | 20 | High | MVP | ADM-BR-001 |
 | OPS | Platform Operations | Platform Operations / SRE | 20 | Medium | Version 2 | OPS-BR-001 |
-| | **Total** | | **406** | | | |
+| | **Total** | | **386** | | | |
 
 ---
 
@@ -161,7 +162,7 @@ This matrix is the blueprint for architecture, data ownership, events, APIs, and
 | INVEST | Cases, Evidence, Assignments, Notes, Timeline | CaseCreated, CaseUpdated, CaseClosed, CaseAssigned, EvidenceAttached | AlertCreated, RiskCalculated | — |
 | WALLET | Wallet Profiles, Reputation, Graphs | WalletProfileUpdated, AddressReputationChanged, SuspiciousWalletDetected | TransactionReceived, CaseCreated, RiskCalculated | — |
 | COMP | Compliance Records, Travel Rule Results, Sanctions Results, Evidence Packages | ComplianceReviewed, TravelRuleValidated, SanctionsHitDetected, AuditPackagePrepared | CaseClosed, CaseUpdated, RiskCalculated, UserUpdated | — |
-| SEC | Security Events, Threat Detections | ThreatDetected, ApiAbuseDetected | UserLoggedIn, AlertCreated | Security Investigation Assistant |
+| SEC | Security Events, Threat Detections, Device Intelligence Records, API Abuse Signals | ThreatDetected, SuspiciousSessionDetected, ApiAbuseDetected | UserLoggedIn, SessionExpired, AlertCreated, CaseCreated | — |
 | AI | Prompts, Evaluations, Recommendations | AIRecommendationGenerated | CaseUpdated, RiskCalculated | Multi-Agent Orchestration |
 | REPORT | Report Definitions, KPI Snapshots | ReportGenerated | CaseClosed, ComplianceReviewed | Report Generation Agent |
 | ADMIN | Admin Settings, Integration Configs | AdminSettingUpdated | UserCreated, RoleAssigned | — |
@@ -2206,40 +2207,61 @@ Compliance evidence and regulatory records shall be protected, retention-aware, 
 | Purpose | Monitor API, session, and device signals for operational security threats. |
 | Business Value | Earlier detection of compromise, abuse, and unauthorized access patterns. |
 | Related Business Requirements | SEC-BR-001, SEC-BR-002 |
-| Related Business Objectives | BO-002, BO-006 |
+| Related Business Objectives | BO-001, BO-002, BO-006 |
 | Primary Users | Security Operations Engineers, Risk Analysts, Platform Administrators |
-| Dependencies | CORE, AUTH, AUTHZ, USER, ALERT, INVEST |
+| Dependencies | CORE, AUTH, AUTHZ, USER (contextual — authenticated actor identity; lifecycle owned by USER), ORG (contextual — tenant/organization scope; lifecycle owned by ORG), ALERT, INVEST, AI (assistive integration only — agent orchestration owned by AI Platform; not a mandatory Version 2 runtime dependency) |
 | Dependent Domains | REPORT, AI, OPS |
-| Estimated Functional Requirements | 30 |
+| Estimated Functional Requirements | ~10 (planning guideline; not a forced count) |
 | Priority | Medium |
 | Release | Version 2 |
 | FR Prefix | `SEC-FR` |
 
 ### Domain Overview
 
-The Security Intelligence domain monitors operational security signals such as API activity, sessions, and device behavior to detect potential account compromise, abuse, and unauthorized access. It supports security investigations using shared investigation capabilities.
+The Security Intelligence domain monitors operational security signals such as API activity, sessions, and device behavior to detect potential account compromise, abuse, and unauthorized access. It supports security investigations using shared investigation capabilities (SEC-BR-002, FI-BR-001 context) without owning INVEST case lifecycle.
+
+SEC is a **Version 2 domain only**. It has **no platform-MVP Functional Requirements, foundational hooks, or platform-MVP event contracts**. Foundational MVP authentication and session capabilities remain AUTH-owned; they do not create SEC MVP Functional Requirements.
+
+ProductScope may refer to API Activity Monitoring, Authentication Anomaly Detection, Operational Security Monitoring, and Account Compromise Investigation. In this specification, **Version 2 SEC features are exactly four** (see Features below). Operational Security Monitoring is broader SEC framing, not a separate feature. Account Compromise Investigation is SEC investigation support under SEC-BR-002 using INVEST context, not a fifth standalone Version 2 feature. API Activity Monitoring maps to API Monitoring; Authentication Anomaly Detection maps to Session Monitoring and Threat Detection as applicable; Device Intelligence maps to Device Intelligence.
 
 ### Responsibilities
 
 The domain is responsible for:
 
 - Monitor API and authentication-related security signals
-- Analyze device intelligence
+- Monitor session and security anomaly patterns
+- Analyze and maintain device intelligence records derived from authorized inputs
 - Detect operational security threats
-- Support security incident investigation
+- Support security incident investigation context (SEC-BR-002)
 
-### Features
+SEC does not authenticate users, establish sessions, create operational alerts, create investigation cases, score risk, own dashboard presentation, generate reports, or orchestrate AI agents. Version 2 SEC core workflows are operable without AI.
+
+### Features (Version 2)
 
 - API Monitoring
 - Session Monitoring
 - Device Intelligence
 - Threat Detection
 
-### Future Features
+These four features are distinct Version 2 capabilities and shall not be merged or expanded into additional Version 2 features in this baseline.
+
+### Future Features (Version 3 — not Version 2)
 
 - Insider Threat Patterns
 - Automated Containment Recommendations
 - SIEM Bi-Directional Sync
+
+These capabilities are explicitly deferred beyond Version 2 and shall not be authored as Version 2 Functional Requirements.
+
+### Functional Requirements Planning Baseline
+
+The intended Version 2 FRS inventory is approximately 10 requirements, determined from locked Version 2 capabilities rather than a mandatory count:
+
+- 4 feature-covering requirements aligned to API Monitoring, Session Monitoring, Device Intelligence, and Threat Detection
+- 1 cross-feature retrieval/discovery requirement
+- Supporting requirements for event publication contract integrity, upstream event consumption integrity, audit outcomes, and authorization/access boundaries
+
+Detailed Functional Requirement authoring is deferred to the FRS phase. This baseline is a planning guide only. Legacy BRS provisional references `FR-060 – FR-070` are superseded during FRS authoring; the BRS has not been migrated in this phase. No `SEC-FR-*` IDs are pre-authored here.
 
 ### Domain Data Ownership
 
@@ -2250,20 +2272,36 @@ This domain owns:
 - Threat Detections
 - API Abuse Signals
 
+SEC does not own authentication sessions, MFA enrollments, device registrations, user lifecycle records, organization lifecycle records, operational alerts, investigation cases, risk scores, AI recommendation records, or reporting definitions. Those remain owned by AUTH, USER, ORG, ALERT, INVEST, RISK, AI, and REPORT respectively.
+
 ### Domain Events
 
-**Publishes**
+**Publishes (Version 2)**
 
 - `ThreatDetected`
 - `SuspiciousSessionDetected`
 - `ApiAbuseDetected`
 
-**Consumes**
+**Consumes (Version 2)**
 
-- `UserLoggedIn`
-- `SessionExpired`
-- `AlertCreated`
-- `CaseCreated`
+- `UserLoggedIn` — AUTH-owned publication consumed by SEC for authentication/session security context enrichment only
+- `SessionExpired` — AUTH-owned publication consumed by SEC for session security context enrichment only
+- `AlertCreated` — ALERT-owned publication consumed by SEC for operational alert context enrichment only
+- `CaseCreated` — INVEST-owned publication consumed by SEC for investigation context enrichment only
+
+**Explicit exclusions (not SEC Version 2 baseline events)**
+
+SEC does not publish or consume `DeviceSignalReceived` in Version 2 baseline. RISK's existing deferred `DeviceSignalReceived` integration remains unchanged and is not satisfied by inventing a SEC event contract in this baseline. Any future SEC↔RISK device-signal contract requires a later locked domain decision.
+
+SEC does not consume `HighRiskDetected`, `RiskCalculated`, `CaseUpdated`, `CaseClosed`, `EvidenceAttached`, `UserUpdated`, `WalletProfileUpdated`, `AIRecommendationGenerated`, `TransactionReceived`, or any SEC self-publication events in Version 2 baseline.
+
+**Downstream consumption (deferred / unspecified)**
+
+- `ThreatDetected` — ALERT may consume when ALERT Version 2+ SEC integration is authored (frozen ALERT MVP baseline defers `ThreatDetected` consumption until SEC Version 2). ALERT is not an MVP dependency on SEC. No frozen MVP downstream consumer obligation exists.
+- `SuspiciousSessionDetected` — downstream routing deferred/unspecified; not a Version 2 cross-domain obligation until explicitly contracted.
+- `ApiAbuseDetected` — downstream routing deferred/unspecified; not a Version 2 cross-domain obligation until explicitly contracted.
+
+SEC does not publish `UserLoggedIn`, `SessionExpired`, `AlertCreated`, or `CaseCreated`. SEC does not create operational alerts or investigation cases through event publication in this baseline.
 
 ### Non-Functional Characteristics
 
@@ -2278,27 +2316,29 @@ This domain owns:
 
 ### External Integrations
 
+External integrations remain provider-neutral capability boundaries embedded within Version 2 features. No separate external-provider ingestion event contract is defined for Version 2 SEC.
+
 - SIEM Platforms
-- Device Fingerprinting
+- Device Fingerprinting / Device Intelligence Providers
 - Exchange API Gateway Logs
 
 ### Related AI Agents
 
-**Primary Agent:** Security Investigation Assistant
+No AI agents are owned or orchestrated by SEC.
 
-**Supporting Agents:**
-- Explanation Agent
-- Summarization Agent
+N/A — AI Platform owns and orchestrates agents; SEC does not own or orchestrate AI agents.
+
+AI Platform owns agent lifecycle and orchestration, including Security Investigation Assistant, Explanation Agent, and Summarization Agent capabilities where applicable. SEC may integrate assistive AI Platform outputs in authorized security workflows when applicable. AI assistance does not replace human decision authority for security disposition, enforcement, or investigation conclusions. Version 2 SEC core workflows remain operable without AI.
 
 ### Security Considerations
 
-Security telemetry and threat findings shall be restricted to authorized security roles and protected as sensitive operational data.
+Security telemetry and threat findings shall be restricted to authorized security roles and protected as sensitive operational data. SEC shall respect organization scope through contextual ORG tenant boundaries without managing organization lifecycle. AUTHZ evaluates access; USER provides authenticated actor identity context; AUTH provides authentication and session event context.
 
 ### Success Criteria
 
 - Security events are visible to authorized users
 - Suspicious API/session/device patterns can be investigated
-- Security cases can be managed through investigation workflows
+- Security investigation support can leverage INVEST context without SEC owning case lifecycle
 
 ### Domain KPIs
 
@@ -2315,9 +2355,9 @@ Security telemetry and threat findings shall be restricted to authorized securit
 
 ### Domain Roadmap
 
-**MVP**
+**MVP (platform release)**
 
-- — (Version 2 domain; foundational auth/session hooks in MVP)
+- None. SEC is a Version 2 domain with no platform-MVP Functional Requirements, event contracts, or foundational hooks. Foundational MVP authentication, session management, and device registration remain AUTH-owned capabilities and do not create SEC MVP Functional Requirements.
 
 **Version 2**
 
@@ -2329,14 +2369,44 @@ Security telemetry and threat findings shall be restricted to authorized securit
 **Version 3**
 
 - Insider Threat Patterns
+- Automated Containment Recommendations
 - SIEM Bi-Directional Sync
-- Containment Recommendations
 
 ### Domain Relationships
 
-**Depends on:** CORE, AUTH, AUTHZ, USER, ALERT, INVEST
+**Depends on (Version 2):** CORE, AUTH, AUTHZ, USER (contextual — authenticated actor identity; lifecycle owned by USER), ORG (contextual — tenant/organization scope; lifecycle owned by ORG), ALERT, INVEST
+
+**Assistive integration (not a hard Version 2 runtime dependency):** AI Platform
+
+**Boundary references (not Version 2 dependencies):** RISK (risk scoring — no locked SEC dependency solely for deferred `DeviceSignalReceived`), DASH (presentation), REPORT (report definitions), COMP (compliance workflows), WALLET (wallet intelligence)
 
 **Supports:** REPORT, AI, OPS
+
+**Authentication boundary:** AUTH owns authentication, credential verification, MFA, session establishment/expiry, device registration, and publication of `UserLoggedIn` and `SessionExpired`. SEC consumes those events for security context only and does not redefine AUTH ownership.
+
+**Authorization boundary:** AUTHZ owns authorization policies and role decisions. SEC applies authorization outcomes and does not redefine AUTHZ.
+
+**User boundary:** USER owns user lifecycle. SEC consumes upstream context where applicable and does not create, update, or deactivate users.
+
+**Organization boundary:** ORG owns organization/tenant lifecycle. SEC applies tenant scope contextually and does not manage organizations.
+
+**Alert boundary:** ALERT owns operational alert records, lifecycle, and operational alert priority. SEC consumes `AlertCreated` for context only. SEC does not create or manage alerts. `ThreatDetected` does not imply MVP or mandatory Version 2 ALERT routing unless explicitly contracted in a future ALERT revision.
+
+**Investigation boundary:** INVEST owns investigation cases and investigation workflow. SEC consumes `CaseCreated` for investigation context enrichment only (SEC-BR-002). SEC does not create or manage investigation cases and does not consume `CaseUpdated`, `CaseClosed`, or `EvidenceAttached` in Version 2 baseline.
+
+**Risk / device-signal boundary:** RISK owns risk scoring and rules. SEC does not score risk. `DeviceSignalReceived` is not an SEC Version 2 publish or consume event. RISK's deferred device-signal integration remains unchanged.
+
+**Audit boundary:** CORE owns shared audit infrastructure. SEC records security detection and access outcomes using shared audit capabilities without redefining CORE ownership.
+
+**Device boundary:** AUTH owns device registration and authentication mechanisms. SEC owns device intelligence records and derived security intelligence from authorized signals; SEC does not redefine AUTH device/session ownership.
+
+**Presentation boundary:** DASH owns workspace/dashboard presentation. SEC owns security data and workflows and does not own dashboard UI.
+
+**Report boundary:** REPORT owns reporting definitions and presentation. SEC does not own regulatory or operational report generation.
+
+**AI boundary:** AI Platform owns AI agents and orchestration. SEC does not own Security Investigation Assistant or other agents.
+
+External SIEM, device intelligence, and API gateway log integrations remain embedded within Version 2 feature workflows; no separate provider-ingest event contract is defined.
 
 ---
 
@@ -2999,6 +3069,28 @@ REPORT may consume `ComplianceReviewed` when REPORT Version 2 scope is authored;
 MVP COMP features are exactly KYC Review, AML Review, Travel Rule, Sanctions Screening, and Audit Preparation. Jurisdiction Policy Packs and Compliance Analytics are Version 2. Automated Regulatory Drafting and Continuous Control Monitoring are Version 3 and shall not become MVP Functional Requirements.
 
 External KYC, sanctions screening, and Travel Rule provider integrations remain provider-neutral capability boundaries embedded within MVP features; no separate external-ingest event contract is defined for MVP COMP.
+
+### Security Intelligence Boundaries
+
+SEC is a Version 2 domain only. It has no platform-MVP Functional Requirements, foundational hooks, or MVP event contracts.
+
+CORE owns shared platform and audit primitives. AUTH authenticates actors, owns sessions, MFA, device registration, and publishes `UserLoggedIn` and `SessionExpired`. AUTHZ determines authorization. USER provides user identity context; SEC does not own user lifecycle. ORG provides tenant/organizational context; SEC does not own organization lifecycle. ALERT owns operational alert lifecycle; SEC consumes `AlertCreated` for context only and does not create or manage alerts. INVEST owns investigation case lifecycle; SEC consumes `CaseCreated` for investigation context enrichment only (SEC-BR-002) and does not create or manage cases. RISK owns risk scoring and rules; SEC does not score risk. DASH owns presentation and workspace concerns; SEC does not own dashboard UI. REPORT owns reporting definitions and presentation. COMP owns compliance workflows and records; SEC does not own them. WALLET owns wallet intelligence (Version 2). AI Platform owns AI agents and orchestration; SEC does not own or orchestrate agents. Version 2 SEC core workflows remain operable without AI.
+
+SEC owns security event monitoring, API activity/security monitoring, session/security anomaly monitoring, device intelligence records and derived intelligence, threat detection workflow/results, API abuse signal handling, and security investigation support/context.
+
+Version 2 SEC publishes exactly `ThreatDetected`, `SuspiciousSessionDetected`, and `ApiAbuseDetected`. Version 2 SEC consumes exactly AUTH-owned `UserLoggedIn` and `SessionExpired`, ALERT-owned `AlertCreated`, and INVEST-owned `CaseCreated`. SEC does not publish or consume `DeviceSignalReceived` in Version 2 baseline. SEC does not consume `HighRiskDetected`, `RiskCalculated`, `CaseUpdated`, `CaseClosed`, `EvidenceAttached`, `UserUpdated`, `WalletProfileUpdated`, `AIRecommendationGenerated`, or `TransactionReceived`.
+
+`UserLoggedIn` and `SessionExpired` are AUTH-owned publications consumed by SEC for security context. `AlertCreated` is an ALERT-owned publication consumed by SEC for context. `CaseCreated` is an INVEST-owned publication consumed by SEC for context.
+
+ALERT may consume `ThreatDetected` when ALERT Version 2+ SEC integration is authored; ALERT is not an MVP dependency on SEC. No frozen downstream consumer is currently established for `SuspiciousSessionDetected` or `ApiAbuseDetected`; downstream routing remains a future contract decision.
+
+Version 2 SEC features are exactly API Monitoring, Session Monitoring, Device Intelligence, and Threat Detection. Insider Threat Patterns, Automated Containment Recommendations, and SIEM Bi-Directional Sync are Version 3 and shall not become Version 2 Functional Requirements.
+
+AUTH owns device registration and authentication/session mechanisms. SEC owns device intelligence records and derived security intelligence from authorized upstream signals without redefining AUTH ownership. SEC records security outcomes using CORE shared audit capabilities without redefining CORE audit infrastructure ownership.
+
+External SIEM, device intelligence, and API gateway log integrations remain provider-neutral capability boundaries embedded within Version 2 features; no separate external-ingest event contract is defined for Version 2 SEC.
+
+RISK's existing deferred `DeviceSignalReceived` integration remains unchanged. `DeviceSignalReceived` is not an SEC Version 2 publish or consume event. Any future SEC↔RISK device-signal contract requires a later locked domain decision.
 
 ### AI Assistive Role
 

@@ -6,7 +6,7 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Requirements Specification |
-| Version | 1.8 (Draft) |
+| Version | 1.9 (Draft) |
 | Status | Draft |
 | Owner | Product & Engineering Team |
 | Last Updated | 2026-09-02 |
@@ -35,6 +35,7 @@
 | 1.6 | 2026-09-02 | Product Team | Complete INVEST domain functional requirements (INVEST-FR-001 – INVEST-FR-010); FDS v1.0 MVP baseline; approved Phase 3 inventory; no MVP AI assist; FI-BR-003 and V2 integrations deferred |
 | 1.7 | 2026-09-02 | Product Team | Complete WALLET domain functional requirements (WALLET-FR-001 – WALLET-FR-010); FDS v1.1 Version 2 baseline; no platform MVP hooks; exact 3 publish / 3 consume event contract; AI agent ownership excluded; V3 capabilities deferred |
 | 1.8 | 2026-09-02 | Product Team | COMP MVP functional requirements authored — COMP-FR-001 through COMP-FR-010, event contracts and traceability added |
+| 1.9 | 2026-09-02 | Product Team | SEC V2 functional requirements authored — SEC-FR-001 through SEC-FR-009, event contracts and traceability added |
 
 ---
 
@@ -568,7 +569,7 @@ These placeholders allow the document to grow without restructuring domain numbe
 
 ## Requirement Traceability Matrix
 
-CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, WALLET, and COMP domain requirements are listed below. Additional domains will be appended as they are authored.
+CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, WALLET, COMP, and SEC domain requirements are listed below. Additional domains will be appended as they are authored.
 
 | FR ID | Title | BR Reference | Type | Priority | Release | API | DB | UI | Tests | Status |
 |-------|-------|--------------|------|----------|---------|-----|----|----|-------|--------|
@@ -725,8 +726,17 @@ CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, WALLET, and COMP domain
 | COMP-FR-008 | Consume Upstream Investigation Risk And User Context Events | CP-BR-001, CP-BR-002 | Integration | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 | COMP-FR-009 | Record Compliance Audit Outcomes | CP-BR-001, CP-BR-002 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 | COMP-FR-010 | Restrict Compliance Data Access To Authorized Actors | CP-BR-001, CP-BR-002 | Security | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| SEC-FR-001 | Monitor API Security Activity | SEC-BR-001 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| SEC-FR-002 | Monitor Session Security Anomalies | SEC-BR-001 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| SEC-FR-003 | Maintain Device Intelligence Records | SEC-BR-001 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| SEC-FR-004 | Detect Operational Security Threats | SEC-BR-001, SEC-BR-002 | Functional | Critical | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| SEC-FR-005 | Retrieve And Discover Security Intelligence Records | SEC-BR-001, SEC-BR-002 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| SEC-FR-006 | Enforce Security Event Publication Contract | SEC-BR-001 | Integration | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| SEC-FR-007 | Consume Upstream Authentication Alert And Investigation Context Events | SEC-BR-001, SEC-BR-002 | Integration | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| SEC-FR-008 | Record Security Intelligence Audit Outcomes | SEC-BR-001, SEC-BR-002 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| SEC-FR-009 | Restrict Security Data Access To Authorized Actors | SEC-BR-001, SEC-BR-002 | Security | Critical | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 
-CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, WALLET, and COMP domain requirements are included above. Additional domains will be appended as they are authored.
+CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, WALLET, COMP, and SEC domain requirements are included above. Additional domains will be appended as they are authored.
 
 As Functional Requirements are authored for subsequent domains, each row shall be updated to maintain end-to-end traceability.
 
@@ -29394,3 +29404,1839 @@ MVP COMP publishes exactly `ComplianceReviewed`, `TravelRuleValidated`, `Sanctio
 COMP does not own operational alert lifecycle, risk scoring, investigation case lifecycle, dashboard presentation, wallet intelligence, user lifecycle, organization lifecycle, AI agent orchestration, or reporting definitions. AI Platform owns AI agents and orchestration; MVP COMP workflows remain operable without AI.
 
 Jurisdiction Policy Packs, Compliance Analytics, Automated Regulatory Drafting, and Continuous Control Monitoring remain Version 2 or Version 3 deferred scope.
+
+# Chapter — SEC Domain Requirements
+
+> Domain reference: [Functional Domain Specification — SEC](FunctionalDomainSpecification.md#domain--sec-security-intelligence)
+>
+> Related Business Requirements: `SEC-BR-001`, `SEC-BR-002`
+> Related Business Objectives: `BO-001`, `BO-002`, `BO-006`
+> Depends on: `CORE`, `AUTH`, `AUTHZ`, `USER` (contextual — authenticated actor identity; lifecycle owned by USER), `ORG` (contextual — tenant/organization scope; lifecycle owned by ORG), `ALERT`, `INVEST`
+
+This chapter defines the Functional Requirements for the SEC (Security Intelligence) domain.
+
+SEC is a **Version 2 domain only**. It has **no platform-MVP capabilities, foundational hooks, or platform-MVP Functional Requirements**. All requirements in this chapter are Version 2 release scope.
+
+SEC owns security event monitoring, API activity/security monitoring, session/security anomaly monitoring, device intelligence records, threat detection workflow/results, API abuse signal handling, and security investigation support/context. AUTH owns authentication, sessions, MFA, and device registration. AUTHZ owns authorization policy. USER owns user lifecycle. ORG owns organization lifecycle. ALERT owns operational alert lifecycle. INVEST owns investigation case lifecycle. RISK owns risk scoring. DASH owns workspace presentation. REPORT owns report definitions. CORE owns shared audit infrastructure. AI Platform owns AI agent lifecycle and orchestration.
+
+Legacy BRS provisional references `FR-060 – FR-070` are superseded by `SEC-FR-001` through `SEC-FR-009` in this chapter. The BRS has not been migrated in this phase.
+
+SEC-FR-001 – SEC-FR-009 are the approved SEC requirements for the current Version 2 draft baseline. Insider Threat Patterns, Automated Containment Recommendations, SIEM Bi-Directional Sync, platform MVP hooks, and AI agent ownership remain deferred or excluded. No SEC-FR-010 is defined.
+
+Version 2 SEC workflows are operable without AI. AI Platform may provide assistive capabilities but is not a mandatory Version 2 runtime dependency for SEC.
+
+## SEC Domain Requirement Index
+
+### Feature-covering requirements
+
+| ID | Title | Priority | Release | FDS Feature Coverage |
+|----|-------|----------|---------|----------------------|
+| SEC-FR-001 | Monitor API Security Activity | High | Version 2 | API Monitoring |
+| SEC-FR-002 | Monitor Session Security Anomalies | High | Version 2 | Session Monitoring |
+| SEC-FR-003 | Maintain Device Intelligence Records | High | Version 2 | Device Intelligence |
+| SEC-FR-004 | Detect Operational Security Threats | Critical | Version 2 | Threat Detection |
+| SEC-FR-005 | Retrieve And Discover Security Intelligence Records | High | Version 2 | Cross-feature discovery/access |
+
+### Supporting SEC Requirements
+
+These requirements are **not** named baseline FDS SEC features. They are supporting / cross-domain integrity requirements.
+
+| ID | Title | Priority | Release | Classification |
+|----|-------|----------|---------|----------------|
+| SEC-FR-006 | Enforce Security Event Publication Contract | High | Version 2 | Supporting — FDS event contract integrity |
+| SEC-FR-007 | Consume Upstream Authentication Alert And Investigation Context Events | High | Version 2 | Supporting — consumer integrity |
+| SEC-FR-008 | Record Security Intelligence Audit Outcomes | High | Version 2 | Supporting — audit integrity |
+| SEC-FR-009 | Restrict Security Data Access To Authorized Actors | Critical | Version 2 | Supporting — AUTHZ boundary integrity |
+
+## 1. API Monitoring
+
+# SEC-FR-001 — Monitor API Security Activity
+
+## Summary
+
+The system shall monitor eligible API security activity and handle API abuse indicators within SEC ownership.
+
+---
+
+## Description
+
+The system shall monitor and interpret authorized API security telemetry within permitted organization scope, detect and record API abuse indicators, and publish eligible `ApiAbuseDetected` outcomes through SEC-FR-006, without owning API gateway infrastructure, without prescribing vendor-specific API technology, and without creating operational alerts or investigation cases.
+
+External API gateway or security telemetry sources may be used where authorized as embedded capability boundaries within this requirement.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Security Engineering
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted monitoring and detection outcomes)
+
+---
+
+## Business Requirement Reference
+
+SEC-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002, BO-006
+
+---
+
+## FDS Domain Reference
+
+SEC — Security Intelligence (API Monitoring)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions where applicable.
+- The actor is authorized for the requested API security monitoring action (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+- Permitted API security telemetry inputs may be available from authorized external sources where configured.
+
+---
+
+## Trigger
+
+An authorized user requests API security monitoring or review; or a permitted system monitoring or detection outcome occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives an API security monitoring request or permitted telemetry input.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (SEC-FR-009).
+3. The system ingests or evaluates permitted API security telemetry according to policy.
+4. The system records SEC-owned security events and API abuse signals as authorized.
+5. The system records the outcome for audit handling (SEC-FR-008).
+6. Eligible API abuse outcomes publish `ApiAbuseDetected` through SEC-FR-006.
+
+---
+
+## Alternative Flow
+
+If applicable authentication or alert context is available through SEC-FR-007:
+- The system may enrich API security interpretation without redefining AUTH or ALERT lifecycle behavior.
+
+If the request is retrieval or review of prior monitoring results only:
+- The system returns authorized SEC-owned records without modification.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The monitoring action is denied (AUTHZ).
+
+If required inputs are missing or invalid:
+- The system rejects the monitoring action.
+
+If external telemetry interaction fails:
+- The system records the failure outcome according to policy without bypassing authorization or audit requirements.
+
+---
+
+## Postconditions
+
+- API security activity is monitored, API abuse indicators are recorded, or the action is denied or rejected as authorized.
+
+---
+
+## Business Rules
+
+- SEC owns API security monitoring and API abuse signal handling within SEC data ownership.
+- SEC does not own API gateway infrastructure or external telemetry source lifecycle.
+- ALERT owns operational alert lifecycle; SEC does not create or manage alerts from API abuse outcomes.
+- INVEST owns investigation case lifecycle; SEC does not create or manage cases.
+- RISK owns risk scoring; SEC does not calculate risk scores.
+- API abuse outcomes publish through SEC-FR-006 only; no additional Version 2 publish events are introduced.
+- No separate external-provider ingestion Functional Requirement exists; provider interaction is embedded in this feature.
+
+---
+
+## Validation Rules
+
+- Monitoring inputs shall identify the API activity scope and required attributes sufficiently for authorized processing.
+- API abuse indicators shall be recorded with sufficient traceability for audit handling.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can monitor API security activity and record API abuse indicators within organization scope.
+- SEC-owned security events and API abuse signals are created with traceability (SEC-FR-008).
+- Unauthorized monitoring actions are denied.
+- Eligible API abuse outcomes result in `ApiAbuseDetected` publication through SEC-FR-006.
+- SEC does not own API gateway infrastructure or prescribe vendor-specific API technology.
+- SEC does not create alerts or investigation cases from API monitoring outcomes.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); SEC-FR-006; SEC-FR-007; SEC-FR-008; SEC-FR-009
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS SEC domain.
+
+---
+
+## Related Events
+
+May result in `ApiAbuseDetected` through SEC-FR-006.
+
+May consume contextual upstream events through SEC-FR-007 where applicable.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; SEC does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Security-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Provider-neutral external API gateway or security telemetry boundaries are embedded in this feature. Downstream routing for `ApiAbuseDetected` remains deferred/unspecified per FDS contract.
+
+
+## 2. Session Monitoring
+
+# SEC-FR-002 — Monitor Session Security Anomalies
+
+## Summary
+
+The system shall monitor session security anomalies using applicable authentication and session context.
+
+---
+
+## Description
+
+The system shall monitor and detect session security anomalies within permitted organization scope using SEC-owned security event records and applicable AUTH-owned context consumed through SEC-FR-007, publishing eligible `SuspiciousSessionDetected` outcomes through SEC-FR-006, without owning session establishment, session lifecycle, or authentication policy.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Security Engineering
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted session anomaly detection outcomes)
+
+---
+
+## Business Requirement Reference
+
+SEC-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002, BO-006
+
+---
+
+## FDS Domain Reference
+
+SEC — Security Intelligence (Session Monitoring)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions where applicable.
+- The actor is authorized for session security monitoring actions (AUTHZ).
+- Organization scope is available where required (ORG contextual).
+- Applicable AUTH-owned `UserLoggedIn` or `SessionExpired` context may be available through SEC-FR-007.
+
+---
+
+## Trigger
+
+An authorized user requests session security monitoring; or a permitted session anomaly detection outcome occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives a session security monitoring request or permitted detection input.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (SEC-FR-009).
+3. The system evaluates session security signals using SEC-owned records and permitted AUTH context from SEC-FR-007.
+4. The system records session anomaly outcomes as authorized.
+5. The system records the outcome for audit handling (SEC-FR-008).
+6. Eligible session anomaly outcomes publish `SuspiciousSessionDetected` through SEC-FR-006.
+
+---
+
+## Alternative Flow
+
+If AUTH context is unavailable for a referenced session:
+- The system records the limitation according to policy and continues with SEC-owned data only where permitted.
+
+If the request is retrieval of prior session anomaly records only:
+- The system returns authorized records without re-detection.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The monitoring action is denied (AUTHZ).
+
+If required inputs are missing or invalid:
+- The system rejects the monitoring action.
+
+---
+
+## Postconditions
+
+- Session security anomalies are monitored and recorded as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- SEC owns session security anomaly monitoring and related SEC-owned security events.
+- AUTH owns session establishment, expiry, and publication of `UserLoggedIn` and `SessionExpired`; SEC consumes those events for context only through SEC-FR-007.
+- SEC does not establish, extend, or terminate user sessions.
+- Session anomaly outcomes publish through SEC-FR-006 only.
+- Downstream routing for `SuspiciousSessionDetected` is deferred/unspecified and is not a Version 2 cross-domain obligation.
+
+---
+
+## Validation Rules
+
+- Session monitoring inputs shall identify the session or actor context sufficiently for authorized processing within organization scope.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can monitor session security anomalies within organization scope.
+- SEC consumes AUTH-owned context only through SEC-FR-007; SEC does not own session lifecycle.
+- Eligible outcomes result in `SuspiciousSessionDetected` publication through SEC-FR-006.
+- Unauthorized monitoring actions are denied.
+- SEC does not create alerts or investigation cases from session anomaly outcomes.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); SEC-FR-006; SEC-FR-007; SEC-FR-008; SEC-FR-009
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS SEC domain.
+
+---
+
+## Related Events
+
+May result in `SuspiciousSessionDetected` through SEC-FR-006.
+
+Consumes contextual `UserLoggedIn` and `SessionExpired` through SEC-FR-007 where applicable.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; SEC does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Security-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Authentication Anomaly Detection in ProductScope maps to Session Monitoring and Threat Detection; this requirement covers session-oriented monitoring only.
+
+
+## 3. Device Intelligence
+
+# SEC-FR-003 — Maintain Device Intelligence Records
+
+## Summary
+
+The system shall maintain SEC-owned device intelligence records derived from authorized inputs.
+
+---
+
+## Description
+
+The system shall create, maintain, retrieve, and enrich SEC-owned device intelligence records within permitted organization scope using authorized contextual inputs and permitted external device intelligence provider boundaries embedded in this feature, without owning AUTH device registration, without publishing or consuming `DeviceSignalReceived`, and without coupling to RISK scoring.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Security Engineering
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted enrichment outcomes)
+
+---
+
+## Business Requirement Reference
+
+SEC-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002, BO-006
+
+---
+
+## FDS Domain Reference
+
+SEC — Security Intelligence (Device Intelligence)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions where applicable.
+- The actor is authorized for device intelligence actions (AUTHZ).
+- Organization scope is available where required (ORG contextual).
+- Permitted device-related context may be available from AUTH or authorized external device intelligence providers where configured.
+
+---
+
+## Trigger
+
+An authorized user requests device intelligence record creation, maintenance, retrieval, or enrichment; or a permitted enrichment outcome occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives a device intelligence request or permitted enrichment input.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (SEC-FR-009).
+3. The system validates required device intelligence inputs.
+4. The system creates, updates, retrieves, or enriches SEC-owned device intelligence records as authorized.
+5. The system records the outcome for audit handling (SEC-FR-008).
+
+---
+
+## Alternative Flow
+
+If permitted external device intelligence provider inputs are available:
+- The system may enrich device intelligence records using authorized external inputs without inventing a separate ingestion Functional Requirement or new event contract.
+
+If the request is retrieval-only:
+- The system returns authorized device intelligence data without modification.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The device intelligence action is denied (AUTHZ).
+
+If required inputs are missing or invalid:
+- The system rejects the device intelligence action.
+
+---
+
+## Postconditions
+
+- Device intelligence records are created, updated, retrieved, or enriched as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- SEC owns device intelligence records and derived security intelligence within SEC scope.
+- AUTH owns device registration and authentication mechanisms; SEC does not redefine AUTH device ownership.
+- SEC does not publish or consume `DeviceSignalReceived` in Version 2 baseline.
+- RISK owns risk scoring; SEC does not calculate risk scores and is not a locked RISK dependency.
+- No separate external-provider ingestion Functional Requirement or event contract is defined.
+
+---
+
+## Validation Rules
+
+- Device intelligence inputs shall identify the device or subject context sufficiently for authorized processing within organization scope.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can maintain SEC-owned device intelligence records within organization scope.
+- AUTH device registration ownership is not redefined.
+- SEC does not publish or consume `DeviceSignalReceived`.
+- SEC does not introduce RISK coupling or risk scoring behavior.
+- Unauthorized device intelligence actions are denied.
+- Device intelligence maintenance remains operable without AI.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); SEC-FR-008; SEC-FR-009
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS SEC domain.
+
+---
+
+## Related Events
+
+None required as a baseline SEC publish event for device intelligence maintenance alone.
+
+May use contextual upstream events through SEC-FR-007 where applicable without consuming `DeviceSignalReceived`.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; SEC does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Security-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+RISK's deferred `DeviceSignalReceived` integration remains unchanged; SEC does not satisfy it in Version 2 baseline.
+
+
+## 4. Threat Detection
+
+# SEC-FR-004 — Detect Operational Security Threats
+
+## Summary
+
+The system shall detect operational security threats and support security investigation context without owning case lifecycle.
+
+---
+
+## Description
+
+The system shall correlate and interpret authorized security signals within permitted organization scope, produce SEC-owned threat detection outcomes, support SEC-BR-002 security investigation context using applicable upstream events consumed through SEC-FR-007, and publish eligible `ThreatDetected` outcomes through SEC-FR-006, without owning INVEST investigation case lifecycle, ALERT operational alert lifecycle, or RISK scoring.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Security Engineering
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted threat detection outcomes)
+
+---
+
+## Business Requirement Reference
+
+SEC-BR-001, SEC-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002, BO-006
+
+---
+
+## FDS Domain Reference
+
+SEC — Security Intelligence (Threat Detection)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions where applicable.
+- The actor is authorized for threat detection actions (AUTHZ).
+- Organization scope is available where required (ORG contextual).
+- Applicable SEC-owned security events and upstream context from SEC-FR-007 may be available.
+
+---
+
+## Trigger
+
+An authorized user initiates threat detection or review; or a permitted threat detection outcome occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives a threat detection request or permitted evaluation input.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (SEC-FR-009).
+3. The system evaluates authorized security signals and SEC-owned records.
+4. The system applies applicable upstream context from SEC-FR-007 without redefining upstream domain behavior.
+5. The system records SEC-owned threat detection outcomes.
+6. The system records the outcome for audit handling (SEC-FR-008).
+7. Eligible threat outcomes publish `ThreatDetected` through SEC-FR-006.
+
+---
+
+## Alternative Flow
+
+If investigation context from `CaseCreated` is available (SEC-FR-007):
+- The system may enrich threat investigation support for SEC-BR-002 without creating or managing INVEST cases.
+
+If no threat condition is met:
+- The system records a non-threat or cleared outcome without publishing `ThreatDetected`.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The threat detection action is denied (AUTHZ).
+
+If required inputs are missing or invalid:
+- The system rejects the threat detection action.
+
+---
+
+## Postconditions
+
+- Operational security threats are detected and recorded as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- SEC owns threat detection workflow and SEC-owned threat detection results.
+- SEC-BR-002 investigation support is satisfied through threat detection outcomes, discovery (SEC-FR-005), and consumption of `CaseCreated` via SEC-FR-007; SEC does not own INVEST case lifecycle.
+- ALERT owns operational alert lifecycle; SEC does not create alerts from `ThreatDetected` in Version 2 baseline.
+- `ThreatDetected` may be consumed by ALERT in future Version 2+ integration; ALERT is not an MVP dependency on SEC and mandatory Version 2 ALERT routing is not established.
+- RISK owns risk scoring; SEC does not calculate risk scores.
+- Threat outcomes publish through SEC-FR-006 only.
+
+---
+
+## Validation Rules
+
+- Threat detection inputs shall identify the evaluation scope and required attributes sufficiently for authorized processing.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can detect and record operational security threats within organization scope.
+- SEC supports SEC-BR-002 investigation context without creating or managing INVEST cases.
+- Eligible threat outcomes result in `ThreatDetected` publication through SEC-FR-006.
+- SEC does not assign ALERT as a mandatory Version 2 downstream consumer.
+- SEC does not implement RISK scoring or ALERT lifecycle behavior.
+- Unauthorized threat detection actions are denied.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); ALERT (contextual); INVEST (contextual); SEC-FR-005; SEC-FR-006; SEC-FR-007; SEC-FR-008; SEC-FR-009
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS SEC domain.
+
+---
+
+## Related Events
+
+May result in `ThreatDetected` through SEC-FR-006.
+
+Consumes contextual upstream events through SEC-FR-007 where applicable.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; SEC does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Security-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Account Compromise Investigation in ProductScope is investigation support under SEC-BR-002, not a fifth standalone Version 2 feature.
+
+
+## 5. Security Discovery
+
+# SEC-FR-005 — Retrieve And Discover Security Intelligence Records
+
+## Summary
+
+The system shall enable authorized retrieval and discovery of SEC-owned security intelligence records.
+
+---
+
+## Description
+
+The system shall enable authorized actors to retrieve, search, filter, and discover SEC-owned security intelligence records—including API security events, session anomaly records, device intelligence records, and threat detection outcomes—within organization scope, supporting SEC-BR-002 investigation support without prescribing DASH presentation, REPORT report generation, or INVEST evidence lifecycle ownership.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Security Engineering
+
+---
+
+## Actor
+
+Authenticated User
+
+---
+
+## Business Requirement Reference
+
+SEC-BR-001, SEC-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-002, BO-006
+
+---
+
+## FDS Domain Reference
+
+SEC — Security Intelligence (Cross-feature discovery/access)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH).
+- The actor is authorized for security intelligence discovery (AUTHZ).
+- Organization scope is available where required (ORG contextual).
+
+---
+
+## Trigger
+
+An authorized user requests retrieval, search, filter, or discovery of SEC-owned security intelligence records.
+
+---
+
+## Normal Flow
+
+1. The system receives a security intelligence discovery request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (SEC-FR-009).
+3. The system validates permitted search and filter parameters.
+4. The system retrieves or discovers authorized SEC-owned records matching the request.
+5. The system returns results within authorized scope without exposing cross-tenant data.
+
+---
+
+## Alternative Flow
+
+If no records match the query:
+- The system returns an empty authorized result set.
+
+If the request targets a specific record identifier:
+- The system returns authorized record detail or denies access if out of scope.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- Discovery is denied (AUTHZ).
+
+If search parameters are invalid:
+- The system rejects the discovery request.
+
+If authorization services are unavailable:
+- The system denies access according to platform fail-closed policy.
+
+---
+
+## Postconditions
+
+- Authorized security intelligence records are retrieved or discovered; or access is denied or rejected.
+
+---
+
+## Business Rules
+
+- Discovery covers SEC-owned records only; SEC does not expose INVEST case lifecycle management through this requirement.
+- DASH owns workspace presentation; this requirement does not prescribe DASH widgets or layouts.
+- REPORT owns report definitions; this requirement does not generate operational or regulatory reports.
+- INVEST owns evidence lifecycle; SEC discovery does not consume `EvidenceAttached`.
+- Discovery respects SEC-FR-009 authorization boundaries for all record types.
+
+---
+
+## Validation Rules
+
+- Discovery requests shall use permitted filter and search parameters defined by organization policy.
+- Results shall be limited to authorized organization scope.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can retrieve and discover SEC-owned records across API monitoring, session monitoring, device intelligence, and threat detection domains.
+- Search and filter behavior returns only authorized records within organization scope.
+- Unauthorized discovery requests are denied.
+- Discovery does not implement DASH presentation or REPORT report generation.
+- Cross-tenant data is not exposed.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); SEC-FR-001; SEC-FR-002; SEC-FR-003; SEC-FR-004; SEC-FR-009
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS SEC domain.
+
+---
+
+## Related Events
+
+None required as a baseline SEC publish event.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; SEC does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Security-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Cross-feature discovery pattern aligned with WALLET-FR-005, COMP-FR-006, INVEST-FR-006, and RISK-FR-008.
+
+
+## 6. Security Event Publication
+
+# SEC-FR-006 — Enforce Security Event Publication Contract
+
+## Summary
+
+The system shall publish security events according to the FDS Version 2 contract.
+
+---
+
+## Description
+
+The system shall publish `ThreatDetected`, `SuspiciousSessionDetected`, and `ApiAbuseDetected` when the corresponding SEC outcomes occur, consistent with the FDS SEC domain Version 2 event contract. This requirement is the single SEC publication authority. No additional SEC Version 2 publish events are introduced.
+
+---
+
+## Type
+
+Integration
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Security Engineering
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+SEC-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002, BO-006
+
+---
+
+## FDS Domain Reference
+
+SEC — Security Intelligence (Supporting — FDS event contract integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- A SEC outcome eligible for publication has occurred.
+- Shared platform event publication capabilities are available (CORE).
+
+---
+
+## Trigger
+
+An API abuse outcome, session anomaly outcome, or threat detection outcome occurs that is defined for Version 2 publication.
+
+---
+
+## Normal Flow
+
+1. The system identifies the SEC outcome eligible for publication.
+2. The system composes the event payload according to the FDS Version 2 contract with sufficient traceability fields.
+3. The system validates publication eligibility according to policy.
+4. The system publishes the appropriate Version 2 event.
+5. Downstream domains may react according to future contracts without SEC redefining their behavior in Version 2 baseline.
+
+---
+
+## Alternative Flow
+
+If publication is deferred by policy for a non-critical outcome:
+- The system follows platform event policy without omitting required baseline Version 2 events.
+
+---
+
+## Exception Flow
+
+If publication fails:
+- The system handles failure according to platform policy without bypassing authorization or exposing unauthorized security intelligence content.
+
+If the outcome is not eligible for publication:
+- The system does not publish the event and records the outcome according to policy.
+
+---
+
+## Postconditions
+
+- Required Version 2 SEC events are published or failure is handled per platform policy.
+
+---
+
+## Business Rules
+
+- Version 2 publish set is limited to `ThreatDetected`, `SuspiciousSessionDetected`, and `ApiAbuseDetected`.
+- No additional SEC Version 2 publish events are introduced.
+- `ThreatDetected` — ALERT may consume in future Version 2+ scope; ALERT is not an MVP dependency on SEC. No mandatory Version 2 ALERT routing obligation exists.
+- `SuspiciousSessionDetected` — downstream routing deferred/unspecified.
+- `ApiAbuseDetected` — downstream routing deferred/unspecified.
+- Feature requirements reference this contract rather than redefining event semantics independently.
+- SEC does not publish upstream-owned events such as `UserLoggedIn`, `AlertCreated`, or `CaseCreated`.
+
+---
+
+## Validation Rules
+
+- Published events shall include required contract fields for the outcome type, including identifiers sufficient for traceability.
+- Duplicate publication handling shall follow platform policy where idempotency applies.
+
+---
+
+## Acceptance Criteria
+
+- `ThreatDetected` is published for eligible threat detection outcomes (SEC-FR-004).
+- `SuspiciousSessionDetected` is published for eligible session anomaly outcomes (SEC-FR-002).
+- `ApiAbuseDetected` is published for eligible API abuse outcomes (SEC-FR-001).
+- Version 2 publish set is not expanded beyond the three FDS-contracted events.
+- Downstream routing obligations are not invented for Version 2 baseline.
+- Publication failures are handled without bypassing authorization.
+
+---
+
+## Dependencies
+
+CORE; SEC-FR-001; SEC-FR-002; SEC-FR-004
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS SEC domain.
+
+---
+
+## Related Events
+
+Publishes `ThreatDetected`, `SuspiciousSessionDetected`, and `ApiAbuseDetected` per FDS Version 2 contract only.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; SEC does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Security-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting requirement. FDS event contract integrity. Single publication authority for Version 2 SEC events.
+
+
+## 7. Upstream Context Consumption
+
+# SEC-FR-007 — Consume Upstream Authentication Alert And Investigation Context Events
+
+## Summary
+
+The system shall consume upstream authentication, alert, and investigation context events without inventing AUTH, ALERT, or INVEST behavior.
+
+---
+
+## Description
+
+The system shall consume AUTH-owned `UserLoggedIn` and `SessionExpired`, ALERT-owned `AlertCreated`, and INVEST-owned `CaseCreated` to obtain permitted upstream context for SEC workflows, without redefining AUTH session lifecycle, ALERT alert lifecycle, INVEST case lifecycle, or consuming excluded events. This requirement is the single SEC consumption authority.
+
+---
+
+## Type
+
+Integration
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Security Engineering
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+SEC-BR-001, SEC-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-002, BO-006
+
+---
+
+## FDS Domain Reference
+
+SEC — Security Intelligence (Supporting — consumer integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- An upstream event eligible for SEC consumption is published by its owning domain.
+- Shared platform event consumption capabilities are available (CORE).
+- SEC workflow requires permitted contextual enrichment.
+
+---
+
+## Trigger
+
+SEC receives an upstream `UserLoggedIn`, `SessionExpired`, `AlertCreated`, or `CaseCreated` event according to platform subscription policy.
+
+---
+
+## Normal Flow
+
+1. The system receives an upstream event from AUTH, ALERT, or INVEST ownership.
+2. The system validates the event is within the locked Version 2 consumption set.
+3. The system extracts permitted contextual fields for authorized SEC use.
+4. The system applies context to eligible SEC workflows without redefining upstream domain behavior.
+5. Context application is recorded where audit policy requires (SEC-FR-008).
+
+---
+
+## Alternative Flow
+
+If consumed context is stale or incomplete:
+- SEC continues using SEC-owned data and records the limitation according to policy.
+
+---
+
+## Exception Flow
+
+If a non-contract event is received:
+- The system does not treat it as a Version 2 SEC consumption event.
+
+If consumption processing fails:
+- The system handles failure according to platform policy without bypassing authorization.
+
+---
+
+## Postconditions
+
+- Permitted upstream context is applied to SEC workflows or ignored according to policy; excluded events are not consumed as Version 2 baseline inputs.
+
+---
+
+## Business Rules
+
+- Version 2 consume set is limited to `UserLoggedIn`, `SessionExpired`, `AlertCreated`, and `CaseCreated`.
+- `UserLoggedIn` and `SessionExpired` are AUTH-owned publications consumed for security context only.
+- `AlertCreated` is an ALERT-owned publication consumed for operational alert context only.
+- `CaseCreated` is an INVEST-owned publication consumed for investigation context only (SEC-BR-002).
+- SEC does not consume `EvidenceAttached`, `CaseClosed`, `CaseUpdated`, `HighRiskDetected`, `RiskCalculated`, `DeviceSignalReceived`, `UserUpdated`, `WalletProfileUpdated`, `AIRecommendationGenerated`, `TransactionReceived`, or SEC self-publication events in Version 2 baseline.
+- SEC does not claim ownership of upstream events or mutate upstream entity lifecycle state.
+
+---
+
+## Validation Rules
+
+- Consumed events shall be recognized only from the locked Version 2 consumption set.
+- Applied context shall remain within authorized organization scope (SEC-FR-009).
+
+---
+
+## Acceptance Criteria
+
+- SEC consumes `UserLoggedIn`, `SessionExpired`, `AlertCreated`, and `CaseCreated` for permitted contextual enrichment.
+- SEC does not consume excluded events in Version 2 baseline.
+- SEC does not claim ownership of upstream events.
+- AUTH, ALERT, and INVEST lifecycle behavior is not redefined by SEC consumption.
+- SEC-BR-002 investigation support can use `CaseCreated` context without `EvidenceAttached`, `CaseClosed`, or `CaseUpdated`.
+
+---
+
+## Dependencies
+
+CORE; AUTH (contextual); ALERT (contextual); INVEST (contextual); SEC-FR-004; SEC-FR-005; SEC-FR-008; SEC-FR-009
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS SEC domain.
+
+---
+
+## Related Events
+
+Consumes `UserLoggedIn`, `SessionExpired`, `AlertCreated`, and `CaseCreated` per FDS Version 2 contract only.
+
+Explicitly excludes: `EvidenceAttached`, `CaseClosed`, `CaseUpdated`, `HighRiskDetected`, `RiskCalculated`, `DeviceSignalReceived`, `UserUpdated`, `WalletProfileUpdated`, `AIRecommendationGenerated`, `TransactionReceived`, and SEC self-events.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; SEC does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Security-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting requirement. Single consumption authority for Version 2 SEC upstream context. `EvidenceAttached` is explicitly excluded.
+
+
+## 8. Security Audit Recording
+
+# SEC-FR-008 — Record Security Intelligence Audit Outcomes
+
+## Summary
+
+The system shall record audit outcomes for SEC security intelligence actions with sufficient traceability.
+
+---
+
+## Description
+
+The system shall record audit outcomes for SEC monitoring, detection, discovery, access, and publication-related actions with sufficient traceability for security operations and investigation support, using CORE shared audit infrastructure where applicable without redefining CORE audit infrastructure ownership.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Security Engineering
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+SEC-BR-001, SEC-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-002, BO-006
+
+---
+
+## FDS Domain Reference
+
+SEC — Security Intelligence (Supporting — audit integrity)
+
+---
+
+## Preconditions
+
+- A SEC action, detection outcome, or record change eligible for audit recording has occurred.
+- Shared platform audit capabilities are available (CORE).
+
+---
+
+## Trigger
+
+A SEC workflow action, detection outcome, authorization outcome, or record change occurs that requires audit recording per policy.
+
+---
+
+## Normal Flow
+
+1. The system identifies the SEC action or outcome eligible for audit recording.
+2. The system captures actor identity, timestamp, action type, affected security intelligence record references, and outcome sufficient for traceability.
+3. The system records the audit outcome using shared audit capabilities (CORE).
+4. Audit records remain accessible to authorized security roles within organization scope (SEC-FR-009).
+
+---
+
+## Alternative Flow
+
+If an action is denied by authorization:
+- The system may record the denied access attempt according to platform audit policy.
+
+---
+
+## Exception Flow
+
+If audit recording fails:
+- The system handles failure according to platform policy without suppressing authorization enforcement.
+
+---
+
+## Postconditions
+
+- Audit outcomes for SEC actions are recorded or failure is handled per platform policy.
+
+---
+
+## Business Rules
+
+- CORE owns shared audit infrastructure; SEC records domain-specific audit outcomes without redefining CORE ownership.
+- Audit records support SEC-BR-001 monitoring and SEC-BR-002 investigation support traceability.
+- SEC audit recording does not substitute for INVEST case audit records, ALERT alert audit records, or AUTH authentication audit records owned by those domains.
+- SEC does not generate REPORT-owned regulatory reports through audit recording.
+
+---
+
+## Validation Rules
+
+- Audit records shall include sufficient identifiers to correlate actions with SEC-owned security intelligence records and actors.
+
+---
+
+## Acceptance Criteria
+
+- SEC workflow actions and detection outcomes produce audit records with sufficient traceability.
+- Denied unauthorized SEC actions may be audited according to policy.
+- CORE shared audit infrastructure ownership is not redefined.
+- Audit records support security intelligence discovery and investigation support workflows.
+
+---
+
+## Dependencies
+
+CORE; AUTH (contextual); AUTHZ (contextual); SEC-FR-009
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS SEC domain.
+
+---
+
+## Related Events
+
+None required as a baseline SEC publish event.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; SEC does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Security-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting audit integrity requirement for all SEC feature and supporting requirements.
+
+
+## 9. Security Access Control
+
+# SEC-FR-009 — Restrict Security Data Access To Authorized Actors
+
+## Summary
+
+The system shall enforce authorization for SEC data and operations within permitted organization scope.
+
+---
+
+## Description
+
+The system shall restrict access to SEC-owned security intelligence records, monitoring operations, discovery results, and detection outcomes to authorized actors according to AUTHZ decisions, without redefining AUTHZ policy, without owning USER or ORG lifecycle, and without creating a separate authorization system.
+
+---
+
+## Type
+
+Security
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Security Engineering
+
+---
+
+## Actor
+
+System; Authenticated User (attempting access)
+
+---
+
+## Business Requirement Reference
+
+SEC-BR-001, SEC-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-002, BO-006
+
+---
+
+## FDS Domain Reference
+
+SEC — Security Intelligence (Supporting — AUTHZ boundary integrity)
+
+---
+
+## Preconditions
+
+- A SEC data access or security intelligence operation is attempted.
+- Authentication and authorization services are available (AUTH, AUTHZ).
+
+---
+
+## Trigger
+
+Any SEC monitoring action, record retrieval, discovery, detection operation, or event-sensitive operation is attempted.
+
+---
+
+## Normal Flow
+
+1. The system identifies the actor and requested SEC operation.
+2. The system evaluates authentication context (AUTH) and authorization decisions (AUTHZ).
+3. The system applies permitted organization scope (ORG contextual).
+4. If authorized, the operation proceeds within permitted scope.
+5. If not authorized, the operation is denied and may be audited (SEC-FR-008).
+
+---
+
+## Alternative Flow
+
+If organization scope limits the visible security intelligence set:
+- The system filters results to authorized tenant boundaries without exposing cross-tenant data.
+
+---
+
+## Exception Flow
+
+If authorization services are unavailable:
+- The system denies access according to platform fail-closed policy.
+
+---
+
+## Postconditions
+
+- Only authorized actors access SEC data and operations within permitted scope, or access is denied.
+
+---
+
+## Business Rules
+
+- AUTHZ owns authorization decisions; SEC applies authorization outcomes and does not redefine AUTHZ.
+- USER provides authenticated actor identity; SEC does not own user lifecycle.
+- ORG provides tenant context; SEC does not own organization lifecycle.
+- Security Operations and other permitted roles access SEC data through AUTHZ without SEC defining role catalogs.
+- All SEC feature and supporting requirements operate within this access boundary.
+
+---
+
+## Validation Rules
+
+- Access decisions shall evaluate actor identity, role/permission outcomes, and organization scope before exposing SEC data or permitting operations.
+
+---
+
+## Acceptance Criteria
+
+- Unauthorized SEC data access and operations are denied.
+- Authorized security operations personnel and permitted roles can access SEC data within scope.
+- SEC does not create a separate authorization system.
+- Tenant isolation boundaries are enforced for SEC data access.
+- Denied access attempts may be audited according to policy (SEC-FR-008).
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual)
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS SEC domain.
+
+---
+
+## Related Events
+
+None required as a baseline SEC publish event.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; SEC does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Security-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting AUTHZ boundary integrity requirement for all SEC feature and supporting requirements.
+
+
+## Intentionally Deferred SEC Scope
+
+| Capability | Release | Status |
+|------------|---------|--------|
+| Insider Threat Patterns | Version 3 | Deferred — not authored in SEC-FR-001–009 |
+| Automated Containment Recommendations | Version 3 | Deferred — not authored in SEC-FR-001–009 |
+| SIEM Bi-Directional Sync | Version 3 | Deferred — not authored in SEC-FR-001–009 |
+| Platform MVP hooks | MVP | None / Not applicable — no platform-MVP SEC FRs |
+| ALERT routing for `ThreatDetected` | ALERT Version 2+ | Future integration — ALERT is not an MVP dependency; no mandatory V2 ALERT routing obligation |
+| Downstream routing for `SuspiciousSessionDetected` | Future contract | Deferred/unspecified — not a Version 2 cross-domain obligation |
+| Downstream routing for `ApiAbuseDetected` | Future contract | Deferred/unspecified — not a Version 2 cross-domain obligation |
+| `DeviceSignalReceived` integration | RISK / Future | Not an SEC V2 event — RISK deferred integration unchanged |
+| `EvidenceAttached` consumption | INVEST | Explicitly excluded from SEC V2 consumption (SEC-FR-007) |
+| AI agent ownership/orchestration | Platform AI | Not owned by SEC — AI Platform owns agents |
+| Regulatory report generation | REPORT | Not SEC-owned — REPORT owns report definitions |
+| Compliance dashboards / DASH presentation | DASH | Not SEC-owned — DASH owns workspace presentation |
+| RISK scoring / RISK dependency | RISK | Not a locked SEC V2 dependency |
+| WALLET / COMP coupling | Other domains | Not SEC-owned — no V2 WALLET or COMP dependency |
+| Separate external-provider ingestion FR | SEC | Not defined — providers embedded in feature FRs |
+| Legacy BRS refs `FR-060 – FR-070` | Legacy | Superseded by `SEC-FR-001 – SEC-FR-009`; BRS not migrated in this phase |
+
+## SEC Baseline Status
+
+SEC-FR-001 – SEC-FR-009 are the approved SEC requirements for the current Version 2 draft baseline.
+
+No SEC-FR-010 is defined.
+
+The Version 2 SEC baseline comprises exactly 4 feature FRs, 1 discovery FR, and 4 supporting FRs.
+
+Version 2 SEC publishes exactly `ThreatDetected`, `SuspiciousSessionDetected`, and `ApiAbuseDetected`. Version 2 SEC consumes exactly AUTH-owned `UserLoggedIn` and `SessionExpired`, ALERT-owned `AlertCreated`, and INVEST-owned `CaseCreated`. SEC does not publish or consume `DeviceSignalReceived`. SEC does not consume `EvidenceAttached`, `HighRiskDetected`, `RiskCalculated`, `CaseClosed`, `CaseUpdated`, `UserUpdated`, `WalletProfileUpdated`, `AIRecommendationGenerated`, or `TransactionReceived`.
+
+SEC does not own authentication, session lifecycle, operational alert lifecycle, investigation case lifecycle, risk scoring, dashboard presentation, compliance workflows, wallet intelligence, user lifecycle, organization lifecycle, AI agent orchestration, or reporting definitions. AI Platform owns AI agents and orchestration; Version 2 SEC workflows remain operable without AI.
+
+SEC has no platform-MVP Functional Requirements. Insider Threat Patterns, Automated Containment Recommendations, and SIEM Bi-Directional Sync remain Version 3 deferred scope.
