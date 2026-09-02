@@ -6,7 +6,7 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Requirements Specification |
-| Version | 1.7 (Draft) |
+| Version | 1.8 (Draft) |
 | Status | Draft |
 | Owner | Product & Engineering Team |
 | Last Updated | 2026-09-02 |
@@ -34,6 +34,7 @@
 | 1.5 | 2026-09-02 | Product Team | Complete RISK domain functional requirements (RISK-FR-001 – RISK-FR-013); ALERT/DASH producer contracts preserved; MVP events RiskCalculated and HighRiskDetected; external TransactionReceived ingest; deferred wallet/alert/device consumes excluded |
 | 1.6 | 2026-09-02 | Product Team | Complete INVEST domain functional requirements (INVEST-FR-001 – INVEST-FR-010); FDS v1.0 MVP baseline; approved Phase 3 inventory; no MVP AI assist; FI-BR-003 and V2 integrations deferred |
 | 1.7 | 2026-09-02 | Product Team | Complete WALLET domain functional requirements (WALLET-FR-001 – WALLET-FR-010); FDS v1.1 Version 2 baseline; no platform MVP hooks; exact 3 publish / 3 consume event contract; AI agent ownership excluded; V3 capabilities deferred |
+| 1.8 | 2026-09-02 | Product Team | COMP MVP functional requirements authored — COMP-FR-001 through COMP-FR-010, event contracts and traceability added |
 
 ---
 
@@ -567,7 +568,7 @@ These placeholders allow the document to grow without restructuring domain numbe
 
 ## Requirement Traceability Matrix
 
-CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, and WALLET domain requirements are listed below. Additional domains will be appended as they are authored.
+CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, WALLET, and COMP domain requirements are listed below. Additional domains will be appended as they are authored.
 
 | FR ID | Title | BR Reference | Type | Priority | Release | API | DB | UI | Tests | Status |
 |-------|-------|--------------|------|----------|---------|-----|----|----|-------|--------|
@@ -714,8 +715,18 @@ CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, and WALLET domain requi
 | WALLET-FR-008 | Consume Upstream Investigation And Risk Context Events | WI-BR-001 | Integration | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 | WALLET-FR-009 | Record Wallet Intelligence Audit Outcomes | WI-BR-001 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 | WALLET-FR-010 | Restrict Wallet Data Access To Authorized Actors | WI-BR-001 | Security | Critical | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| COMP-FR-001 | Support KYC Review Workflows | CP-BR-001 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| COMP-FR-002 | Support AML Review Workflows | CP-BR-001 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| COMP-FR-003 | Validate Travel Rule Requirements | CP-BR-001 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| COMP-FR-004 | Support Sanctions Screening Workflows | CP-BR-001 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| COMP-FR-005 | Support Audit Preparation | CP-BR-001, CP-BR-002 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| COMP-FR-006 | Retrieve And Discover Compliance Records | CP-BR-001 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| COMP-FR-007 | Enforce Compliance Event Publication Contract | CP-BR-001, CP-BR-002 | Integration | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| COMP-FR-008 | Consume Upstream Investigation Risk And User Context Events | CP-BR-001, CP-BR-002 | Integration | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| COMP-FR-009 | Record Compliance Audit Outcomes | CP-BR-001, CP-BR-002 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| COMP-FR-010 | Restrict Compliance Data Access To Authorized Actors | CP-BR-001, CP-BR-002 | Security | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 
-CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, and WALLET domain requirements are included above. Additional domains will be appended as they are authored.
+CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, WALLET, and COMP domain requirements are included above. Additional domains will be appended as they are authored.
 
 As Functional Requirements are authored for subsequent domains, each row shall be updated to maintain end-to-end traceability.
 
@@ -27321,3 +27332,2065 @@ Version 2 WALLET publishes exactly `WalletProfileUpdated`, `AddressReputationCha
 WALLET does not own operational alert lifecycle, risk scoring, investigation case lifecycle, dashboard presentation, compliance records, user lifecycle, organization lifecycle, AI agent orchestration, or reporting definitions. AI Platform owns AI agents and orchestration.
 
 WALLET has no platform-MVP Functional Requirements. Multi-Chain Expansion, Cluster Detection, and Cross-Exchange Correlation remain Version 3/Future scope.
+
+# Chapter — COMP Domain Requirements
+
+> Domain reference: [Functional Domain Specification — COMP](FunctionalDomainSpecification.md#domain--comp-compliance--travel-rule)
+>
+> Related Business Requirements: `CP-BR-001`, `CP-BR-002`
+> Related Business Objectives: `BO-003`
+> Depends on: `CORE`, `AUTH`, `AUTHZ`, `USER` (contextual — authenticated actor identity; lifecycle owned by USER), `ORG` (contextual — tenant/organization scope; lifecycle owned by ORG), `INVEST`, `RISK`
+
+This chapter defines the Functional Requirements for the COMP (Compliance & Travel Rule) domain.
+
+COMP is a **platform MVP domain**. All requirements in this chapter are MVP release scope unless explicitly marked otherwise in deferred-scope tables below.
+
+COMP owns KYC review workflows, AML review workflows, Travel Rule validation, sanctions screening workflows, compliance records, compliance evidence packages, audit preparation packages, compliance audit outcomes, and authorized access enforcement for COMP data. RISK owns risk scoring. INVEST owns investigation case lifecycle. ALERT owns operational alert lifecycle. WALLET owns wallet intelligence. DASH owns workspace and dashboard presentation. REPORT owns reporting definitions and presentation. USER owns user lifecycle. ORG owns organization lifecycle. AUTH authenticates; AUTHZ authorizes. CORE owns shared platform primitives including shared audit infrastructure. AI Platform owns AI agent lifecycle and orchestration.
+
+Legacy BRS provisional references `FR-040 – FR-055` are superseded by `COMP-FR-001` through `COMP-FR-010` in this chapter. The BRS has not been migrated in this phase.
+
+COMP-FR-001 – COMP-FR-010 are the approved COMP requirements for the current MVP draft baseline. Jurisdiction Policy Packs, Compliance Analytics, Automated Regulatory Drafting, Continuous Control Monitoring, regulatory report generation, compliance dashboards, and AI agent ownership remain deferred or excluded. No COMP-FR-011 is defined.
+
+MVP COMP workflows are operable without AI. AI Platform may provide assistive capabilities but is not a mandatory MVP runtime dependency for COMP.
+
+## COMP Domain Requirement Index
+
+### Feature-covering requirements
+
+| ID | Title | Priority | Release | FDS Feature Coverage |
+|----|-------|----------|---------|----------------------|
+| COMP-FR-001 | Support KYC Review Workflows | Critical | MVP | KYC Review |
+| COMP-FR-002 | Support AML Review Workflows | Critical | MVP | AML Review |
+| COMP-FR-003 | Validate Travel Rule Requirements | High | MVP | Travel Rule |
+| COMP-FR-004 | Support Sanctions Screening Workflows | Critical | MVP | Sanctions Screening |
+| COMP-FR-005 | Support Audit Preparation | High | MVP | Audit Preparation |
+| COMP-FR-006 | Retrieve And Discover Compliance Records | High | MVP | Cross-feature discovery/access |
+
+### Supporting COMP Requirements
+
+These requirements are **not** named baseline FDS COMP features. They are supporting / cross-domain integrity requirements.
+
+| ID | Title | Priority | Release | Classification |
+|----|-------|----------|---------|----------------|
+| COMP-FR-007 | Enforce Compliance Event Publication Contract | High | MVP | Supporting — FDS event contract integrity |
+| COMP-FR-008 | Consume Upstream Investigation Risk And User Context Events | High | MVP | Supporting — consumer integrity |
+| COMP-FR-009 | Record Compliance Audit Outcomes | High | MVP | Supporting — audit integrity |
+| COMP-FR-010 | Restrict Compliance Data Access To Authorized Actors | Critical | MVP | Supporting — AUTHZ boundary integrity |
+
+## 1. KYC Review
+
+# COMP-FR-001 — Support KYC Review Workflows
+
+## Summary
+
+The system shall support KYC review workflows including compliance record handling, review outcomes, traceability, and authorized access.
+
+---
+
+## Description
+
+The system shall enable authorized actors to initiate, conduct, and complete KYC review workflows within permitted organization scope, maintaining COMP-owned compliance records and review outcomes with sufficient traceability for regulatory readiness, without owning USER identity lifecycle, INVEST investigation case lifecycle, RISK scoring, or operational alert lifecycle.
+
+Eligible KYC review outcomes publish `ComplianceReviewed` through COMP-FR-007.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Compliance Engineering
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted workflow progression and outcome recording)
+
+---
+
+## Business Requirement Reference
+
+CP-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-003
+
+---
+
+## FDS Domain Reference
+
+COMP — Compliance & Travel Rule (KYC Review)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions.
+- The actor is authorized for the requested KYC review action (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+- Applicable user context may be available through COMP-FR-008 consumption of USER-owned `UserUpdated` where enrichment applies.
+
+---
+
+## Trigger
+
+An authorized user initiates, updates, or completes a KYC review workflow; or a permitted system workflow progression occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives a KYC review workflow request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (COMP-FR-010).
+3. The system validates required KYC review inputs.
+4. The system creates or updates COMP-owned compliance records for the KYC review.
+5. The actor conducts the review and records a permitted review outcome.
+6. The system records the outcome for audit handling (COMP-FR-009).
+7. Eligible KYC review completion publishes `ComplianceReviewed` through COMP-FR-007.
+
+---
+
+## Alternative Flow
+
+If applicable user context is available through `UserUpdated` (COMP-FR-008):
+- The system may enrich KYC review context without redefining USER lifecycle behavior.
+
+If the request is retrieval or status review only:
+- The system returns authorized KYC review data without modification.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The KYC review action is denied (AUTHZ).
+
+If required inputs are missing or invalid:
+- The system rejects the KYC review action.
+
+If the action would exceed authorized organization scope:
+- The system denies the action (ORG contextual scope via COMP-FR-010).
+
+---
+
+## Postconditions
+
+- A KYC review workflow progresses, completes, or is retrieved as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- COMP owns KYC review workflows and COMP-owned compliance records for KYC outcomes.
+- KYC Review and AML Review are distinct MVP capabilities (COMP-FR-002).
+- USER owns user identity lifecycle; COMP does not create, update, or deactivate users.
+- INVEST owns investigation case lifecycle; COMP does not create or manage cases.
+- RISK owns risk scoring; COMP does not calculate risk scores.
+- ALERT owns operational alert lifecycle; COMP does not create or manage alerts.
+- KYC review outcomes publish through COMP-FR-007; this requirement does not invent additional MVP publish events.
+
+---
+
+## Validation Rules
+
+- KYC review inputs shall identify the subject, review type, and required review attributes sufficiently for authorized processing.
+- Review outcomes shall be one of the permitted outcome states defined by organization compliance policy.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can initiate, conduct, and complete KYC review workflows within organization scope.
+- COMP-owned compliance records are created and updated for KYC reviews.
+- Review outcomes are recorded with sufficient traceability for audit handling (COMP-FR-009).
+- Unauthorized KYC review actions are denied.
+- Eligible KYC review completion results in `ComplianceReviewed` publication through COMP-FR-007.
+- COMP does not redefine USER identity lifecycle or INVEST case lifecycle.
+- KYC review workflows remain operable without AI.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); COMP-FR-007; COMP-FR-008; COMP-FR-009; COMP-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS COMP domain.
+
+---
+
+## Related Events
+
+May result in `ComplianceReviewed` through COMP-FR-007.
+
+Consumes contextual `UserUpdated` through COMP-FR-008 where applicable.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; COMP does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Compliance-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Distinct from AML review (COMP-FR-002). External KYC provider integration may be used where authorized without prescribing vendor technology.
+
+
+## 2. AML Review
+
+# COMP-FR-002 — Support AML Review Workflows
+
+## Summary
+
+The system shall support AML review workflows as a distinct MVP compliance capability.
+
+---
+
+## Description
+
+The system shall enable authorized actors to initiate, conduct, and complete AML review workflows within permitted organization scope, maintaining COMP-owned compliance records and AML review outcomes with sufficient traceability, without merging AML with KYC review behavior, without implementing RISK scoring, and without owning operational alert lifecycle.
+
+Eligible AML review outcomes publish `ComplianceReviewed` through COMP-FR-007.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Compliance Engineering
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted workflow progression and outcome recording)
+
+---
+
+## Business Requirement Reference
+
+CP-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-003
+
+---
+
+## FDS Domain Reference
+
+COMP — Compliance & Travel Rule (AML Review)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions.
+- The actor is authorized for the requested AML review action (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+- Applicable investigation or risk context may be available through COMP-FR-008 consumption of INVEST-owned `CaseClosed`, `CaseUpdated`, or RISK-owned `RiskCalculated` where enrichment applies.
+
+---
+
+## Trigger
+
+An authorized user initiates, updates, or completes an AML review workflow; or a permitted system workflow progression occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives an AML review workflow request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (COMP-FR-010).
+3. The system validates required AML review inputs.
+4. The system creates or updates COMP-owned compliance records for the AML review.
+5. The actor conducts the review and records a permitted review outcome.
+6. The system records the outcome for audit handling (COMP-FR-009).
+7. Eligible AML review completion publishes `ComplianceReviewed` through COMP-FR-007.
+
+---
+
+## Alternative Flow
+
+If applicable investigation or risk context is available (COMP-FR-008):
+- The system may enrich AML review context from INVEST-owned or RISK-owned events without redefining INVEST case lifecycle or RISK scoring behavior.
+
+If the request is retrieval or status review only:
+- The system returns authorized AML review data without modification.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The AML review action is denied (AUTHZ).
+
+If required inputs are missing or invalid:
+- The system rejects the AML review action.
+
+If the action would exceed authorized organization scope:
+- The system denies the action (ORG contextual scope via COMP-FR-010).
+
+---
+
+## Postconditions
+
+- An AML review workflow progresses, completes, or is retrieved as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- COMP owns AML review workflows and COMP-owned compliance records for AML outcomes.
+- AML Review and KYC Review are distinct MVP capabilities (COMP-FR-001).
+- RISK owns risk scoring; COMP consumes `RiskCalculated` for context only and does not calculate risk scores.
+- ALERT owns operational alert lifecycle; COMP does not create alerts from AML review outcomes.
+- INVEST owns investigation case lifecycle; COMP does not create or manage cases.
+- AML review outcomes publish through COMP-FR-007; this requirement does not invent additional MVP publish events.
+
+---
+
+## Validation Rules
+
+- AML review inputs shall identify the review subject, scope, and required review attributes sufficiently for authorized processing.
+- Review outcomes shall be one of the permitted outcome states defined by organization compliance policy.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can initiate, conduct, and complete AML review workflows within organization scope.
+- AML review is implemented as a distinct capability separate from KYC review (COMP-FR-001).
+- COMP-owned compliance records are created and updated for AML reviews.
+- Review outcomes are recorded with sufficient traceability for audit handling (COMP-FR-009).
+- Unauthorized AML review actions are denied.
+- Eligible AML review completion results in `ComplianceReviewed` publication through COMP-FR-007.
+- COMP does not implement RISK scoring or ALERT lifecycle behavior.
+- AML review workflows remain operable without AI.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); INVEST (contextual); RISK (contextual); COMP-FR-007; COMP-FR-008; COMP-FR-009; COMP-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS COMP domain.
+
+---
+
+## Related Events
+
+May result in `ComplianceReviewed` through COMP-FR-007.
+
+Consumes contextual `CaseClosed`, `CaseUpdated`, and `RiskCalculated` through COMP-FR-008 where applicable.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; COMP does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Compliance-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Distinct from KYC review (COMP-FR-001). Does not route AML outcomes to ALERT in MVP baseline.
+
+
+## 3. Travel Rule
+
+# COMP-FR-003 — Validate Travel Rule Requirements
+
+## Summary
+
+The system shall validate Travel Rule requirements and record validation outcomes with traceability.
+
+---
+
+## Description
+
+The system shall enable authorized actors to perform Travel Rule validation for applicable transfer scenarios, record COMP-owned Travel Rule validation results and compliance records, and publish eligible validation outcomes through COMP-FR-007, without inventing downstream consumers or prescribing Travel Rule network vendor technology.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Compliance Engineering
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted validation processing)
+
+---
+
+## Business Requirement Reference
+
+CP-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-003
+
+---
+
+## FDS Domain Reference
+
+COMP — Compliance & Travel Rule (Travel Rule)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions where applicable.
+- The actor is authorized for the requested Travel Rule validation action (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+- Required transfer and counterparty attributes for validation are available.
+
+---
+
+## Trigger
+
+An authorized user or permitted system process requests Travel Rule validation for an applicable transfer scenario.
+
+---
+
+## Normal Flow
+
+1. The system receives a Travel Rule validation request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (COMP-FR-010).
+3. The system validates required Travel Rule inputs.
+4. The system performs Travel Rule validation according to applicable policy, which may include interaction with an authorized external Travel Rule network where configured.
+5. The system records COMP-owned Travel Rule validation results.
+6. The system records the outcome for audit handling (COMP-FR-009).
+7. Eligible validation outcomes publish `TravelRuleValidated` through COMP-FR-007.
+
+---
+
+## Alternative Flow
+
+If validation requires additional counterparty or originator/beneficiary information:
+- The system requests or records the additional information according to policy before completing validation.
+
+If validation is retrieval of a prior result only:
+- The system returns authorized prior validation records without re-validation.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The validation action is denied (AUTHZ).
+
+If required inputs are missing or invalid:
+- The system rejects the validation request and records the rejection reason where policy requires.
+
+If external Travel Rule network interaction fails:
+- The system records the failure outcome according to policy without bypassing authorization or audit requirements.
+
+---
+
+## Postconditions
+
+- A Travel Rule validation is completed, retrieved, or rejected as authorized; or the action is denied.
+
+---
+
+## Business Rules
+
+- COMP owns Travel Rule validation workflow and COMP-owned Travel Rule validation records.
+- Travel Rule validation outcomes publish through COMP-FR-007 only; downstream routing for `TravelRuleValidated` is deferred/unspecified and is not an MVP COMP dependency.
+- COMP does not own transaction ingestion lifecycle beyond permitted validation inputs.
+- RISK owns risk scoring; COMP does not calculate risk scores from Travel Rule outcomes.
+- ALERT owns operational alert lifecycle; COMP does not create alerts from Travel Rule validation.
+
+---
+
+## Validation Rules
+
+- Travel Rule validation inputs shall include sufficient transfer, originator, and beneficiary attributes required by applicable policy.
+- Validation outcomes shall indicate pass, fail, pending, or other permitted states defined by organization compliance policy.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can request and complete Travel Rule validation within organization scope.
+- COMP-owned Travel Rule validation records are created and updated with traceability (COMP-FR-009).
+- Unauthorized validation actions are denied.
+- Eligible validation outcomes result in `TravelRuleValidated` publication through COMP-FR-007.
+- No MVP downstream consumer is required for `TravelRuleValidated`.
+- COMP does not prescribe Travel Rule network vendor technology.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); COMP-FR-007; COMP-FR-009; COMP-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS COMP domain.
+
+---
+
+## Related Events
+
+May result in `TravelRuleValidated` through COMP-FR-007.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; COMP does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Compliance-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Downstream routing for `TravelRuleValidated` remains deferred/unspecified per FDS contract.
+
+
+## 4. Sanctions Screening
+
+# COMP-FR-004 — Support Sanctions Screening Workflows
+
+## Summary
+
+The system shall support COMP-owned sanctions screening workflows and result handling.
+
+---
+
+## Description
+
+The system shall enable authorized actors to initiate, conduct, and resolve sanctions screening workflows within permitted organization scope, maintaining COMP-owned sanctions screening results and compliance records with sufficient traceability, without owning RISK scoring, without owning ALERT operational alert lifecycle, and without assigning ALERT as an MVP consumer of `SanctionsHitDetected`.
+
+Eligible sanctions hit outcomes publish `SanctionsHitDetected` through COMP-FR-007.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Compliance Engineering
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted screening processing)
+
+---
+
+## Business Requirement Reference
+
+CP-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-003
+
+---
+
+## FDS Domain Reference
+
+COMP — Compliance & Travel Rule (Sanctions Screening)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions where applicable.
+- The actor is authorized for the requested sanctions screening action (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+- Screening subjects and attributes required for screening are available.
+
+---
+
+## Trigger
+
+An authorized user or permitted system process initiates sanctions screening for an applicable subject or transaction context.
+
+---
+
+## Normal Flow
+
+1. The system receives a sanctions screening request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (COMP-FR-010).
+3. The system validates required screening inputs.
+4. The system performs sanctions screening according to applicable policy, which may include interaction with an authorized external sanctions screening provider where configured.
+5. The system records COMP-owned sanctions screening results.
+6. If a sanctions hit is detected, the system records the hit outcome and permitted disposition steps within COMP workflow ownership.
+7. The system records the outcome for audit handling (COMP-FR-009).
+8. Eligible sanctions hit outcomes publish `SanctionsHitDetected` through COMP-FR-007.
+
+---
+
+## Alternative Flow
+
+If screening returns no hit:
+- The system records a clear-negative result without publishing `SanctionsHitDetected`.
+
+If the request is retrieval of prior screening results only:
+- The system returns authorized prior screening records without re-screening.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The screening action is denied (AUTHZ).
+
+If required inputs are missing or invalid:
+- The system rejects the screening request.
+
+If external sanctions screening provider interaction fails:
+- The system records the failure outcome according to policy without bypassing authorization or audit requirements.
+
+---
+
+## Postconditions
+
+- A sanctions screening workflow completes, is retrieved, or is rejected as authorized; or the action is denied.
+
+---
+
+## Business Rules
+
+- COMP owns sanctions screening workflow and COMP-owned sanctions screening results.
+- RISK owns risk scoring; COMP does not calculate risk scores from screening outcomes.
+- ALERT owns operational alert lifecycle; COMP does not create or route operational alerts from `SanctionsHitDetected` in MVP baseline.
+- Downstream routing for `SanctionsHitDetected` is deferred/unspecified and is not an MVP COMP dependency.
+- Sanctions hit outcomes publish through COMP-FR-007 only; this requirement does not invent additional MVP publish events.
+
+---
+
+## Validation Rules
+
+- Screening inputs shall identify the screening subject and required attributes sufficiently for authorized processing.
+- Screening results shall indicate hit, no-hit, pending review, or other permitted states defined by organization compliance policy.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can initiate and complete sanctions screening workflows within organization scope.
+- COMP-owned sanctions screening results are recorded with traceability (COMP-FR-009).
+- Unauthorized screening actions are denied.
+- Eligible sanctions hit outcomes result in `SanctionsHitDetected` publication through COMP-FR-007.
+- COMP does not assign ALERT as an MVP consumer of `SanctionsHitDetected`.
+- COMP does not implement RISK scoring or ALERT lifecycle behavior.
+- COMP does not prescribe sanctions screening vendor technology.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); COMP-FR-007; COMP-FR-009; COMP-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS COMP domain.
+
+---
+
+## Related Events
+
+May result in `SanctionsHitDetected` through COMP-FR-007.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; COMP does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Compliance-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Compliance-sourced alert generation remains deferred. ALERT is not an MVP downstream consumer.
+
+
+## 5. Audit Preparation
+
+# COMP-FR-005 — Support Audit Preparation
+
+## Summary
+
+The system shall create and manage compliance evidence and audit preparation packages using COMP-owned data and permitted investigation context.
+
+---
+
+## Description
+
+The system shall enable authorized actors to assemble, maintain, and finalize compliance evidence packages and audit preparation packages from COMP-owned compliance records and results plus applicable investigation context obtained through INVEST-owned `CaseClosed` and `CaseUpdated` consumption (COMP-FR-008), without consuming `EvidenceAttached`, without owning shared audit infrastructure (CORE), and without owning INVEST case lifecycle.
+
+Eligible package finalization publishes `AuditPackagePrepared` through COMP-FR-007.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Compliance Engineering
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted package assembly)
+
+---
+
+## Business Requirement Reference
+
+CP-BR-001, CP-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-003
+
+---
+
+## FDS Domain Reference
+
+COMP — Compliance & Travel Rule (Audit Preparation)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions.
+- The actor is authorized for audit preparation actions (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+- COMP-owned compliance records and results exist or are creatable for package assembly.
+- Applicable investigation context may be available through COMP-FR-008 consumption of `CaseClosed` and `CaseUpdated`.
+
+---
+
+## Trigger
+
+An authorized user initiates or updates audit preparation or requests finalization of a compliance evidence or audit preparation package.
+
+---
+
+## Normal Flow
+
+1. The system receives an audit preparation request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (COMP-FR-010).
+3. The system validates required package inputs and scope.
+4. The system assembles package content from COMP-owned compliance records and results.
+5. Where applicable, the system incorporates investigation context from consumed `CaseClosed` and `CaseUpdated` events without consuming `EvidenceAttached`.
+6. The actor reviews and updates the package as authorized.
+7. The system records package state changes for audit handling (COMP-FR-009).
+8. Eligible package finalization publishes `AuditPackagePrepared` through COMP-FR-007.
+
+---
+
+## Alternative Flow
+
+If investigation context is unavailable for a referenced case:
+- The system assembles the package from COMP-owned data only and records the limitation according to policy.
+
+If the request is retrieval of an existing package only:
+- The system returns authorized package content without modification.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The audit preparation action is denied (AUTHZ).
+
+If required package inputs are missing or invalid:
+- The system rejects the package action.
+
+If referenced compliance records are inaccessible within authorized scope:
+- The system denies or limits package assembly according to policy.
+
+---
+
+## Postconditions
+
+- An audit preparation package is created, updated, finalized, or retrieved as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- COMP owns compliance evidence packages and audit preparation packages (CP-BR-002).
+- CP-BR-002 evidence requirements are satisfied using COMP-owned compliance data plus investigation context from `CaseClosed` and `CaseUpdated`; COMP does not consume `EvidenceAttached` in MVP baseline.
+- CORE owns shared audit infrastructure; COMP uses shared audit capabilities without redefining CORE ownership.
+- INVEST owns investigation case lifecycle and evidence attachment events; COMP does not consume `EvidenceAttached`.
+- Downstream routing for `AuditPackagePrepared` is deferred/unspecified and is not an MVP COMP dependency.
+- REPORT owns report definition and presentation; COMP does not generate REPORT-owned regulatory reports.
+
+---
+
+## Validation Rules
+
+- Package assembly shall include identifiable scope, included compliance record references, and package status sufficient for authorized audit preparation.
+- Finalized packages shall meet organization policy for completeness before eligible publication.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can create, update, and finalize audit preparation packages within organization scope.
+- Packages are assembled from COMP-owned compliance records and results.
+- Applicable investigation context is incorporated through `CaseClosed` and `CaseUpdated` consumption only (COMP-FR-008).
+- COMP does not consume `EvidenceAttached` for evidence assembly.
+- Unauthorized audit preparation actions are denied.
+- Eligible package finalization results in `AuditPackagePrepared` publication through COMP-FR-007.
+- COMP does not redefine CORE shared audit infrastructure ownership.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); INVEST (contextual); COMP-FR-007; COMP-FR-008; COMP-FR-009; COMP-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS COMP domain.
+
+---
+
+## Related Events
+
+May result in `AuditPackagePrepared` through COMP-FR-007.
+
+Consumes contextual `CaseClosed` and `CaseUpdated` through COMP-FR-008 where applicable.
+
+Does not consume `EvidenceAttached`.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; COMP does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Compliance-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Primary CP-BR-002 fulfillment requirement. Evidence path explicitly excludes `EvidenceAttached` consumption.
+
+
+## 6. Compliance Discovery
+
+# COMP-FR-006 — Retrieve And Discover Compliance Records
+
+## Summary
+
+The system shall enable authorized retrieval and discovery of COMP-owned compliance records across COMP features.
+
+---
+
+## Description
+
+The system shall enable authorized actors to retrieve, search, filter, and discover COMP-owned compliance records—including KYC reviews, AML reviews, Travel Rule validations, sanctions screening results, and audit preparation artifacts—within organization scope, without prescribing presentation technology, without turning discovery into DASH workspace presentation, and without turning discovery into REPORT report definition or generation.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Compliance Engineering
+
+---
+
+## Actor
+
+Authenticated User
+
+---
+
+## Business Requirement Reference
+
+CP-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-003
+
+---
+
+## FDS Domain Reference
+
+COMP — Compliance & Travel Rule (Cross-feature discovery/access)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH).
+- The actor is authorized for compliance record discovery (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+An authorized user requests retrieval, search, filter, or discovery of COMP-owned compliance records.
+
+---
+
+## Normal Flow
+
+1. The system receives a compliance record discovery request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (COMP-FR-010).
+3. The system validates permitted search and filter parameters.
+4. The system retrieves or discovers authorized COMP-owned records matching the request.
+5. The system returns results within authorized scope without exposing cross-tenant data.
+
+---
+
+## Alternative Flow
+
+If no records match the query:
+- The system returns an empty authorized result set.
+
+If the request targets a specific record identifier:
+- The system returns the authorized record detail or denies access if out of scope.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- Discovery is denied (AUTHZ).
+
+If search parameters are invalid:
+- The system rejects the discovery request.
+
+If authorization services are unavailable:
+- The system denies access according to platform fail-closed policy.
+
+---
+
+## Postconditions
+
+- Authorized compliance records are retrieved or discovered; or access is denied or rejected.
+
+---
+
+## Business Rules
+
+- Discovery covers COMP-owned records only; COMP does not expose INVEST case lifecycle management through this requirement.
+- DASH owns workspace and dashboard presentation; this requirement does not prescribe DASH widgets or layouts.
+- REPORT owns report definitions and presentation; this requirement does not generate regulatory reports.
+- Discovery respects COMP-FR-010 authorization boundaries for all record types.
+
+---
+
+## Validation Rules
+
+- Discovery requests shall use permitted filter and search parameters defined by organization policy.
+- Results shall be limited to authorized organization scope.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can retrieve and discover COMP-owned compliance records across KYC, AML, Travel Rule, sanctions, and audit preparation domains.
+- Search and filter behavior returns only authorized records within organization scope.
+- Unauthorized discovery requests are denied.
+- Discovery does not implement DASH presentation or REPORT report generation.
+- Cross-tenant data is not exposed.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); COMP-FR-001; COMP-FR-002; COMP-FR-003; COMP-FR-004; COMP-FR-005; COMP-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS COMP domain.
+
+---
+
+## Related Events
+
+None required as a baseline COMP publish event.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; COMP does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Compliance-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Cross-feature discovery pattern aligned with INVEST-FR-006, RISK-FR-008, ALERT-FR-006, and WALLET-FR-005.
+
+
+## 7. Compliance Event Publication
+
+# COMP-FR-007 — Enforce Compliance Event Publication Contract
+
+## Summary
+
+The system shall publish compliance events according to the FDS MVP contract.
+
+---
+
+## Description
+
+The system shall publish `ComplianceReviewed`, `TravelRuleValidated`, `SanctionsHitDetected`, and `AuditPackagePrepared` when the corresponding COMP outcomes occur, consistent with the FDS COMP domain MVP event contract. This requirement is the single COMP publication authority. No additional COMP MVP publish events are introduced.
+
+---
+
+## Type
+
+Integration
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Compliance Engineering
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+CP-BR-001, CP-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-003
+
+---
+
+## FDS Domain Reference
+
+COMP — Compliance & Travel Rule (Supporting — FDS event contract integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- A COMP outcome eligible for publication has occurred.
+- Shared platform event publication capabilities are available (CORE).
+
+---
+
+## Trigger
+
+A KYC or AML review completion, Travel Rule validation outcome, sanctions hit detection, or audit package finalization occurs that is defined for MVP publication.
+
+---
+
+## Normal Flow
+
+1. The system identifies the COMP outcome eligible for publication.
+2. The system composes the event payload according to the FDS MVP contract with sufficient traceability fields.
+3. The system publishes the appropriate MVP event.
+4. Downstream domains may react according to future contracts without COMP redefining their behavior in MVP baseline.
+
+---
+
+## Alternative Flow
+
+If publication is deferred by policy for a non-critical outcome:
+- The system follows platform event policy without omitting required baseline MVP events.
+
+---
+
+## Exception Flow
+
+If publication fails:
+- The system handles failure according to platform policy without bypassing authorization or exposing unauthorized compliance content.
+
+---
+
+## Postconditions
+
+- Required MVP COMP events are published or failure is handled per platform policy.
+
+---
+
+## Business Rules
+
+- MVP publish set is limited to `ComplianceReviewed`, `TravelRuleValidated`, `SanctionsHitDetected`, and `AuditPackagePrepared`.
+- No additional MVP COMP publish events are introduced.
+- `ComplianceReviewed` — REPORT Version 2 may consume in future scope; REPORT is not an MVP COMP dependency.
+- `TravelRuleValidated` — downstream routing deferred/unspecified.
+- `SanctionsHitDetected` — downstream routing deferred/unspecified; ALERT is not an MVP consumer.
+- `AuditPackagePrepared` — downstream routing deferred/unspecified.
+- Feature requirements reference this contract rather than redefining event semantics independently.
+
+---
+
+## Validation Rules
+
+- Published events shall include required contract fields for the outcome type, including identifiers sufficient for traceability.
+
+---
+
+## Acceptance Criteria
+
+- `ComplianceReviewed` is published for eligible KYC review completion (COMP-FR-001) and AML review completion (COMP-FR-002).
+- `TravelRuleValidated` is published for eligible Travel Rule validation outcomes (COMP-FR-003).
+- `SanctionsHitDetected` is published for eligible sanctions hit outcomes (COMP-FR-004).
+- `AuditPackagePrepared` is published for eligible audit package finalization (COMP-FR-005).
+- MVP publish set is not expanded beyond the four FDS-contracted events.
+- Downstream routing obligations are not invented for MVP baseline.
+
+---
+
+## Dependencies
+
+CORE; COMP-FR-001; COMP-FR-002; COMP-FR-003; COMP-FR-004; COMP-FR-005
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS COMP domain.
+
+---
+
+## Related Events
+
+Publishes `ComplianceReviewed`, `TravelRuleValidated`, `SanctionsHitDetected`, and `AuditPackagePrepared` per FDS MVP contract only.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; COMP does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Compliance-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting requirement. FDS event contract integrity. Single publication authority for MVP COMP events.
+
+
+## 8. Upstream Context Consumption
+
+# COMP-FR-008 — Consume Upstream Investigation Risk And User Context Events
+
+## Summary
+
+The system shall consume upstream investigation, risk, and user context events without inventing INVEST, RISK, or USER behavior.
+
+---
+
+## Description
+
+The system shall consume INVEST-owned `CaseClosed` and `CaseUpdated`, RISK-owned `RiskCalculated`, and USER-owned `UserUpdated` to obtain permitted upstream context for COMP workflows, without redefining INVEST case lifecycle, RISK scoring, USER lifecycle, or consuming excluded events. This requirement is the single COMP consumption authority.
+
+---
+
+## Type
+
+Integration
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Compliance Engineering
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+CP-BR-001, CP-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-003
+
+---
+
+## FDS Domain Reference
+
+COMP — Compliance & Travel Rule (Supporting — consumer integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- An upstream event eligible for COMP consumption is published by its owning domain.
+- Shared platform event consumption capabilities are available (CORE).
+- COMP workflow or package assembly requires permitted contextual enrichment.
+
+---
+
+## Trigger
+
+COMP receives an upstream `CaseClosed`, `CaseUpdated`, `RiskCalculated`, or `UserUpdated` event according to platform subscription policy.
+
+---
+
+## Normal Flow
+
+1. The system receives an upstream event from INVEST, RISK, or USER ownership.
+2. The system validates the event is within the locked MVP consumption set.
+3. The system extracts permitted contextual fields for authorized COMP use.
+4. The system applies context to eligible COMP workflows or audit preparation without redefining upstream domain behavior.
+5. Context application is recorded where audit policy requires (COMP-FR-009).
+
+---
+
+## Alternative Flow
+
+If consumed context is stale or incomplete:
+- COMP continues using COMP-owned data and records the limitation according to policy.
+
+---
+
+## Exception Flow
+
+If a non-contract event is received:
+- The system does not treat it as an MVP COMP consumption event.
+
+If consumption processing fails:
+- The system handles failure according to platform policy without bypassing authorization.
+
+---
+
+## Postconditions
+
+- Permitted upstream context is applied to COMP workflows or ignored according to policy; excluded events are not consumed as MVP baseline inputs.
+
+---
+
+## Business Rules
+
+- MVP consume set is limited to `CaseClosed`, `CaseUpdated`, `RiskCalculated`, and `UserUpdated`.
+- `CaseClosed` and `CaseUpdated` are INVEST-owned publications consumed for investigation context only.
+- `RiskCalculated` is a RISK-owned publication consumed for risk context only.
+- `UserUpdated` is a USER-owned publication consumed for user/KYC context only.
+- COMP does not consume `EvidenceAttached`, `HighRiskDetected`, `AlertCreated`, `CaseCreated`, `WalletProfileUpdated`, `AIRecommendationGenerated`, `TransactionReceived`, or COMP self-publication events in MVP baseline.
+- CP-BR-002 evidence assembly uses COMP-owned data plus `CaseClosed` and `CaseUpdated` context; it does not require `EvidenceAttached` consumption.
+
+---
+
+## Validation Rules
+
+- Consumed events shall be recognized only from the locked MVP consumption set.
+- Applied context shall remain within authorized organization scope (COMP-FR-010).
+
+---
+
+## Acceptance Criteria
+
+- COMP consumes `CaseClosed`, `CaseUpdated`, `RiskCalculated`, and `UserUpdated` for permitted contextual enrichment.
+- COMP does not consume `EvidenceAttached` or other excluded events in MVP baseline.
+- COMP does not claim ownership of upstream events.
+- INVEST, RISK, and USER lifecycle behavior is not redefined by COMP consumption.
+- Audit preparation (COMP-FR-005) can assemble evidence using consumed investigation context without `EvidenceAttached`.
+
+---
+
+## Dependencies
+
+CORE; INVEST (contextual); RISK (contextual); USER (contextual); COMP-FR-005; COMP-FR-009; COMP-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS COMP domain.
+
+---
+
+## Related Events
+
+Consumes `CaseClosed`, `CaseUpdated`, `RiskCalculated`, and `UserUpdated` per FDS MVP contract only.
+
+Explicitly excludes: `EvidenceAttached`, `HighRiskDetected`, `AlertCreated`, `CaseCreated`, `WalletProfileUpdated`, `AIRecommendationGenerated`, `TransactionReceived`, and COMP self-events.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; COMP does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Compliance-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting requirement. Single consumption authority for MVP COMP upstream context. `EvidenceAttached` is explicitly excluded.
+
+
+## 9. Compliance Audit Recording
+
+# COMP-FR-009 — Record Compliance Audit Outcomes
+
+## Summary
+
+The system shall record audit outcomes for COMP actions and compliance decisions with sufficient traceability.
+
+---
+
+## Description
+
+The system shall record audit outcomes for COMP workflow actions, compliance decisions, record changes, and package operations with sufficient traceability for regulatory readiness and audit preparation, using CORE shared audit infrastructure where applicable without redefining CORE audit infrastructure ownership.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Compliance Engineering
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+CP-BR-001, CP-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-003
+
+---
+
+## FDS Domain Reference
+
+COMP — Compliance & Travel Rule (Supporting — audit integrity)
+
+---
+
+## Preconditions
+
+- A COMP action, decision, or record change eligible for audit recording has occurred.
+- Shared platform audit capabilities are available (CORE).
+
+---
+
+## Trigger
+
+A COMP workflow action, compliance decision, authorization outcome, or record change occurs that requires audit recording per policy.
+
+---
+
+## Normal Flow
+
+1. The system identifies the COMP action or outcome eligible for audit recording.
+2. The system captures actor identity, timestamp, action type, affected compliance record references, and outcome sufficient for traceability.
+3. The system records the audit outcome using shared audit capabilities (CORE).
+4. Audit records remain accessible to authorized auditors within organization scope (COMP-FR-010).
+
+---
+
+## Alternative Flow
+
+If an action is denied by authorization:
+- The system may record the denied access attempt according to platform audit policy.
+
+---
+
+## Exception Flow
+
+If audit recording fails:
+- The system handles failure according to platform policy without suppressing authorization enforcement.
+
+---
+
+## Postconditions
+
+- Audit outcomes for COMP actions are recorded or failure is handled per platform policy.
+
+---
+
+## Business Rules
+
+- CORE owns shared audit infrastructure; COMP records domain-specific audit outcomes without redefining CORE ownership.
+- Audit records support CP-BR-002 compliance evidence management and BO-003 regulatory readiness.
+- COMP audit recording does not substitute for INVEST case audit records or RISK scoring audit records owned by those domains.
+
+---
+
+## Validation Rules
+
+- Audit records shall include sufficient identifiers to correlate actions with COMP-owned compliance records and actors.
+
+---
+
+## Acceptance Criteria
+
+- COMP workflow actions and compliance decisions produce audit records with sufficient traceability.
+- Denied unauthorized COMP actions may be audited according to policy.
+- CORE shared audit infrastructure ownership is not redefined.
+- Audit records support audit preparation workflows (COMP-FR-005).
+
+---
+
+## Dependencies
+
+CORE; AUTH (contextual); AUTHZ (contextual); COMP-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS COMP domain.
+
+---
+
+## Related Events
+
+None required as a baseline COMP publish event.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; COMP does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Compliance-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting audit integrity requirement for all COMP feature and supporting requirements.
+
+
+## 10. Compliance Access Control
+
+# COMP-FR-010 — Restrict Compliance Data Access To Authorized Actors
+
+## Summary
+
+The system shall enforce authorization for COMP data and operations within permitted organization scope.
+
+---
+
+## Description
+
+The system shall restrict access to COMP-owned compliance records, workflow operations, packages, and discovery results to authorized actors according to AUTHZ decisions, without redefining AUTHZ policy, without owning USER or ORG lifecycle, and without creating a separate authorization system.
+
+---
+
+## Type
+
+Security
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Compliance Engineering
+
+---
+
+## Actor
+
+System; Authenticated User (attempting access)
+
+---
+
+## Business Requirement Reference
+
+CP-BR-001, CP-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-003
+
+---
+
+## FDS Domain Reference
+
+COMP — Compliance & Travel Rule (Supporting — AUTHZ boundary integrity)
+
+---
+
+## Preconditions
+
+- A COMP data access or workflow operation is attempted.
+- Authentication and authorization services are available (AUTH, AUTHZ).
+
+---
+
+## Trigger
+
+Any COMP workflow action, record retrieval, discovery, package operation, or event-sensitive operation is attempted.
+
+---
+
+## Normal Flow
+
+1. The system identifies the actor and requested COMP operation.
+2. The system evaluates authentication context (AUTH) and authorization decisions (AUTHZ).
+3. The system applies permitted organization scope (ORG contextual).
+4. If authorized, the operation proceeds within permitted scope.
+5. If not authorized, the operation is denied and may be audited (COMP-FR-009).
+
+---
+
+## Alternative Flow
+
+If organization scope limits the visible compliance record set:
+- The system filters results to authorized tenant boundaries without exposing cross-tenant data.
+
+---
+
+## Exception Flow
+
+If authorization services are unavailable:
+- The system denies access according to platform fail-closed policy.
+
+---
+
+## Postconditions
+
+- Only authorized actors access COMP data and operations within permitted scope, or access is denied.
+
+---
+
+## Business Rules
+
+- AUTHZ owns authorization decisions; COMP applies authorization outcomes and does not redefine AUTHZ.
+- USER provides authenticated actor identity; COMP does not own user lifecycle.
+- ORG provides tenant context; COMP does not own organization lifecycle.
+- Compliance officer and auditor role expectations are enforced through AUTHZ without COMP defining role catalogs.
+
+---
+
+## Validation Rules
+
+- Access decisions shall evaluate actor identity, role/permission outcomes, and organization scope before exposing COMP data or permitting operations.
+
+---
+
+## Acceptance Criteria
+
+- Unauthorized COMP data access and operations are denied.
+- Authorized compliance officers and permitted roles can access COMP data within scope.
+- COMP does not create a separate authorization system.
+- Tenant isolation boundaries are enforced for COMP data access.
+- All COMP feature and supporting requirements operate within this access boundary.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual)
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS COMP domain.
+
+---
+
+## Related Events
+
+None required as a baseline COMP publish event.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; COMP does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Compliance-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting AUTHZ boundary integrity requirement for all COMP feature and supporting requirements.
+
+
+## Intentionally Deferred COMP Scope
+
+| Capability | Release | Status |
+|------------|---------|--------|
+| Jurisdiction Policy Packs | Version 2 | Deferred — not authored in COMP-FR-001–010 |
+| Compliance Analytics | Version 2 | Deferred — not authored in COMP-FR-001–010 |
+| Automated Regulatory Drafting | Version 3 | Deferred — not authored in COMP-FR-001–010 |
+| Continuous Control Monitoring | Version 3 | Deferred — not authored in COMP-FR-001–010 |
+| Regulatory report generation | REPORT | Not COMP-owned — REPORT owns report definition and presentation |
+| Compliance dashboards | DASH | Not COMP-owned — DASH owns workspace presentation |
+| ALERT routing for `SanctionsHitDetected` | ALERT / Future | Deferred — ALERT is not an MVP consumer |
+| `EvidenceAttached` consumption | INVEST | Explicitly excluded from MVP COMP consumption (COMP-FR-008) |
+| AI agent ownership/orchestration | Platform AI | Not owned by COMP — AI Platform owns agents |
+| Downstream routing for `TravelRuleValidated` | Future contract | Deferred/unspecified — not an MVP cross-domain obligation |
+| Downstream routing for `SanctionsHitDetected` | Future contract | Deferred/unspecified — not an MVP cross-domain obligation |
+| Downstream routing for `AuditPackagePrepared` | Future contract | Deferred/unspecified — not an MVP cross-domain obligation |
+| REPORT consumption of `ComplianceReviewed` | REPORT Version 2 | Future scope — REPORT is not an MVP COMP dependency |
+| WALLET intelligence coupling | WALLET | Not COMP-owned — no MVP WALLET dependency |
+| Legacy BRS refs `FR-040 – FR-055` | Legacy | Superseded by `COMP-FR-001 – COMP-FR-010`; BRS not migrated in this phase |
+
+## COMP Baseline Status
+
+COMP-FR-001 – COMP-FR-010 are the approved COMP requirements for the current MVP draft baseline.
+
+No COMP-FR-011 is defined.
+
+The MVP COMP baseline comprises exactly 5 feature FRs, 1 discovery FR, and 4 supporting FRs.
+
+MVP COMP publishes exactly `ComplianceReviewed`, `TravelRuleValidated`, `SanctionsHitDetected`, and `AuditPackagePrepared`. MVP COMP consumes exactly INVEST-owned `CaseClosed` and `CaseUpdated`, RISK-owned `RiskCalculated`, and USER-owned `UserUpdated`. COMP does not consume `EvidenceAttached`, `HighRiskDetected`, `AlertCreated`, `CaseCreated`, `WalletProfileUpdated`, `AIRecommendationGenerated`, or `TransactionReceived`.
+
+COMP does not own operational alert lifecycle, risk scoring, investigation case lifecycle, dashboard presentation, wallet intelligence, user lifecycle, organization lifecycle, AI agent orchestration, or reporting definitions. AI Platform owns AI agents and orchestration; MVP COMP workflows remain operable without AI.
+
+Jurisdiction Policy Packs, Compliance Analytics, Automated Regulatory Drafting, and Continuous Control Monitoring remain Version 2 or Version 3 deferred scope.

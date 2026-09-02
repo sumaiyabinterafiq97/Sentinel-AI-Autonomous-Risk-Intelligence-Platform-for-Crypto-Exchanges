@@ -6,7 +6,7 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Domain Specification |
-| Version | 1.1 (Draft) |
+| Version | 1.2 (Draft) |
 | Status | Draft |
 | Owner | Product & Engineering Team |
 | Last Updated | 2026-09-02 |
@@ -28,6 +28,7 @@
 | 0.9 | 2026-09-02 | Product Team | RISK: MVP feature/roadmap/event alignment; ALERT/DASH producer boundaries; external TransactionReceived ingest; wallet/AI/alert consume deferred; ORG contextual dependency |
 | 1.0 | 2026-09-02 | Product Team | INVEST domain correction: MVP/V2 event and BR traceability reconciliation, frozen downstream contract alignment, AI ownership clarification, and dependency/roadmap boundary cleanup |
 | 1.1 | 2026-09-02 | Product Team | WALLET: Version 2 event/boundary correction; interaction matrix reconciled; USER/ORG contextual dependencies; AI ownership clarified; platform MVP hooks none; FR planning baseline ~10; downstream consumer deferral for `AddressReputationChanged` and `SuspiciousWalletDetected` |
+| 1.2 | 2026-09-02 | Product Team | COMP: MVP event/boundary correction; interaction matrix reconciled; USER/ORG contextual dependencies; AI assistive-only (not hard dependency); AI ownership clarified; FR planning baseline ~11; downstream consumer deferral; `EvidenceAttached` excluded from MVP consume set |
 
 ---
 
@@ -133,13 +134,13 @@ This document intentionally excludes:
 | RISK | Risk Intelligence | Risk Intelligence Team | 45 (planning guideline; not a forced count) | Critical | MVP | RI-BR-001, RI-BR-002, RI-BR-003 |
 | INVEST | Investigation Management | Investigation Platform Team | 50 (planning guideline; not a forced count) | Critical | MVP | FI-BR-001, FI-BR-002 (MVP); FI-BR-003 (V2) |
 | WALLET | Wallet Intelligence | Financial Crime Intelligence Team | ~10 (planning guideline; not a forced count) | Medium | Version 2 | WI-BR-001 |
-| COMP | Compliance & Travel Rule | Compliance Engineering | 40 | High | MVP | CP-BR-001, CP-BR-002 |
+| COMP | Compliance & Travel Rule | Compliance Engineering | ~11 (planning guideline; not a forced count) | High | MVP | CP-BR-001, CP-BR-002 |
 | SEC | Security Intelligence | Security Engineering | 30 | Medium | Version 2 | SEC-BR-001, SEC-BR-002 |
 | AI | AI Platform | AI Platform Team | 60 | High | MVP | AI-BR-001, AI-BR-002 |
 | REPORT | Reporting & Analytics | Analytics & Insights Team | 20 | Medium | Version 2 | RA-BR-001 |
 | ADMIN | Administration | Platform Engineering | 20 | High | MVP | ADM-BR-001 |
 | OPS | Platform Operations | Platform Operations / SRE | 20 | Medium | Version 2 | OPS-BR-001 |
-| | **Total** | | **435** | | | |
+| | **Total** | | **406** | | | |
 
 ---
 
@@ -159,7 +160,7 @@ This matrix is the blueprint for architecture, data ownership, events, APIs, and
 | RISK | Risk Scores, Rules, Explanations, Priority Signals | RiskCalculated, HighRiskDetected | TransactionReceived | Risk Analysis Agent |
 | INVEST | Cases, Evidence, Assignments, Notes, Timeline | CaseCreated, CaseUpdated, CaseClosed, CaseAssigned, EvidenceAttached | AlertCreated, RiskCalculated | — |
 | WALLET | Wallet Profiles, Reputation, Graphs | WalletProfileUpdated, AddressReputationChanged, SuspiciousWalletDetected | TransactionReceived, CaseCreated, RiskCalculated | — |
-| COMP | Compliance Records, Travel Rule Results | ComplianceReviewed, TravelRuleValidated | CaseClosed, RiskCalculated | Compliance Agent |
+| COMP | Compliance Records, Travel Rule Results, Sanctions Results, Evidence Packages | ComplianceReviewed, TravelRuleValidated, SanctionsHitDetected, AuditPackagePrepared | CaseClosed, CaseUpdated, RiskCalculated, UserUpdated | — |
 | SEC | Security Events, Threat Detections | ThreatDetected, ApiAbuseDetected | UserLoggedIn, AlertCreated | Security Investigation Assistant |
 | AI | Prompts, Evaluations, Recommendations | AIRecommendationGenerated | CaseUpdated, RiskCalculated | Multi-Agent Orchestration |
 | REPORT | Report Definitions, KPI Snapshots | ReportGenerated | CaseClosed, ComplianceReviewed | Report Generation Agent |
@@ -1968,28 +1969,40 @@ Wallet intelligence data shall be accessed only by authorized investigators and 
 | Related Business Requirements | CP-BR-001, CP-BR-002 |
 | Related Business Objectives | BO-003 |
 | Primary Users | Compliance Officers, Auditors, Risk Managers |
-| Dependencies | CORE, AUTH, AUTHZ, USER, INVEST, RISK, AI |
+| Dependencies | CORE, AUTH, AUTHZ, USER (contextual — authenticated actor identity; lifecycle owned by USER), ORG (contextual — tenant/organization scope; lifecycle owned by ORG), INVEST, RISK, AI (assistive integration only — agent orchestration owned by AI Platform; not a mandatory MVP runtime dependency) |
 | Dependent Domains | REPORT, ADMIN |
-| Estimated Functional Requirements | 40 |
+| Estimated Functional Requirements | ~11 (planning guideline; not a forced count) |
 | Priority | High |
 | Release | MVP |
 | FR Prefix | `COMP-FR` |
 
 ### Domain Overview
 
-The Compliance & Travel Rule domain supports regulatory investigation workflows including KYC review, AML review, Travel Rule validation, sanctions screening support, and audit preparation. It standardizes compliance evidence and operational documentation.
+The Compliance & Travel Rule domain supports regulatory compliance workflows including KYC review, AML review, Travel Rule validation, sanctions screening, and audit preparation. It standardizes compliance evidence and operational documentation for regulatory readiness (BO-003, CP-BR-001, CP-BR-002).
+
+COMP is a **platform MVP domain**. All COMP features and event contracts defined in this specification apply to MVP release scope unless explicitly marked Version 2 or Version 3.
+
+COMP owns compliance workflows, compliance records, Travel Rule validations, sanctions screening workflow, compliance evidence packages, and audit preparation packages. It does not own risk scoring (RISK), investigation case lifecycle (INVEST), operational alert lifecycle (ALERT), wallet intelligence (WALLET), dashboard/workspace presentation (DASH), reporting definitions (REPORT), user lifecycle (USER), organization lifecycle (ORG), or AI agent orchestration (AI Platform). COMP may consume permitted upstream context from INVEST, RISK, and USER without redefining their behavior.
+
+COMP supports compliance workflows around investigations but does not own INVEST case lifecycle. CP-BR-002 compliance evidence management is satisfied through COMP-owned compliance data and applicable investigation/context information available through the locked MVP consumption model. COMP does not consume `EvidenceAttached` in MVP baseline.
+
+ProductScope terminology may refer to “KYC Investigation Support” and related compliance capabilities; in this specification, **KYC Review** and **AML Review** are distinct MVP features. Generic regulatory-report generation and Compliance Analytics remain deferred beyond MVP COMP scope and belong to REPORT or Version 2/Version 3 capabilities as defined below.
 
 ### Responsibilities
 
 The domain is responsible for:
 
-- Support KYC and AML review workflows
+- Support KYC review workflows
+- Support AML review workflows
 - Validate Travel Rule requirements
-- Assist sanctions screening workflows
-- Maintain compliance evidence
+- Support sanctions screening workflows
+- Maintain compliance evidence packages
 - Support audit preparation
+- Consume upstream investigation, risk, and user context for enrichment without redefining INVEST, RISK, or USER lifecycle behavior
 
-### Features
+COMP does not create or own operational alerts, calculate risk scores, create or manage investigation cases, own wallet intelligence, own dashboard presentation, generate REPORT-owned regulatory reports, or orchestrate AI agents. MVP COMP core workflows are operable without AI.
+
+### Features (MVP)
 
 - KYC Review
 - AML Review
@@ -1997,11 +2010,38 @@ The domain is responsible for:
 - Sanctions Screening
 - Audit Preparation
 
-### Future Features
+KYC Review and AML Review are distinct MVP features and shall not be merged.
 
-- Jurisdiction-Specific Policy Packs
-- Automated Regulatory Report Drafting
+### Future Features (Version 2 — not MVP)
+
+- Jurisdiction Policy Packs (also referred to as Jurisdiction-Specific Policy Packs in product materials)
+- Compliance Analytics
+
+These capabilities are explicitly deferred beyond MVP and shall not be authored as MVP Functional Requirements.
+
+### Future Features (Version 3 — not MVP)
+
+- Automated Regulatory Drafting (also referred to as Automated Regulatory Report Drafting in product materials)
 - Continuous Control Monitoring
+
+These capabilities are explicitly deferred beyond MVP and shall not be authored as MVP Functional Requirements.
+
+### Functional Requirements Planning Baseline
+
+The intended MVP FRS inventory is approximately 11 requirements (`COMP-FR-001` through `COMP-FR-010`), determined from locked MVP capabilities rather than a mandatory count:
+
+- `COMP-FR-001` — Support KYC Review Workflows
+- `COMP-FR-002` — Support AML Review Workflows
+- `COMP-FR-003` — Validate Travel Rule Requirements
+- `COMP-FR-004` — Support Sanctions Screening Workflows
+- `COMP-FR-005` — Support Audit Preparation
+- `COMP-FR-006` — Retrieve And Discover Compliance Records
+- `COMP-FR-007` — Enforce Compliance Event Publication Contract
+- `COMP-FR-008` — Consume Upstream Investigation Risk And User Context Events
+- `COMP-FR-009` — Record Compliance Audit Outcomes
+- `COMP-FR-010` — Restrict Compliance Data Access To Authorized Actors
+
+Detailed Functional Requirement authoring is deferred to the FRS phase. This baseline is a planning guide only. No `COMP-FR-011` is defined unless a future locked FDS decision introduces a genuinely distinct capability.
 
 ### Domain Data Ownership
 
@@ -2013,21 +2053,36 @@ This domain owns:
 - Compliance Evidence Packages
 - Audit Preparation Packages
 
+COMP does not own risk scores, investigation cases, operational alerts, wallet profiles, AI recommendation records, reporting definitions, or user/organization lifecycle records. Those remain owned by RISK, INVEST, ALERT, WALLET, AI, REPORT, USER, and ORG respectively.
+
 ### Domain Events
 
-**Publishes**
+**Publishes (MVP)**
 
 - `ComplianceReviewed`
 - `TravelRuleValidated`
 - `SanctionsHitDetected`
 - `AuditPackagePrepared`
 
-**Consumes**
+**Consumes (MVP)**
 
-- `CaseClosed`
-- `CaseUpdated`
-- `RiskCalculated`
-- `UserUpdated`
+- `CaseClosed` — INVEST-owned publication consumed by COMP for investigation context enrichment only
+- `CaseUpdated` — INVEST-owned publication consumed by COMP for investigation context enrichment only
+- `RiskCalculated` — RISK-owned publication consumed by COMP for risk context enrichment only
+- `UserUpdated` — USER-owned publication consumed by COMP for user/KYC context enrichment only
+
+**Explicit exclusions (not COMP MVP baseline consumption)**
+
+COMP does not consume `HighRiskDetected`, `AlertCreated`, `EvidenceAttached`, `CaseCreated`, `WalletProfileUpdated`, `AIRecommendationGenerated`, `TransactionReceived`, or any COMP self-publication events in MVP baseline.
+
+**Downstream consumption (deferred / unspecified)**
+
+- `ComplianceReviewed` — REPORT may consume when REPORT Version 2 scope is authored. REPORT is not an MVP COMP dependency. No frozen MVP downstream consumer is currently established.
+- `TravelRuleValidated` — COMP-owned MVP publication. No frozen downstream consumer is currently established; downstream routing remains a future contract decision.
+- `SanctionsHitDetected` — COMP-owned MVP publication. No frozen downstream consumer is currently established; downstream routing remains a future contract decision. COMP does not create operational alerts. ALERT compliance-sourced alert generation remains deferred.
+- `AuditPackagePrepared` — COMP-owned MVP publication. No frozen downstream consumer is currently established; downstream routing remains a future contract decision.
+
+COMP does not publish `AlertCreated`, `RiskCalculated`, `HighRiskDetected`, `CaseCreated`, `CaseUpdated`, `CaseClosed`, `EvidenceAttached`, `TransactionReceived`, `WalletProfileUpdated`, or `AIRecommendationGenerated`.
 
 ### Non-Functional Characteristics
 
@@ -2042,28 +2097,30 @@ This domain owns:
 
 ### External Integrations
 
+Provider-neutral external integration boundaries embedded within MVP capabilities (no separate external-ingest event contract in MVP):
+
 - KYC Providers
 - Sanctions Screening Providers
 - Travel Rule Networks
-- Regulatory Reporting Tools
+
+Automated regulatory report generation and regulatory reporting presentation remain REPORT or Version 2/Version 3 deferred scope, not MVP COMP-owned capabilities.
 
 ### Related AI Agents
 
-**Primary Agent:** Compliance Agent
+No AI agents are owned or orchestrated by COMP.
 
-**Supporting Agents:**
-- Audit Preparation Assistant
-- Evidence Retrieval Agent
+AI Platform owns agent lifecycle and orchestration, including Compliance Agent, Audit Preparation Assistant, and Evidence Retrieval Agent capabilities where applicable. COMP may integrate assistive AI Platform outputs in authorized compliance workflows when applicable. AI assistance does not replace human decision authority for compliance disposition or regulatory outcomes. MVP COMP core workflows are not mandatory-AI-dependent.
 
 ### Security Considerations
 
-Compliance evidence and regulatory records shall be protected, retention-aware, and accessible only to authorized compliance and audit roles.
+Compliance evidence and regulatory records shall be protected, retention-aware, and accessible only to authorized compliance and audit roles. COMP shall respect organization scope through contextual ORG tenant boundaries without managing organization lifecycle. AUTHZ evaluates access; USER provides authenticated actor identity context.
 
 ### Success Criteria
 
-- Compliance investigations follow standardized workflows
+- Compliance workflows follow standardized MVP capabilities
 - Travel Rule validation is supported
-- Audit evidence can be assembled from operational records
+- Sanctions screening workflow is supported within COMP ownership
+- Audit preparation packages can be assembled from COMP-owned compliance data and applicable context
 
 ### Domain KPIs
 
@@ -2101,9 +2158,39 @@ Compliance evidence and regulatory records shall be protected, retention-aware, 
 
 ### Domain Relationships
 
-**Depends on:** CORE, AUTH, AUTHZ, USER, INVEST, RISK, AI
+**Depends on (MVP):** CORE, AUTH, AUTHZ, USER (contextual — authenticated actor identity; lifecycle owned by USER), ORG (contextual — tenant/organization scope; lifecycle owned by ORG), INVEST, RISK
 
-**Supports:** REPORT, ADMIN
+**Assistive integration (not a mandatory MVP runtime dependency):** AI Platform (agent orchestration owned by AI Platform; COMP core workflows operable without AI)
+
+**Supports (downstream / future scope):** REPORT, ADMIN
+
+**Boundary references (not MVP dependencies):** ALERT (operational alert lifecycle), DASH (presentation), WALLET (wallet intelligence — Version 2 domain)
+
+**External boundaries:** KYC Providers, Sanctions Screening Providers, Travel Rule Networks (provider-neutral; embedded in MVP capabilities)
+
+**Risk boundary:** RISK owns risk scoring, rules, and risk-derived priority signals. COMP consumes `RiskCalculated` for contextual enrichment only. COMP owns sanctions screening workflow; COMP does not score risk and does not publish `RiskCalculated` or `HighRiskDetected`.
+
+**Investigation boundary:** INVEST owns investigation cases and investigation workflow. COMP consumes `CaseClosed` and `CaseUpdated` for investigation context enrichment only. COMP does not create or manage investigation cases and does not consume `CaseCreated` or `EvidenceAttached` in MVP baseline.
+
+**Alert boundary:** ALERT owns operational alert records, lifecycle, and operational alert priority. COMP does not create or manage alerts and does not publish alert events. `SanctionsHitDetected` does not imply MVP ALERT routing.
+
+**User boundary:** USER owns user lifecycle. COMP consumes `UserUpdated` for user/KYC context enrichment only.
+
+**Presentation boundary:** DASH owns workspace/dashboard presentation. COMP owns compliance data and workflows and does not own dashboard UI or workspace widgets.
+
+**Reporting boundary:** REPORT owns reporting definitions and report presentation. COMP may supply compliance outcomes for downstream reporting without owning report definitions. REPORT is not an MVP COMP dependency.
+
+**Wallet boundary:** WALLET owns wallet intelligence (Version 2). COMP does not consume wallet events in MVP baseline.
+
+**AI boundary:** AI Platform owns agent orchestration and recommendation generation. COMP owns compliance workflow authority. AI assistance is assistive only and is not a mandatory MVP runtime dependency for COMP core workflows.
+
+**Authorization and tenant scope:** AUTHZ owns authorization decisions. ORG provides tenant context. USER provides authenticated actor identity. COMP applies authorized outcomes within permitted scope without managing USER or ORG lifecycle.
+
+**Evidence boundary (CP-BR-002):** COMP owns compliance evidence packages and audit preparation packages. Evidence management does not require COMP to consume `EvidenceAttached` in MVP baseline. Applicable investigation context is obtained through `CaseClosed` and `CaseUpdated` consumption and COMP-owned compliance records.
+
+**Producer/downstream contract:** MVP COMP publishes `ComplianceReviewed`, `TravelRuleValidated`, `SanctionsHitDetected`, and `AuditPackagePrepared`. Downstream routing for all COMP publish events except potential future REPORT Version 2 consumption of `ComplianceReviewed` remains deferred or unspecified and is not an MVP cross-domain obligation until explicitly contracted.
+
+**Platform scope:** COMP is a platform MVP domain. Jurisdiction Policy Packs, Compliance Analytics, Automated Regulatory Drafting, and Continuous Control Monitoring are Version 2/Version 3 scope and shall not become MVP Functional Requirements.
 
 ---
 
@@ -2894,6 +2981,24 @@ INVEST may consume `WalletProfileUpdated` when INVEST Version 2 wallet-context i
 Version 2 WALLET features are exactly Wallet Profiles, Address Reputation, Transaction History, and Relationship Graph. Multi-Chain Expansion, Cluster Detection, and Cross-Exchange Correlation are Version 3 and shall not become Version 2 Functional Requirements.
 
 Wallet Risk Scoring and RISK wallet-event consumption remain Version 2+ RISK scope aligned with WALLET; they are not WALLET requirements.
+
+### Compliance & Travel Rule Boundaries
+
+COMP is a platform MVP domain.
+
+CORE owns shared platform and audit primitives. AUTH authenticates actors. AUTHZ determines authorization. USER provides user identity context; COMP does not own user lifecycle. ORG provides tenant/organizational context; COMP does not own organization lifecycle. RISK owns risk scoring and risk rules; COMP owns sanctions screening workflow and does not score risk. INVEST owns investigation case lifecycle; COMP does not create or manage cases. ALERT owns alert lifecycle and operational alert priority; COMP does not create or manage alerts. WALLET owns wallet intelligence (Version 2). DASH owns presentation and workspace concerns; COMP does not own dashboard UI. REPORT owns reporting definitions and presentation; COMP does not own regulatory report generation. AI Platform owns AI agents and orchestration; COMP does not own or orchestrate agents. MVP COMP core workflows are operable without AI.
+
+COMP owns compliance workflows, compliance records, Travel Rule validations, sanctions screening workflow, compliance evidence packages, and audit preparation packages.
+
+MVP COMP publishes exactly `ComplianceReviewed`, `TravelRuleValidated`, `SanctionsHitDetected`, and `AuditPackagePrepared`. MVP COMP consumes exactly INVEST-owned `CaseClosed` and `CaseUpdated`, RISK-owned `RiskCalculated`, and USER-owned `UserUpdated`. COMP does not consume `HighRiskDetected`, `AlertCreated`, `EvidenceAttached`, `CaseCreated`, `WalletProfileUpdated`, `AIRecommendationGenerated`, or `TransactionReceived` in MVP baseline.
+
+`CaseClosed` and `CaseUpdated` are INVEST-owned publications consumed by COMP for context. `RiskCalculated` is a RISK-owned publication consumed by COMP for context. `UserUpdated` is a USER-owned publication consumed by COMP for context. CP-BR-002 evidence packages are assembled from COMP-owned compliance data plus applicable investigation/context information through this consumption model without MVP consumption of `EvidenceAttached`.
+
+REPORT may consume `ComplianceReviewed` when REPORT Version 2 scope is authored; REPORT is not an MVP COMP dependency. No frozen downstream consumer is currently established for `TravelRuleValidated`, `SanctionsHitDetected`, or `AuditPackagePrepared`; downstream routing remains a future contract decision. `SanctionsHitDetected` does not imply MVP ALERT routing; compliance-sourced alert generation remains deferred.
+
+MVP COMP features are exactly KYC Review, AML Review, Travel Rule, Sanctions Screening, and Audit Preparation. Jurisdiction Policy Packs and Compliance Analytics are Version 2. Automated Regulatory Drafting and Continuous Control Monitoring are Version 3 and shall not become MVP Functional Requirements.
+
+External KYC, sanctions screening, and Travel Rule provider integrations remain provider-neutral capability boundaries embedded within MVP features; no separate external-ingest event contract is defined for MVP COMP.
 
 ### AI Assistive Role
 
