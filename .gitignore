@@ -1,0 +1,51 @@
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Cursor
+.cursor/
+*.cursorindexingignore
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+*-credentials.json
+service-account*.json
+
+# Dependencies and build artifacts
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+.turbo/
+.next/
+out/
+
+# Python
+__pycache__/
+.venv/
+venv/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+*.tmp
