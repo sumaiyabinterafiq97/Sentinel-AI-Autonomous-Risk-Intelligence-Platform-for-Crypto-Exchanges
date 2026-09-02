@@ -6,7 +6,7 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Domain Specification |
-| Version | 0.9 (Draft) |
+| Version | 1.0 (Draft) |
 | Status | Draft |
 | Owner | Product & Engineering Team |
 | Last Updated | 2026-09-02 |
@@ -26,6 +26,7 @@
 | 0.7 | 2026-08-11 | Product Team | DASH: MVP feature/roadmap alignment; BR traceability via FI-BR-001/RI-BR-002 (MVP) and RA-BR-001 (V2); matrix/events reconciled; V2/V3 data ownership; consumer-domain boundaries |
 | 0.8 | 2026-09-02 | Product Team | ALERT: MVP feature/roadmap/event alignment; RISK/INVEST/ORG boundaries; matrix reconciled; escalation and SEC/compliance inputs deferred; consumer sequencing rule |
 | 0.9 | 2026-09-02 | Product Team | RISK: MVP feature/roadmap/event alignment; ALERT/DASH producer boundaries; external TransactionReceived ingest; wallet/AI/alert consume deferred; ORG contextual dependency |
+| 1.0 | 2026-09-02 | Product Team | INVEST domain correction: MVP/V2 event and BR traceability reconciliation, frozen downstream contract alignment, AI ownership clarification, and dependency/roadmap boundary cleanup |
 
 ---
 
@@ -129,7 +130,7 @@ This document intentionally excludes:
 | DASH | Operational Workspace | Product Experience / Frontend Platform | 14 | High | MVP | FI-BR-001, RI-BR-002 (MVP); RA-BR-001 (V2) |
 | ALERT | Alert Management | Risk Operations Engineering | 20 (planning guideline; not a forced count) | High | MVP | RI-BR-001, RI-BR-002 |
 | RISK | Risk Intelligence | Risk Intelligence Team | 45 (planning guideline; not a forced count) | Critical | MVP | RI-BR-001, RI-BR-002, RI-BR-003 |
-| INVEST | Investigation Management | Investigation Platform Team | 50 | Critical | MVP | FI-BR-001, FI-BR-002, FI-BR-003 |
+| INVEST | Investigation Management | Investigation Platform Team | 50 (planning guideline; not a forced count) | Critical | MVP | FI-BR-001, FI-BR-002 (MVP); FI-BR-003 (V2) |
 | WALLET | Wallet Intelligence | Financial Crime Intelligence Team | 25 | Medium | Version 2 | WI-BR-001 |
 | COMP | Compliance & Travel Rule | Compliance Engineering | 40 | High | MVP | CP-BR-001, CP-BR-002 |
 | SEC | Security Intelligence | Security Engineering | 30 | Medium | Version 2 | SEC-BR-001, SEC-BR-002 |
@@ -155,7 +156,7 @@ This matrix is the blueprint for architecture, data ownership, events, APIs, and
 | DASH | Work Queue Presentations | WorkspaceViewed, WorkQueueOpened, WidgetInteracted | AlertCreated, CaseUpdated, RiskCalculated, ReportGenerated | Workspace Summary Assistant |
 | ALERT | Alerts, Alert Assignments, Alert Operational Priorities | AlertCreated, AlertAssigned, AlertClosed | RiskCalculated, HighRiskDetected | Alert Triage Assistant |
 | RISK | Risk Scores, Rules, Explanations, Priority Signals | RiskCalculated, HighRiskDetected | TransactionReceived | Risk Analysis Agent |
-| INVEST | Cases, Evidence, Notes, Timeline | CaseCreated, CaseClosed, EvidenceAttached | AlertCreated, RiskCalculated | Investigation Agent |
+| INVEST | Cases, Evidence, Assignments, Notes, Timeline | CaseCreated, CaseUpdated, CaseClosed, CaseAssigned, EvidenceAttached | AlertCreated, RiskCalculated | — |
 | WALLET | Wallet Profiles, Reputation, Graphs | WalletProfileUpdated | TransactionReceived, CaseCreated | Wallet Analysis Agent |
 | COMP | Compliance Records, Travel Rule Results | ComplianceReviewed, TravelRuleValidated | CaseClosed, RiskCalculated | Compliance Agent |
 | SEC | Security Events, Threat Detections | ThreatDetected, ApiAbuseDetected | UserLoggedIn, AlertCreated | Security Investigation Assistant |
@@ -1553,46 +1554,57 @@ Risk rules/configuration shall be manageable only by authorized administrators (
 | Domain ID | `INVEST` |
 | Domain Name | Investigation Management |
 | Domain Owner | Investigation Platform Team |
-| Purpose | Manage cases, evidence, collaboration, and investigation lifecycle. |
+| Purpose | Manage investigation cases, evidence, assignments, and investigation lifecycle. |
 | Business Value | Unified investigation workspace that reduces manual effort and improves consistency. |
-| Related Business Requirements | FI-BR-001, FI-BR-002, FI-BR-003 |
+| Related Business Requirements | FI-BR-001, FI-BR-002 (MVP); FI-BR-003 (Version 2) |
 | Related Business Objectives | BO-001, BO-004, BO-005 |
 | Primary Users | Fraud Investigators, Risk Analysts, Compliance Officers, Security Engineers |
-| Dependencies | CORE, AUTH, AUTHZ, USER, ALERT, RISK, AI |
+| Dependencies | CORE, AUTH, AUTHZ, USER, ORG (contextual — tenant/organization scope; lifecycle owned by ORG), ALERT, RISK, AI (assistive integration — agent orchestration owned by AI Platform) |
 | Dependent Domains | COMP, REPORT, DASH, WALLET, SEC |
-| Estimated Functional Requirements | 50 |
+| Estimated Functional Requirements | 50 (planning guideline; not a forced count) |
 | Priority | Critical |
 | Release | MVP |
 | FR Prefix | `INVEST-FR` |
 
 ### Domain Overview
 
-The Investigation Management domain consolidates case management, evidence collection, timelines, notes, collaboration, and escalation into a single operational investigation capability. It merges what were previously separate case, evidence, and fraud investigation concerns into one enterprise investigation domain.
+The Investigation Management domain consolidates case management, evidence collection, timelines, notes, and investigator assignments into a single operational investigation capability. It merges what were previously separate case, evidence, and fraud investigation concerns into one enterprise investigation domain.
+
+INVEST owns investigation cases and investigation workflow authority. It does not own risk scoring (RISK), operational alert lifecycle (ALERT), sanctions/compliance workflows (COMP), dashboard/workspace presentation (DASH), or AI agent orchestration (AI Platform). AI assistance integrated into investigation workflows remains assistive and human-controlled.
+
+Version 2 expands INVEST with collaboration (FI-BR-003), AI-assisted summaries, and escalation workflows.
 
 ### Responsibilities
 
 The domain is responsible for:
 
 - Manage investigation cases end-to-end
-- Collect and organize evidence
+- Collect and organize evidence, including attached artifacts where appropriate
 - Maintain investigation timelines and notes
-- Support collaboration and assignments
-- Enable AI-assisted summaries and escalation
+- Support investigator assignments
+- Consume upstream alert and risk context without redefining ALERT or RISK lifecycle behavior
+
+**Version 2 responsibilities (deferred):**
+
+- Support cross-functional investigation collaboration (FI-BR-003)
+- Enable AI-assisted investigation summaries through AI Platform integration
+- Support case-level escalation workflows
+
+INVEST does not create or own operational alerts, calculate risk scores, own sanctions/compliance workflows, or own dashboard presentation.
 
 ### Features
 
 - Case Management
-- Evidence Collection
+- Evidence Collection (includes attached artifacts/evidence attachments as part of evidence records)
 - Investigation Timeline
 - Notes
-- Collaboration
 - Assignments
-- AI Summary
-- Escalation
-- Attachments
 
 ### Future Features
 
+- Collaboration Expansion (FI-BR-003)
+- AI Summary
+- Escalation Workflows
 - Investigation Playbooks
 - Cross-Case Link Analysis
 - Automated Evidence Packaging for Audit
@@ -1602,30 +1614,39 @@ The domain is responsible for:
 This domain owns:
 
 - Cases
-- Evidence
+- Evidence (including attached artifacts where applicable as part of evidence records)
 - Assignments
 - Notes
 - Timeline Events
-- Attachments
-- Escalation Records
+- Escalation Records (data ownership; escalation workflow behavior is Version 2)
+
+INVEST does not own risk scores, operational alerts, wallet profiles, AI recommendation records, or compliance records. Those remain owned by RISK, ALERT, WALLET, AI, and COMP respectively. INVEST may consume permitted upstream context from those domains without claiming ownership.
 
 ### Domain Events
 
-**Publishes**
+**Publishes (MVP)**
 
 - `CaseCreated`
-- `CaseAssigned`
 - `CaseUpdated`
 - `CaseClosed`
+- `CaseAssigned`
 - `EvidenceAttached`
+
+**Publishes (Version 2 — when Escalation Workflows apply)**
+
 - `InvestigationEscalated`
 
-**Consumes**
+**Consumes (MVP)**
 
 - `AlertCreated`
 - `RiskCalculated`
-- `AIRecommendationGenerated`
-- `WalletProfileUpdated`
+
+**Deferred consumption (Version 2+)**
+
+- `AIRecommendationGenerated` — deferred until AI Summary and applicable AI Platform integration are Version 2 scope for INVEST
+- `WalletProfileUpdated` — deferred until WALLET Version 2
+
+INVEST does not consume `HighRiskDetected` in MVP. Upstream alert context is consumed via `AlertCreated` where applicable.
 
 ### Non-Functional Characteristics
 
@@ -1641,27 +1662,27 @@ This domain owns:
 ### External Integrations
 
 - Document Storage
-- Ticketing Systems
-- Notification Service
+- Ticketing Systems (Version 2)
+- Notification Service (Version 2 — notification infrastructure owned by CORE shared notification framework; INVEST does not own notification delivery)
 
 ### Related AI Agents
 
-**Primary Agent:** Investigation Agent
+No AI agents are owned or orchestrated by INVEST.
 
-**Supporting Agents:**
-- Evidence Retrieval Agent
-- Report Generation Agent
-- Summarization Agent
+AI Platform owns agent lifecycle and orchestration, including Investigation Agent, Evidence Retrieval Agent, Report Generation Agent, and Summarization Agent capabilities. INVEST may integrate assistive AI Platform outputs in authorized investigation workflows when applicable. AI assistance does not replace human decision authority for investigation disposition, enforcement, or case closure.
+
+AI Summary remains Version 2 INVEST scope. MVP INVEST does not establish a separate AI-assistance capability solely because AI Platform provides an Investigation Agent.
 
 ### Security Considerations
 
-Investigation access shall be restricted by role and assignment. Evidence integrity and investigation audit trails shall be preserved.
+Investigation access shall be restricted by role and assignment (AUTHZ evaluates access). Evidence integrity and investigation audit trails shall be preserved. INVEST shall respect organization scope through contextual ORG tenant boundaries without managing organization lifecycle.
 
 ### Success Criteria
 
-- Cases can be created and closed
-- Evidence can be attached and reviewed
-- Collaboration and assignment are supported
+- Cases can be created, updated, and closed
+- Evidence can be collected, attached, and reviewed
+- Investigator assignments are supported
+- Investigation timelines and notes are maintained
 - Investigation history is auditable
 
 ### Domain KPIs
@@ -1675,7 +1696,7 @@ Investigation access shall be restricted by role and assignment. Evidence integr
 
 - Incomplete evidence
 - Unowned or stalled cases
-- Collaboration conflicts
+- Collaboration conflicts (Version 2+ collaboration scope)
 - Evidence integrity issues
 
 ### Domain Roadmap
@@ -1690,7 +1711,7 @@ Investigation access shall be restricted by role and assignment. Evidence integr
 
 **Version 2**
 
-- Collaboration Expansion
+- Collaboration Expansion (FI-BR-003)
 - AI Summary
 - Escalation Workflows
 
@@ -1701,9 +1722,31 @@ Investigation access shall be restricted by role and assignment. Evidence integr
 
 ### Domain Relationships
 
-**Depends on:** CORE, AUTH, AUTHZ, USER, ALERT, RISK, AI
+**Depends on:** CORE, AUTH, AUTHZ, USER, ORG (contextual — tenant/organization scope; lifecycle owned by ORG), ALERT, RISK, AI (assistive integration only)
 
 **Supports:** COMP, REPORT, DASH, WALLET, SEC
+
+**Investigation boundary:** INVEST owns investigation cases and investigation workflow. ALERT does not create or own investigation cases. ALERT may associate alert context with investigations. INVEST consumes `AlertCreated` for applicable upstream alert context.
+
+**Risk boundary:** RISK owns risk scoring, rules, and risk-derived priority signals. INVEST consumes `RiskCalculated` for contextual enrichment only. INVEST does not score risk and does not consume `HighRiskDetected` in MVP.
+
+**Alert boundary:** ALERT owns operational alert records, lifecycle, and operational alert priority. INVEST does not publish alerts.
+
+**Presentation boundary:** DASH owns workspace/dashboard presentation. INVEST publishes investigation case events for downstream refresh; DASH consumes `CaseUpdated` (frozen DASH-FR-011).
+
+**Compliance boundary:** COMP owns sanctions and compliance workflows. INVEST supports compliance through owned case/evidence outcomes and published case events without duplicating compliance processing.
+
+**Escalation boundary:** INVEST owns case-level Escalation Records as data. Escalation Workflows and `InvestigationEscalated` publication are Version 2. Alert-level escalation remains ALERT Version 2 scope.
+
+**AI boundary:** AI Platform owns agent orchestration and recommendation generation. INVEST owns investigation workflow authority. AI assistance is assistive only and does not own INVEST lifecycle. `AIRecommendationGenerated` consumption is deferred to Version 2.
+
+**Wallet boundary:** `WalletProfileUpdated` consumption is deferred until WALLET Version 2.
+
+**Authorization and tenant scope:** AUTHZ owns authorization decisions. ORG provides tenant context. INVEST applies authorized investigation outcomes within permitted scope.
+
+**Producer/downstream contract:** MVP INVEST publishes `CaseCreated`, `CaseUpdated`, `CaseClosed`, `CaseAssigned`, and `EvidenceAttached`. DASH consumes `CaseUpdated` (frozen DASH-FR-011). COMP, REPORT, WALLET, SEC, and AI may consume applicable INVEST events according to their domain contracts without INVEST redefining their behavior.
+
+**Consumer-domain sequencing:** INVEST may be authored before upstream ALERT/RISK FRs are complete by specifying investigation lifecycle, upstream consumption (`AlertCreated`, `RiskCalculated`), and downstream publication behavior only. INVEST must not invent ALERT alert lifecycle, RISK scoring, or AI orchestration behavior. INVEST consumes upstream context; INVEST owns investigation workflow after receiving applicable upstream context; downstream consumers receive INVEST-owned case events.
 
 ---
 
@@ -2741,7 +2784,15 @@ Operational telemetry access shall be restricted to authorized platform and secu
 
 ### Investigation Consolidation
 
-Investigation Management (`INVEST`) consolidates case management, evidence management, and fraud investigation into a single enterprise domain. Detailed Functional Requirements within `INVEST-FR-*` may still be grouped by feature area (cases, evidence, collaboration), but they share one domain boundary.
+Investigation Management (`INVEST`) consolidates case management, evidence management, and fraud investigation into a single enterprise domain. Detailed Functional Requirements within `INVEST-FR-*` may still be grouped by feature area (cases, evidence, assignments), but they share one domain boundary. Collaboration (FI-BR-003), AI Summary, and Escalation Workflows are Version 2 scope within the same domain boundary.
+
+### Investigation Management Boundaries
+
+INVEST owns investigation cases and investigation workflow. ALERT owns operational alert lifecycle and publishes `AlertCreated`. RISK owns risk scoring and publishes `RiskCalculated`. DASH owns workspace presentation and consumes `CaseUpdated` (frozen DASH-FR-011). COMP owns sanctions/compliance workflows. AI Platform owns agent orchestration; AI assistance remains assistive.
+
+MVP INVEST publishes `CaseCreated`, `CaseUpdated`, `CaseClosed`, `CaseAssigned`, and `EvidenceAttached`. MVP INVEST consumes `AlertCreated` and `RiskCalculated` only. `InvestigationEscalated`, `AIRecommendationGenerated` consumption, and `WalletProfileUpdated` consumption are Version 2/deferred. INVEST does not consume `HighRiskDetected`, publish alerts, score risk, or own dashboard presentation.
+
+INVEST owns Escalation Records as data; Escalation Workflows are Version 2. Evidence Collection includes attached artifacts without a separate Attachments MVP capability. Notification delivery is not an MVP INVEST-owned capability.
 
 ### Operational Workspace Naming
 
@@ -2753,7 +2804,7 @@ DASH is a consumer/presentation domain relative to ALERT, RISK, INVEST, and REPO
 
 ALERT owns alert records and operational alert lifecycle. RISK owns risk scoring, rules, and risk-derived priority signals. ALERT operationalizes alert priority and handling state for alert queues without duplicating RISK scoring behavior.
 
-INVEST owns investigation cases and workflow. ALERT does not create or own investigation cases. ALERT may associate alert context with investigations. INVEST consumes `AlertCreated`.
+INVEST owns investigation cases and workflow. ALERT does not create or own investigation cases. ALERT may associate alert context with investigations. INVEST consumes `AlertCreated`. INVEST publishes `CaseUpdated` for downstream presentation refresh (frozen DASH-FR-011).
 
 DASH consumes `AlertCreated` for work queue presentation refresh (downstream contract with frozen DASH-FR-011). AUTHZ owns authorization decisions. ORG provides contextual tenant scope. CORE owns shared platform primitives including deferred Version 2 notification capabilities.
 

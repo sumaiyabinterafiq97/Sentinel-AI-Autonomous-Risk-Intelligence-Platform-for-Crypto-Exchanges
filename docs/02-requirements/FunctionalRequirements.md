@@ -6,7 +6,7 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Requirements Specification |
-| Version | 1.5 (Draft) |
+| Version | 1.6 (Draft) |
 | Status | Draft |
 | Owner | Product & Engineering Team |
 | Last Updated | 2026-09-02 |
@@ -32,6 +32,7 @@
 | 1.3 | 2026-09-02 | Product Team | Complete DASH domain functional requirements (DASH-FR-001 – DASH-FR-013); consumer/presentation boundaries; AI assistive-only; Saved Views V2 / Layouts V3 deferred |
 | 1.4 | 2026-09-02 | Product Team | Complete ALERT domain functional requirements (ALERT-FR-001 – ALERT-FR-012); RISK/INVEST boundaries; MVP event contract; escalation and deferred integrations excluded |
 | 1.5 | 2026-09-02 | Product Team | Complete RISK domain functional requirements (RISK-FR-001 – RISK-FR-013); ALERT/DASH producer contracts preserved; MVP events RiskCalculated and HighRiskDetected; external TransactionReceived ingest; deferred wallet/alert/device consumes excluded |
+| 1.6 | 2026-09-02 | Product Team | Complete INVEST domain functional requirements (INVEST-FR-001 – INVEST-FR-010); FDS v1.0 MVP baseline; approved Phase 3 inventory; no MVP AI assist; FI-BR-003 and V2 integrations deferred |
 
 ---
 
@@ -423,9 +424,9 @@ RISK-FR-003 Calculate Transaction Risk Score
 
 Investigation Management
 
-INVEST-FR-001 Create Investigation
-INVEST-FR-002 Assign Investigation
-INVEST-FR-003 Close Investigation
+INVEST-FR-001 Manage Investigation Case Lifecycle
+INVEST-FR-002 Assign Investigation Case
+INVEST-FR-003 Collect And Organize Evidence
 ```
 
 ### Domain Prefix Catalog
@@ -692,8 +693,18 @@ CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, and RISK domain requirements are list
 | RISK-FR-011 | Record Risk Management Audit Outcomes | RI-BR-001, RI-BR-003 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 | RISK-FR-012 | Restrict Risk Data And Configuration Access To Authorized Actors | RI-BR-001, RI-BR-002, RI-BR-003 | Security | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 | RISK-FR-013 | Provide Risk Analysis Assistance | RI-BR-001, RI-BR-003 | Functional | Medium | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| INVEST-FR-001 | Manage Investigation Case Lifecycle | FI-BR-001 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| INVEST-FR-002 | Assign Investigation Case | FI-BR-001 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| INVEST-FR-003 | Collect And Organize Evidence | FI-BR-002 | Functional | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| INVEST-FR-004 | Maintain Investigation Notes | FI-BR-001 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| INVEST-FR-005 | Maintain Investigation Timeline | FI-BR-001 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| INVEST-FR-006 | Retrieve And Discover Investigations | FI-BR-001 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| INVEST-FR-007 | Enforce Investigation Event Publication Contract | FI-BR-001, FI-BR-002 | Integration | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| INVEST-FR-008 | Consume Upstream Alert And Risk Context Events | FI-BR-001 | Integration | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| INVEST-FR-009 | Record Investigation Audit Outcomes | FI-BR-001, FI-BR-002 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| INVEST-FR-010 | Restrict Investigation Data Access To Authorized Actors | FI-BR-001, FI-BR-002 | Security | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 
-CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, and RISK domain requirements are included above. Additional domains will be appended as they are authored.
+CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, and INVEST domain requirements are included above. Additional domains will be appended as they are authored.
 
 As Functional Requirements are authored for subsequent domains, each row shall be updated to maintain end-to-end traceability.
 
@@ -23378,3 +23389,1977 @@ No RISK-FR-014 is defined.
 RISK does not own operational alert priority, alert lifecycle, investigation cases, sanctions workflow, dashboard presentation, wallet profiles, authorization role definitions, or autonomous enforcement. AI agents in RISK are assistive only and are not a mandatory scoring dependency; humans decide.
 
 MVP RISK publishes only `RiskCalculated` and `HighRiskDetected`. MVP RISK consumes only external `TransactionReceived`. `RiskUpdated`, `RiskExplanationGenerated`, `AlertCreated` consumption, wallet-event consumption, and `DeviceSignalReceived` consumption are not part of this baseline.
+
+# Chapter — INVEST Domain Requirements
+
+> Domain reference: [Functional Domain Specification — INVEST](FunctionalDomainSpecification.md#domain--invest-investigation-management)
+>
+> Related Business Requirements: `FI-BR-001`, `FI-BR-002` (MVP); `FI-BR-003` (Version 2)
+> Related Business Objectives: `BO-001`, `BO-004`, `BO-005`
+> Depends on: `CORE`, `AUTH`, `AUTHZ`, `USER`, `ORG` (contextual — tenant/organization scope; lifecycle owned by ORG), `ALERT`, `RISK`, `AI` (assistive integration only — agent orchestration owned by AI Platform)
+
+This chapter defines the Functional Requirements for the INVEST (Investigation Management) domain.
+
+INVEST owns investigation cases, evidence, assignments, notes, timeline events, and investigation workflow authority. ALERT owns operational alert records, lifecycle, and operational alert priority. RISK owns risk scoring, rules, and risk-derived priority signals. COMP owns sanctions and compliance workflows. DASH owns workspace and dashboard presentation. AI Platform owns AI agent lifecycle and orchestration. AUTH authenticates; AUTHZ authorizes; ORG provides contextual tenant scope. CORE owns shared platform primitives including audit context.
+
+INVEST-FR-001 – INVEST-FR-010 are the approved INVEST requirements for the current draft baseline. Collaboration Expansion (FI-BR-003), AI Summary, Escalation Workflows, `InvestigationEscalated`, `AIRecommendationGenerated` consumption, `WalletProfileUpdated` consumption, Ticketing Systems, Notification Service, Investigation Playbooks, Cross-Case Link Analysis, and Automated Evidence Packaging for Audit remain deferred. No INVEST-FR-011 is defined.
+
+For BO-005, MVP INVEST contributes through investigator assignments and investigation workflow coordination only. Full cross-functional collaboration belongs to FI-BR-003 in Version 2.
+
+## INVEST Domain Requirement Index
+
+### Feature-covering requirements
+
+| ID | Title | Priority | Release | FDS Feature Coverage |
+|----|-------|----------|---------|----------------------|
+| INVEST-FR-001 | Manage Investigation Case Lifecycle | Critical | MVP | Case Management |
+| INVEST-FR-002 | Assign Investigation Case | Critical | MVP | Assignments |
+| INVEST-FR-003 | Collect And Organize Evidence | Critical | MVP | Evidence Collection (includes attached artifacts) |
+| INVEST-FR-004 | Maintain Investigation Notes | High | MVP | Notes |
+| INVEST-FR-005 | Maintain Investigation Timeline | High | MVP | Investigation Timeline |
+| INVEST-FR-006 | Retrieve And Discover Investigations | High | MVP | Case Management (discovery/access) |
+
+### Supporting INVEST Requirements
+
+These requirements are **not** named baseline FDS INVEST features. They are supporting / cross-domain integrity requirements.
+
+| ID | Title | Priority | Release | Classification |
+|----|-------|----------|---------|----------------|
+| INVEST-FR-007 | Enforce Investigation Event Publication Contract | High | MVP | Supporting — FDS event contract integrity |
+| INVEST-FR-008 | Consume Upstream Alert And Risk Context Events | High | MVP | Supporting — consumer integrity |
+| INVEST-FR-009 | Record Investigation Audit Outcomes | High | MVP | Supporting — audit integrity |
+| INVEST-FR-010 | Restrict Investigation Data Access To Authorized Actors | Critical | MVP | Supporting — AUTHZ boundary integrity |
+
+## 1. Case Management
+
+# INVEST-FR-001 — Manage Investigation Case Lifecycle
+
+## Summary
+
+The system shall manage investigation case creation, update, and closure.
+
+---
+
+## Description
+
+The system shall enable authorized actors to create, update, and close investigation cases within permitted organization scope, including manual case creation and alert-context-driven initiation where applicable, without owning operational alert lifecycle, risk scoring, compliance workflows, dashboard presentation, or AI agent orchestration.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Investigation Platform Team
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted alert-context-driven initiation)
+
+---
+
+## Business Requirement Reference
+
+FI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-005 (partial — lifecycle and workflow coordination; full collaboration deferred to FI-BR-003 Version 2)
+
+---
+
+## FDS Domain Reference
+
+INVEST — Investigation Management (Case Management)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions.
+- The actor is authorized for the requested case lifecycle action (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+- Permitted upstream alert context may be available through INVEST-FR-008 when alert-context-driven initiation applies.
+
+---
+
+## Trigger
+
+An authorized user requests investigation case creation, update, or closure; or a permitted alert-context-driven initiation outcome occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives a case lifecycle request or permitted alert-context-driven initiation input.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (INVEST-FR-010).
+3. The system validates required case lifecycle inputs.
+4. The system creates, updates, or closes the investigation case as authorized.
+5. The system records the outcome for audit handling (INVEST-FR-009).
+6. Eligible creation outcomes publish `CaseCreated` through INVEST-FR-007.
+7. Eligible update outcomes publish `CaseUpdated` through INVEST-FR-007.
+8. Eligible closure outcomes publish `CaseClosed` through INVEST-FR-007.
+
+---
+
+## Alternative Flow
+
+If alert context from `AlertCreated` is available and policy permits alert-context-driven initiation:
+- The system may create an investigation case using permitted alert context without transferring alert ownership from ALERT to INVEST.
+
+If the request is update-only without closure:
+- The system updates authorized case attributes and publishes `CaseUpdated` when applicable (INVEST-FR-007).
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The lifecycle action is denied (AUTHZ).
+
+If required inputs are missing or invalid:
+- The system rejects the lifecycle action.
+
+If the action would exceed authorized organization scope:
+- The system denies the action (ORG contextual scope via INVEST-FR-010).
+
+---
+
+## Postconditions
+
+- An investigation case is created, updated, or closed as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- INVEST owns investigation cases and investigation workflow.
+- ALERT owns operational alert records and alert lifecycle; INVEST does not create or own alerts.
+- RISK owns risk scoring and risk-derived priority signals; INVEST does not score risk.
+- Alert association or context consumption does not transfer alert ownership to INVEST.
+- Case lifecycle outcomes publish through INVEST-FR-007; this requirement does not invent additional MVP publish events.
+- `CaseUpdated` supports frozen DASH-FR-011 downstream consumption.
+
+---
+
+## Validation Rules
+
+- Case lifecycle requests shall identify the case or permitted initiation context sufficiently for authorized processing.
+
+---
+
+## Acceptance Criteria
+
+- Authorized users can create, update, and close investigation cases.
+- Manual case creation is supported.
+- Alert-context-driven initiation is supported where applicable without owning alert lifecycle.
+- Unauthorized or out-of-scope lifecycle actions are denied.
+- Eligible outcomes publish `CaseCreated`, `CaseUpdated`, and `CaseClosed` through INVEST-FR-007.
+- Case lifecycle actions do not create alerts, score risk, or orchestrate AI agents.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); ALERT (contextual); INVEST-FR-007; INVEST-FR-008; INVEST-FR-009; INVEST-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS INVEST domain.
+
+---
+
+## Related Events
+
+Publishes `CaseCreated`, `CaseUpdated`, and `CaseClosed` through INVEST-FR-007.
+
+Consumes permitted upstream context via INVEST-FR-008 when alert-context-driven initiation applies.
+
+---
+
+## Related AI Agents
+
+N/A — INVEST does not own or orchestrate AI agents. AI Platform owns agent lifecycle and orchestration.
+
+---
+
+## Related UI Screens
+
+Investigation-management-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Primary FI-BR-001 lifecycle requirement. Distinct from alert lifecycle (ALERT) and investigation assignment (INVEST-FR-002).
+
+
+## 2. Assignments
+
+# INVEST-FR-002 — Assign Investigation Case
+
+## Summary
+
+The system shall assign and reassign investigation cases to authorized investigators.
+
+---
+
+## Description
+
+The system shall enable authorized actors to assign or reassign investigation case ownership to authorized investigators, distinct from ALERT alert assignment, without owning alert lifecycle or AI agent orchestration.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Investigation Platform Team
+
+---
+
+## Actor
+
+Authenticated User
+
+---
+
+## Business Requirement Reference
+
+FI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-005 (partial — assignment-based workflow coordination; full collaboration deferred to FI-BR-003 Version 2)
+
+---
+
+## FDS Domain Reference
+
+INVEST — Investigation Management (Assignments)
+
+---
+
+## Preconditions
+
+- An investigation case exists.
+- The actor is authenticated (AUTH).
+- The actor is authorized to assign or reassign the case (AUTHZ).
+- A permitted investigator identity exists (USER).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+An authorized actor requests assignment or reassignment of an investigation case.
+
+---
+
+## Normal Flow
+
+1. The system receives an assignment or reassignment request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (INVEST-FR-010).
+3. The system validates the target investigator and case state.
+4. The system updates investigation case assignment.
+5. The system records the outcome for audit handling (INVEST-FR-009).
+6. Eligible assignment outcomes publish `CaseAssigned` through INVEST-FR-007.
+7. Relevant assignment changes may also result in `CaseUpdated` through INVEST-FR-007 where applicable.
+
+---
+
+## Alternative Flow
+
+If reassignment replaces an existing assignee:
+- The system updates assignment history according to policy without modifying alert assignment owned by ALERT.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The assignment action is denied (AUTHZ).
+
+If the target investigator is invalid or unavailable within scope:
+- The system rejects the assignment.
+
+---
+
+## Postconditions
+
+- Investigation case assignment is updated as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- INVEST owns investigation case assignment records.
+- ALERT owns alert assignment; investigation case assignment is distinct from ALERT alert assignment (ALERT-FR-004).
+- Assignment outcomes publish `CaseAssigned` through INVEST-FR-007.
+- Assignment does not create operational alerts or investigation cases by itself.
+
+---
+
+## Validation Rules
+
+- Assignment requests shall identify the investigation case and target investigator.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can assign and reassign investigation cases to authorized investigators.
+- Unauthorized assignment attempts are denied.
+- Eligible outcomes publish `CaseAssigned` through INVEST-FR-007.
+- Investigation assignment remains distinct from alert assignment.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER; ORG (contextual); INVEST-FR-001; INVEST-FR-007; INVEST-FR-009; INVEST-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS INVEST domain.
+
+---
+
+## Related Events
+
+Publishes `CaseAssigned` through INVEST-FR-007. May also result in `CaseUpdated` through INVEST-FR-007.
+
+---
+
+## Related AI Agents
+
+N/A — INVEST does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Investigation-management-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Partial BO-005 MVP contribution through assignment workflow only.
+
+
+## 3. Evidence Collection
+
+# INVEST-FR-003 — Collect And Organize Evidence
+
+## Summary
+
+The system shall collect, attach, organize, review, and maintain investigation evidence.
+
+---
+
+## Description
+
+The system shall enable authorized actors to collect, attach, organize, review, and maintain investigation evidence, including attached artifacts as part of evidence records, using Document Storage only as a permitted external integration boundary when applicable, without owning risk scores, operational alerts, compliance records, or AI agent orchestration.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Investigation Platform Team
+
+---
+
+## Actor
+
+Authenticated User
+
+---
+
+## Business Requirement Reference
+
+FI-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-004
+
+---
+
+## FDS Domain Reference
+
+INVEST — Investigation Management (Evidence Collection; includes attached artifacts/evidence attachments)
+
+---
+
+## Preconditions
+
+- An investigation case exists or is being created under authorized lifecycle rules (INVEST-FR-001).
+- The actor is authenticated (AUTH).
+- The actor is authorized for evidence actions on the case (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+An authorized actor collects, attaches, organizes, reviews, or maintains investigation evidence for an authorized case.
+
+---
+
+## Normal Flow
+
+1. The system receives an evidence management request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (INVEST-FR-010).
+3. The system validates evidence inputs and case association.
+4. The system stores or updates authorized investigation evidence, including attached artifacts where applicable.
+5. The system records the outcome for audit handling (INVEST-FR-009).
+6. Eligible attach outcomes publish `EvidenceAttached` through INVEST-FR-007.
+7. Relevant evidence changes may also result in `CaseUpdated` through INVEST-FR-007 where applicable.
+
+---
+
+## Alternative Flow
+
+If Document Storage is used as an external integration boundary:
+- The system references or stores permitted artifact metadata and associations without prescribing storage technology.
+
+If evidence is organized or reviewed without new attachment:
+- The system updates authorized evidence organization or review state without inventing separate Attachments MVP capability.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The evidence action is denied (AUTHZ).
+
+If required evidence inputs are missing or invalid:
+- The system rejects the action.
+
+---
+
+## Postconditions
+
+- Investigation evidence is collected, attached, organized, reviewed, or maintained as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- INVEST owns investigation evidence records, including attached artifacts as part of evidence records.
+- Attachments are not a separate MVP capability or FR; they are handled within Evidence Collection.
+- Evidence actions do not create alerts, score risk, or own compliance records.
+- Eligible attach outcomes publish `EvidenceAttached` through INVEST-FR-007.
+
+---
+
+## Validation Rules
+
+- Evidence actions shall identify the investigation case and evidence content sufficiently for authorized processing.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can collect, attach, organize, review, and maintain investigation evidence.
+- Attached artifacts are handled as part of evidence records without a separate Attachments FR.
+- Unauthorized evidence actions are denied.
+- Eligible attach outcomes publish `EvidenceAttached` through INVEST-FR-007.
+- Evidence management does not own risk, alert, or compliance data.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); INVEST-FR-001; INVEST-FR-007; INVEST-FR-009; INVEST-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS INVEST domain.
+
+---
+
+## Related Events
+
+Publishes `EvidenceAttached` through INVEST-FR-007. May also result in `CaseUpdated` through INVEST-FR-007.
+
+---
+
+## Related AI Agents
+
+N/A — INVEST does not own or orchestrate AI agents. AI Platform owns Evidence Retrieval Agent capabilities.
+
+---
+
+## Related UI Screens
+
+Investigation-management-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Primary FI-BR-002 requirement. Document Storage is an external integration boundary only.
+
+
+## 4. Notes
+
+# INVEST-FR-004 — Maintain Investigation Notes
+
+## Summary
+
+The system shall create, update, and maintain investigation notes and findings.
+
+---
+
+## Description
+
+The system shall enable authorized actors to create, update, and maintain investigation notes and findings distinct from timeline events, without duplicating CORE audit infrastructure or owning AI-generated recommendation records.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Investigation Platform Team
+
+---
+
+## Actor
+
+Authenticated User
+
+---
+
+## Business Requirement Reference
+
+FI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-004
+
+---
+
+## FDS Domain Reference
+
+INVEST — Investigation Management (Notes)
+
+---
+
+## Preconditions
+
+- An investigation case exists.
+- The actor is authenticated (AUTH).
+- The actor is authorized for note actions on the case (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+An authorized actor creates, updates, or maintains an investigation note or finding.
+
+---
+
+## Normal Flow
+
+1. The system receives a note management request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (INVEST-FR-010).
+3. The system validates note content and case association.
+4. The system creates or updates the authorized investigation note.
+5. The system records the outcome for audit handling (INVEST-FR-009).
+6. Relevant note changes may result in `CaseUpdated` through INVEST-FR-007 where applicable.
+
+---
+
+## Alternative Flow
+
+If the note update is informational only:
+- The system updates note content without modifying case closure or alert lifecycle.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The note action is denied (AUTHZ).
+
+If required note inputs are missing or invalid:
+- The system rejects the action.
+
+---
+
+## Postconditions
+
+- Investigation notes are created or updated as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- Notes are authored investigation findings distinct from timeline events (INVEST-FR-005).
+- Note changes may publish `CaseUpdated` through INVEST-FR-007; no separate MVP note publish event exists.
+- INVEST does not own AI recommendation records (AI Platform).
+
+---
+
+## Validation Rules
+
+- Note requests shall identify the investigation case and note content sufficiently for authorized processing.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can create, update, and maintain investigation notes.
+- Notes remain distinct from timeline events.
+- Unauthorized note actions are denied.
+- Relevant changes may result in `CaseUpdated` through INVEST-FR-007.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); INVEST-FR-001; INVEST-FR-007; INVEST-FR-009; INVEST-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS INVEST domain.
+
+---
+
+## Related Events
+
+May result in `CaseUpdated` through INVEST-FR-007.
+
+---
+
+## Related AI Agents
+
+N/A — INVEST does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Investigation-management-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Distinct from timeline maintenance (INVEST-FR-005).
+
+
+## 5. Investigation Timeline
+
+# INVEST-FR-005 — Maintain Investigation Timeline
+
+## Summary
+
+The system shall maintain chronological investigation timeline history.
+
+---
+
+## Description
+
+The system shall maintain chronological investigation timeline events for authorized cases, distinct from authored investigation notes, using shared audit capabilities where applicable without redefining CORE audit infrastructure ownership.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Investigation Platform Team
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted system-generated timeline entries)
+
+---
+
+## Business Requirement Reference
+
+FI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-004
+
+---
+
+## FDS Domain Reference
+
+INVEST — Investigation Management (Investigation Timeline)
+
+---
+
+## Preconditions
+
+- An investigation case exists.
+- The actor is authenticated (AUTH) for user-initiated timeline entries where applicable.
+- The actor is authorized for timeline maintenance where user action is required (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+An authorized actor or permitted system workflow adds or maintains a timeline entry for an investigation case.
+
+---
+
+## Normal Flow
+
+1. The system receives a timeline maintenance request or identifies a permitted timeline-worthy outcome.
+2. The system authorizes user-initiated actions (AUTHZ) within permitted organization scope (INVEST-FR-010).
+3. The system validates timeline entry content and case association.
+4. The system records the chronological timeline entry.
+5. The system records the outcome for audit handling (INVEST-FR-009).
+6. Relevant timeline changes may result in `CaseUpdated` through INVEST-FR-007 where applicable.
+
+---
+
+## Alternative Flow
+
+If a timeline entry is generated from an authorized INVEST-owned outcome such as assignment or evidence attachment:
+- The system records the timeline entry without duplicating the originating requirement's primary behavior.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized for a user-initiated timeline action:
+- The timeline action is denied (AUTHZ).
+
+If required timeline inputs are missing or invalid:
+- The system rejects the action.
+
+---
+
+## Postconditions
+
+- Timeline entries are recorded as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- Timeline events represent chronological investigation history distinct from authored notes (INVEST-FR-004).
+- Timeline maintenance uses shared audit capabilities without owning CORE audit infrastructure.
+- Relevant timeline changes may publish `CaseUpdated` through INVEST-FR-007; no separate MVP timeline publish event exists.
+
+---
+
+## Validation Rules
+
+- Timeline entries shall identify the investigation case and event sufficiently for authorized recording.
+
+---
+
+## Acceptance Criteria
+
+- Authorized timeline history is maintained for investigation cases.
+- Timeline entries remain distinct from investigation notes.
+- Unauthorized timeline actions are denied.
+- Relevant changes may result in `CaseUpdated` through INVEST-FR-007.
+- CORE audit infrastructure ownership is not redefined.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); INVEST-FR-001; INVEST-FR-007; INVEST-FR-009; INVEST-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS INVEST domain.
+
+---
+
+## Related Events
+
+May result in `CaseUpdated` through INVEST-FR-007.
+
+---
+
+## Related AI Agents
+
+N/A — INVEST does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Investigation-management-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Distinct from notes (INVEST-FR-004) and from CORE audit framework ownership.
+
+
+## 6. Investigation Discovery
+
+# INVEST-FR-006 — Retrieve And Discover Investigations
+
+## Summary
+
+The system shall enable authorized retrieval and discovery of investigation cases.
+
+---
+
+## Description
+
+The system shall enable authorized actors to retrieve, search, filter, and discover investigation cases and permitted investigation work queues within organization scope, without prescribing presentation technology, search infrastructure, or dashboard ownership.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Investigation Platform Team
+
+---
+
+## Actor
+
+Authenticated User
+
+---
+
+## Business Requirement Reference
+
+FI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001
+
+---
+
+## FDS Domain Reference
+
+INVEST — Investigation Management (Case Management — discovery/access)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH).
+- The actor is authorized for investigation retrieval or discovery (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+
+---
+
+## Trigger
+
+An authorized actor requests retrieval, search, filtering, or discovery of investigation cases.
+
+---
+
+## Normal Flow
+
+1. The system receives a retrieval or discovery request.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (INVEST-FR-010).
+3. The system applies authorized search, filter, or queue criteria.
+4. The system returns only authorized investigation cases or work-queue views.
+5. The system records access outcomes for audit handling when applicable (INVEST-FR-009).
+
+---
+
+## Alternative Flow
+
+If the request targets a single known investigation case:
+- The system returns the authorized case record when permitted.
+
+If no cases match authorized criteria:
+- The system returns an empty authorized result set.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The system denies retrieval or discovery (AUTHZ).
+
+If the request would expose unauthorized investigation data:
+- The system does not return protected content.
+
+---
+
+## Postconditions
+
+- Authorized investigation cases or discovery results are returned; or access is denied.
+
+---
+
+## Business Rules
+
+- Retrieval and discovery remain INVEST-owned investigation data access behaviors.
+- DASH owns workspace and dashboard presentation; this requirement does not redefine DASH presentation behavior.
+- No MVP publish event is required solely for discovery.
+- Assignment-based visibility constraints apply where required by policy (INVEST-FR-010).
+
+---
+
+## Validation Rules
+
+- Discovery requests shall include sufficient scope and criteria to apply authorization boundaries.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can retrieve and discover investigation cases within permitted scope.
+- Unauthorized actors cannot access protected investigation data.
+- Discovery does not require a separate MVP publish event.
+- The requirement remains implementation-independent.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; ORG (contextual); INVEST-FR-009; INVEST-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS INVEST domain.
+
+---
+
+## Related Events
+
+None required solely for discovery.
+
+---
+
+## Related AI Agents
+
+N/A — INVEST does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Investigation-management-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Discovery/access facet of Case Management.
+
+## 7. Supporting Investigation Management Requirements
+
+# INVEST-FR-007 — Enforce Investigation Event Publication Contract
+
+## Summary
+
+The system shall publish investigation events according to the FDS MVP contract.
+
+---
+
+## Description
+
+The system shall publish `CaseCreated`, `CaseUpdated`, `CaseClosed`, `CaseAssigned`, and `EvidenceAttached` when the corresponding INVEST outcomes occur, consistent with the FDS INVEST domain MVP event contract.
+
+---
+
+## Type
+
+Integration
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Investigation Platform Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+FI-BR-001, FI-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-004
+
+---
+
+## FDS Domain Reference
+
+INVEST — Investigation Management (Supporting — FDS event contract integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- An INVEST outcome eligible for publication has occurred.
+- Shared platform event publication capabilities are available (CORE).
+
+---
+
+## Trigger
+
+A case creation, update, closure, assignment, or evidence-attachment outcome occurs that is defined for MVP publication.
+
+---
+
+## Normal Flow
+
+1. The system identifies the INVEST outcome eligible for publication.
+2. The system composes the event payload according to the FDS MVP contract.
+3. The system publishes the appropriate MVP event.
+4. Dependent consumers such as DASH, COMP, AI, WALLET, and SEC may react without INVEST redefining their behavior.
+
+---
+
+## Alternative Flow
+
+If publication is deferred by policy for a non-critical outcome:
+- The system follows platform event policy without omitting required baseline MVP events.
+
+---
+
+## Exception Flow
+
+If publication fails:
+- The system handles failure according to platform policy without bypassing authorization or exposing unauthorized investigation content.
+
+---
+
+## Postconditions
+
+- Required MVP INVEST events are published or failure is handled per platform policy.
+
+---
+
+## Business Rules
+
+- MVP publish set is limited to `CaseCreated`, `CaseUpdated`, `CaseClosed`, `CaseAssigned`, and `EvidenceAttached`.
+- `InvestigationEscalated` is Version 2 and is not part of this baseline.
+- No additional MVP INVEST publish events are introduced.
+- `CaseUpdated` supports frozen DASH-FR-011 downstream consumption.
+- Feature requirements reference this contract rather than redefining event semantics independently.
+
+---
+
+## Validation Rules
+
+- Published events shall include required contract fields for the outcome type.
+
+---
+
+## Acceptance Criteria
+
+- `CaseCreated` is published for eligible case creation (INVEST-FR-001).
+- `CaseUpdated` is published for eligible case updates (INVEST-FR-001, INVEST-FR-003, INVEST-FR-004, INVEST-FR-005).
+- `CaseClosed` is published for eligible case closure (INVEST-FR-001).
+- `CaseAssigned` is published for eligible assignment (INVEST-FR-002).
+- `EvidenceAttached` is published for eligible evidence attachment (INVEST-FR-003).
+- MVP publish set is not expanded beyond the FDS contract.
+
+---
+
+## Dependencies
+
+CORE; INVEST-FR-001; INVEST-FR-002; INVEST-FR-003; INVEST-FR-004; INVEST-FR-005
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS INVEST domain.
+
+---
+
+## Related Events
+
+Publishes `CaseCreated`, `CaseUpdated`, `CaseClosed`, `CaseAssigned`, and `EvidenceAttached` per FDS MVP contract only.
+
+---
+
+## Related AI Agents
+
+N/A — INVEST does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Investigation-management-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting requirement. FDS event contract integrity. Single publication authority for MVP INVEST events.
+
+
+# INVEST-FR-008 — Consume Upstream Alert And Risk Context Events
+
+## Summary
+
+The system shall consume upstream alert and risk context events without inventing ALERT or RISK behavior.
+
+---
+
+## Description
+
+The system shall consume `AlertCreated` and `RiskCalculated` to obtain permitted upstream alert and risk context for investigation workflows, without redefining ALERT alert lifecycle, RISK scoring, or risk-derived priority signal calculation.
+
+---
+
+## Type
+
+Integration
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Investigation Platform Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+FI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-001
+
+---
+
+## FDS Domain Reference
+
+INVEST — Investigation Management (Supporting — consumer integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- Investigation management capabilities exist or are active.
+- An upstream event in the FDS MVP consume set is received.
+
+---
+
+## Trigger
+
+The system receives `AlertCreated` or `RiskCalculated`.
+
+---
+
+## Normal Flow
+
+1. The system receives an upstream event in the MVP consume set.
+2. The system identifies affected investigation cases or eligible investigation-context outcomes.
+3. The system applies permitted alert or risk context to authorized investigation workflows only.
+4. The system applies authorization boundaries after processing (INVEST-FR-010).
+5. Permitted alert-context-driven initiation or contextual enrichment may invoke INVEST-FR-001 without transferring alert or risk ownership to INVEST.
+
+---
+
+## Alternative Flow
+
+If upstream context is temporarily unavailable:
+- The system retains or indicates stale investigation context according to policy without inventing ALERT or RISK outcomes.
+
+---
+
+## Exception Flow
+
+If processing would expose unauthorized investigation content:
+- The system does not expose protected information as part of context consumption handling.
+
+---
+
+## Postconditions
+
+- Authorized investigation workflows reflect permitted upstream alert or risk context when applicable.
+
+---
+
+## Business Rules
+
+- MVP consume set is limited to `AlertCreated` and `RiskCalculated`.
+- INVEST does not consume `HighRiskDetected` in MVP.
+- `AIRecommendationGenerated` and `WalletProfileUpdated` are Version 2/deferred and are not part of this baseline.
+- ALERT owns alert lifecycle; INVEST consumes alert context only.
+- RISK owns risk scoring and risk-derived priority signals; INVEST consumes risk context only.
+- INVEST does not perform risk scoring or create operational alerts.
+
+---
+
+## Validation Rules
+
+- Consumption handling shall remain within authorized organization and case scope.
+
+---
+
+## Acceptance Criteria
+
+- Each FDS MVP consume event can trigger permitted investigation context behavior.
+- Processing does not invent ALERT lifecycle behavior or RISK scoring behavior.
+- `HighRiskDetected`, `AIRecommendationGenerated`, and `WalletProfileUpdated` are not consumed in this baseline.
+
+---
+
+## Dependencies
+
+CORE; AUTHZ; ALERT (upstream publisher); RISK (upstream publisher); INVEST-FR-001; INVEST-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS INVEST domain.
+
+---
+
+## Related Events
+
+Consumes `AlertCreated` and `RiskCalculated` per FDS MVP contract only.
+
+---
+
+## Related AI Agents
+
+N/A — INVEST does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Investigation-management-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting consumer integrity requirement. Upstream alert context may support INVEST-FR-001 initiation paths.
+
+
+# INVEST-FR-009 — Record Investigation Audit Outcomes
+
+## Summary
+
+The system shall record audit outcomes for relevant investigation management actions.
+
+---
+
+## Description
+
+The system shall record audit outcomes for relevant investigation management actions, including case lifecycle, assignment, evidence, notes, timeline, retrieval, and access-denial actions, using shared CORE audit-context capabilities where applicable. This requirement does not invent a separate platform audit framework.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Investigation Platform Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+FI-BR-001, FI-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-004
+
+---
+
+## FDS Domain Reference
+
+INVEST — Investigation Management (Supporting — audit integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- A relevant INVEST management action or access attempt occurs.
+- Shared audit context capabilities are available where applicable (CORE).
+
+---
+
+## Trigger
+
+An investigation management action completes, fails authorization, or is otherwise auditable under INVEST policy.
+
+---
+
+## Normal Flow
+
+1. The system identifies the investigation management action or outcome to audit.
+2. The system composes an audit record using shared platform audit capabilities.
+3. The system stores or forwards the audit outcome according to platform policy.
+4. Audit records remain investigation-management outcomes and do not substitute for alert records, risk assessments, or compliance records owned by other domains.
+
+---
+
+## Alternative Flow
+
+If audit context is partially available:
+- The system records the best available authorized audit outcome according to platform policy.
+
+---
+
+## Exception Flow
+
+If audit recording fails:
+- The system handles failure according to platform policy without bypassing authorization or exposing unauthorized investigation content.
+
+---
+
+## Postconditions
+
+- Relevant investigation management audit outcomes are recorded or failure is handled per platform policy.
+
+---
+
+## Business Rules
+
+- INVEST uses shared CORE audit capabilities; INVEST does not own platform audit infrastructure.
+- Audit records shall not become a substitute for operational alert records (ALERT) or risk assessments (RISK).
+- Full investigation audit trail is required by FDS NFR expectations.
+
+---
+
+## Validation Rules
+
+- Audit records shall identify the investigation action, actor or system source, and outcome sufficiently for authorized audit review.
+
+---
+
+## Acceptance Criteria
+
+- Relevant investigation management actions produce audit outcomes.
+- Audit recording does not redefine CORE audit infrastructure ownership.
+- Unauthorized access attempts relevant to INVEST can be audited when policy requires.
+
+---
+
+## Dependencies
+
+CORE; INVEST-FR-001; INVEST-FR-002; INVEST-FR-003; INVEST-FR-004; INVEST-FR-005; INVEST-FR-006; INVEST-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS INVEST domain.
+
+---
+
+## Related Events
+
+None required as a baseline INVEST publish event.
+
+---
+
+## Related AI Agents
+
+N/A — INVEST does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Investigation-management-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Primary FI-BR-002 audit support together with investigation lifecycle auditing for FI-BR-001.
+
+
+# INVEST-FR-010 — Restrict Investigation Data Access To Authorized Actors
+
+## Summary
+
+The system shall restrict investigation data access to authorized actors.
+
+---
+
+## Description
+
+The system shall prevent unauthorized actors from retrieving, discovering, creating, updating, assigning, closing, or otherwise accessing investigation cases, evidence, notes, assignments, and timeline data outside permitted authorization, assignment, and organization scope.
+
+---
+
+## Type
+
+Security
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+MVP
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Investigation Platform Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+FI-BR-001, FI-BR-002
+
+---
+
+## Business Objective Reference
+
+BO-001, BO-004
+
+---
+
+## FDS Domain Reference
+
+INVEST — Investigation Management (Supporting — AUTHZ boundary integrity. Not a named baseline FDS feature.)
+
+---
+
+## Preconditions
+
+- An investigation-data access or management request is attempted.
+
+---
+
+## Trigger
+
+The system prepares to return investigation information or perform an investigation management action.
+
+---
+
+## Normal Flow
+
+1. The system identifies the investigation access or management action requested.
+2. The system determines whether the actor is permitted (AUTHZ).
+3. The system applies assignment-based and role-based restrictions where required by FDS policy.
+4. The system allows the action only when authorized within permitted organization scope (ORG contextual).
+5. The system denies unauthorized access or actions.
+
+---
+
+## Alternative Flow
+
+If only part of a requested investigation-data set is authorized:
+- The system returns or acts on authorized items only when policy allows partial visibility.
+
+---
+
+## Exception Flow
+
+If authorization cannot be determined for protected investigation content:
+- The system denies access or action.
+
+If unauthorized access is attempted:
+- The system does not return protected foreign investigation information.
+
+---
+
+## Postconditions
+
+- Investigation information and actions remain within authorized boundaries.
+
+---
+
+## Business Rules
+
+- This requirement states what must be prevented: unauthorized investigation-data access and actions.
+- This requirement does not prescribe infrastructure, caching technology, or authorization implementation mechanisms.
+- AUTHZ evaluates whether the actor may perform the action; INVEST enforces authorized outcomes.
+- AUTHZ owns role and permission definitions; INVEST does not define roles.
+- AUTH owns authentication; INVEST does not authenticate actors.
+- ORG provides tenant context; INVEST does not manage organization lifecycle.
+- Investigation access shall be restricted by role and assignment where required by FDS.
+
+---
+
+## Validation Rules
+
+- Investigation requests shall be scoped sufficiently to apply authorization and assignment boundaries.
+
+---
+
+## Acceptance Criteria
+
+- Unauthorized actors cannot access or modify protected investigation cases, evidence, notes, assignments, or timeline data.
+- Denied attempts do not return protected unauthorized investigation data.
+- Assignment-based restrictions are enforced where required.
+- The requirement remains implementation-independent.
+
+---
+
+## Dependencies
+
+AUTH; AUTHZ; ORG (contextual); INVEST-FR-001; INVEST-FR-002; INVEST-FR-003; INVEST-FR-004; INVEST-FR-005; INVEST-FR-006
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS INVEST domain.
+
+---
+
+## Related Events
+
+None required as a baseline INVEST publish event.
+
+---
+
+## Related AI Agents
+
+N/A — INVEST does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Investigation-management-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting security integrity requirement. Specifies prevention outcomes only — not authorization architecture.
+
+
+## Intentionally Deferred INVEST Scope
+
+| FDS Item | Disposition |
+|----------|-------------|
+| Collaboration Expansion / FI-BR-003 | Version 2 — not authored in INVEST-FR-001–010 |
+| AI Summary | Version 2 — not authored in INVEST-FR-001–010 |
+| Escalation Workflows / `InvestigationEscalated` | Version 2 — not authored in INVEST-FR-001–010 |
+| Escalation Records workflow behavior | Version 2 — data ownership noted in FDS; no MVP workflow FR |
+| `AIRecommendationGenerated` consumption | Version 2 — not authored in INVEST-FR-001–010 |
+| `WalletProfileUpdated` consumption | Version 2 — not authored in INVEST-FR-001–010 |
+| Ticketing Systems | Version 2 — not authored in INVEST-FR-001–010 |
+| Notification Service / notification delivery | Version 2 — not authored in INVEST-FR-001–010 |
+| Investigation Playbooks | Version 3 — not authored in INVEST-FR-001–010 |
+| Cross-Case Link Analysis | Version 3 — not authored in INVEST-FR-001–010 |
+| Automated Evidence Packaging for Audit | Future — not authored in INVEST-FR-001–010 |
+| Separate Attachments capability | Not in baseline — handled within INVEST-FR-003 |
+| INVEST-owned Investigation Agent | Not in baseline — AI Platform owns agent orchestration |
+| INVEST-owned Evidence Retrieval Agent | Not in baseline — AI Platform owns agent orchestration |
+| INVEST-owned Report Generation Agent | Not in baseline — AI Platform owns agent orchestration |
+| INVEST-owned Summarization Agent | Not in baseline — AI Platform owns agent orchestration |
+| `HighRiskDetected` consumption | Excluded — not an MVP INVEST consume event |
+| Operational alert lifecycle / alert generation | Remains ALERT-owned — not an INVEST requirement |
+| Risk scoring / risk rules / risk-derived priority signals | Remains RISK-owned — not an INVEST requirement |
+| Sanctions/compliance workflows | Remains COMP-owned — not an INVEST requirement |
+| Dashboard/workspace presentation | Remains DASH-owned — not an INVEST requirement |
+| Autonomous AI enforcement / autonomous investigation disposition | Never in INVEST — humans decide |
+
+## INVEST Baseline Status
+
+INVEST-FR-001 – INVEST-FR-010 are the approved INVEST requirements for the current draft baseline.
+
+No INVEST-FR-011 is defined.
+
+INVEST does not own operational alert lifecycle, risk scoring, sanctions/compliance workflows, dashboard presentation, wallet profiles, AI agent orchestration, authorization role definitions, organization lifecycle, or notification infrastructure. AI Platform owns AI agents and orchestration; AI Summary and AI-assisted investigation capabilities remain Version 2 INVEST scope.
+
+MVP INVEST publishes only `CaseCreated`, `CaseUpdated`, `CaseClosed`, `CaseAssigned`, and `EvidenceAttached`. MVP INVEST consumes only `AlertCreated` and `RiskCalculated`. `InvestigationEscalated`, `HighRiskDetected`, `AIRecommendationGenerated`, and `WalletProfileUpdated` are not part of this baseline.
