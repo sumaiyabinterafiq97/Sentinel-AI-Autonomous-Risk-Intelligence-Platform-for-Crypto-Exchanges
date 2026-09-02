@@ -6,7 +6,7 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Requirements Specification |
-| Version | 1.6 (Draft) |
+| Version | 1.7 (Draft) |
 | Status | Draft |
 | Owner | Product & Engineering Team |
 | Last Updated | 2026-09-02 |
@@ -33,6 +33,7 @@
 | 1.4 | 2026-09-02 | Product Team | Complete ALERT domain functional requirements (ALERT-FR-001 – ALERT-FR-012); RISK/INVEST boundaries; MVP event contract; escalation and deferred integrations excluded |
 | 1.5 | 2026-09-02 | Product Team | Complete RISK domain functional requirements (RISK-FR-001 – RISK-FR-013); ALERT/DASH producer contracts preserved; MVP events RiskCalculated and HighRiskDetected; external TransactionReceived ingest; deferred wallet/alert/device consumes excluded |
 | 1.6 | 2026-09-02 | Product Team | Complete INVEST domain functional requirements (INVEST-FR-001 – INVEST-FR-010); FDS v1.0 MVP baseline; approved Phase 3 inventory; no MVP AI assist; FI-BR-003 and V2 integrations deferred |
+| 1.7 | 2026-09-02 | Product Team | Complete WALLET domain functional requirements (WALLET-FR-001 – WALLET-FR-010); FDS v1.1 Version 2 baseline; no platform MVP hooks; exact 3 publish / 3 consume event contract; AI agent ownership excluded; V3 capabilities deferred |
 
 ---
 
@@ -566,7 +567,7 @@ These placeholders allow the document to grow without restructuring domain numbe
 
 ## Requirement Traceability Matrix
 
-CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, and RISK domain requirements are listed below. Additional domains will be appended as they are authored.
+CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, and WALLET domain requirements are listed below. Additional domains will be appended as they are authored.
 
 | FR ID | Title | BR Reference | Type | Priority | Release | API | DB | UI | Tests | Status |
 |-------|-------|--------------|------|----------|---------|-----|----|----|-------|--------|
@@ -703,8 +704,18 @@ CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, and RISK domain requirements are list
 | INVEST-FR-008 | Consume Upstream Alert And Risk Context Events | FI-BR-001 | Integration | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 | INVEST-FR-009 | Record Investigation Audit Outcomes | FI-BR-001, FI-BR-002 | Functional | High | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 | INVEST-FR-010 | Restrict Investigation Data Access To Authorized Actors | FI-BR-001, FI-BR-002 | Security | Critical | MVP | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| WALLET-FR-001 | Manage Wallet Profiles | WI-BR-001 | Functional | Critical | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| WALLET-FR-002 | Assess Address Reputation | WI-BR-001 | Functional | Critical | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| WALLET-FR-003 | Present Wallet Transaction History | WI-BR-001 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| WALLET-FR-004 | Expose Wallet Relationship Graph | WI-BR-001 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| WALLET-FR-005 | Retrieve And Discover Wallet Intelligence | WI-BR-001 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| WALLET-FR-006 | Ingest External Transaction Inputs For Wallet Enrichment | WI-BR-001 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| WALLET-FR-007 | Enforce Wallet Event Publication Contract | WI-BR-001 | Integration | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| WALLET-FR-008 | Consume Upstream Investigation And Risk Context Events | WI-BR-001 | Integration | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| WALLET-FR-009 | Record Wallet Intelligence Audit Outcomes | WI-BR-001 | Functional | High | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
+| WALLET-FR-010 | Restrict Wallet Data Access To Authorized Actors | WI-BR-001 | Security | Critical | Version 2 | To be defined in System Architecture | To be defined in Database Design | To be defined in UI documentation | To be defined in Testing Strategy | Draft |
 
-CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, and INVEST domain requirements are included above. Additional domains will be appended as they are authored.
+CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, and WALLET domain requirements are included above. Additional domains will be appended as they are authored.
 
 As Functional Requirements are authored for subsequent domains, each row shall be updated to maintain end-to-end traceability.
 
@@ -25363,3 +25374,1950 @@ No INVEST-FR-011 is defined.
 INVEST does not own operational alert lifecycle, risk scoring, sanctions/compliance workflows, dashboard presentation, wallet profiles, AI agent orchestration, authorization role definitions, organization lifecycle, or notification infrastructure. AI Platform owns AI agents and orchestration; AI Summary and AI-assisted investigation capabilities remain Version 2 INVEST scope.
 
 MVP INVEST publishes only `CaseCreated`, `CaseUpdated`, `CaseClosed`, `CaseAssigned`, and `EvidenceAttached`. MVP INVEST consumes only `AlertCreated` and `RiskCalculated`. `InvestigationEscalated`, `HighRiskDetected`, `AIRecommendationGenerated`, and `WalletProfileUpdated` are not part of this baseline.
+
+# Chapter — WALLET Domain Requirements
+
+> Domain reference: [Functional Domain Specification — WALLET](FunctionalDomainSpecification.md#domain--wallet-wallet-intelligence)
+>
+> Related Business Requirements: `WI-BR-001`
+> Related Business Objectives: `BO-002`
+> Depends on: `CORE`, `AUTH`, `AUTHZ`, `USER` (contextual — authenticated actor identity; lifecycle owned by USER), `ORG` (contextual — tenant/organization scope; lifecycle owned by ORG), `RISK`, `INVEST`
+
+This chapter defines the Functional Requirements for the WALLET (Wallet Intelligence) domain.
+
+WALLET is a **Version 2 domain only**. It has **no platform-MVP capabilities, foundational hooks, or platform-MVP Functional Requirements**. All requirements in this chapter are Version 2 release scope.
+
+WALLET owns wallet profiles, address reputation records, wallet activity timelines, and wallet relationship graphs. RISK owns risk scoring. INVEST owns investigation case lifecycle. ALERT owns operational alert lifecycle. DASH owns workspace and dashboard presentation. COMP owns compliance records and workflows. REPORT owns reporting definitions and presentation. AI Platform owns AI agent lifecycle and orchestration. AUTH authenticates; AUTHZ authorizes; USER provides authenticated actor identity; ORG provides contextual tenant scope. CORE owns shared platform primitives including audit context.
+
+Legacy BRS provisional references `FR-071 – FR-079` are superseded by `WALLET-FR-001` through `WALLET-FR-010` in this chapter. The BRS has not been migrated in this phase.
+
+WALLET-FR-001 – WALLET-FR-010 are the approved WALLET requirements for the current Version 2 draft baseline. Multi-Chain Expansion, Cluster Detection, Cross-Exchange Correlation, platform MVP hooks, and AI agent ownership remain deferred or excluded. No WALLET-FR-011 is defined.
+
+## WALLET Domain Requirement Index
+
+### Feature-covering requirements
+
+| ID | Title | Priority | Release | FDS Feature Coverage |
+|----|-------|----------|---------|----------------------|
+| WALLET-FR-001 | Manage Wallet Profiles | Critical | Version 2 | Wallet Profiles |
+| WALLET-FR-002 | Assess Address Reputation | Critical | Version 2 | Address Reputation |
+| WALLET-FR-003 | Present Wallet Transaction History | High | Version 2 | Transaction History |
+| WALLET-FR-004 | Expose Wallet Relationship Graph | High | Version 2 | Relationship Graph |
+| WALLET-FR-005 | Retrieve And Discover Wallet Intelligence | High | Version 2 | Cross-feature discovery/access |
+
+### Supporting WALLET Requirements
+
+These requirements are **not** named baseline FDS WALLET features. They are supporting / cross-domain integrity requirements.
+
+| ID | Title | Priority | Release | Classification |
+|----|-------|----------|---------|----------------|
+| WALLET-FR-006 | Ingest External Transaction Inputs For Wallet Enrichment | High | Version 2 | Supporting — external ingestion boundary |
+| WALLET-FR-007 | Enforce Wallet Event Publication Contract | High | Version 2 | Supporting — FDS event contract integrity |
+| WALLET-FR-008 | Consume Upstream Investigation And Risk Context Events | High | Version 2 | Supporting — consumer integrity |
+| WALLET-FR-009 | Record Wallet Intelligence Audit Outcomes | High | Version 2 | Supporting — audit integrity |
+| WALLET-FR-010 | Restrict Wallet Data Access To Authorized Actors | Critical | Version 2 | Supporting — AUTHZ boundary integrity |
+
+## 1. Wallet Profiles
+
+# WALLET-FR-001 — Manage Wallet Profiles
+
+## Summary
+
+The system shall create, maintain, retrieve, and enrich wallet profiles within WALLET ownership.
+
+---
+
+## Description
+
+The system shall enable authorized actors to create, maintain, retrieve, and enrich wallet profiles and address identity records within permitted organization scope, using permitted external transaction inputs where applicable (WALLET-FR-006) and publishing eligible profile changes through WALLET-FR-007, without owning risk scoring, investigation case lifecycle, operational alert lifecycle, dashboard presentation, compliance workflows, or AI agent orchestration.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Financial Crime Intelligence Team
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted enrichment outcomes)
+
+---
+
+## Business Requirement Reference
+
+WI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002
+
+---
+
+## FDS Domain Reference
+
+WALLET — Wallet Intelligence (Wallet Profiles)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- The actor is authenticated (AUTH) for user-initiated actions.
+- The actor is authorized for the requested wallet profile action (AUTHZ).
+- Organization scope is available where required (ORG contextual; lifecycle owned by ORG).
+- Permitted external transaction inputs may be available through WALLET-FR-006 when enrichment applies.
+
+---
+
+## Trigger
+
+An authorized user requests wallet profile creation, maintenance, retrieval, or enrichment; or a permitted enrichment outcome occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives a wallet profile request or permitted enrichment input.
+2. The system authorizes the request (AUTHZ) within permitted organization scope (WALLET-FR-010).
+3. The system validates required wallet profile inputs.
+4. The system creates, updates, retrieves, or enriches the wallet profile as authorized.
+5. The system records the outcome for audit handling (WALLET-FR-009).
+6. Eligible profile changes publish `WalletProfileUpdated` through WALLET-FR-007.
+
+---
+
+## Alternative Flow
+
+If permitted external transaction inputs are available (WALLET-FR-006):
+- The system may enrich wallet profile data using authorized external inputs without claiming ownership of the upstream transaction source.
+
+If the request is retrieval-only:
+- The system returns authorized wallet profile data without modification.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The profile action is denied (AUTHZ).
+
+If required inputs are missing or invalid:
+- The system rejects the profile action.
+
+If the action would exceed authorized organization scope:
+- The system denies the action (ORG contextual scope via WALLET-FR-010).
+
+---
+
+## Postconditions
+
+- A wallet profile is created, updated, retrieved, or enriched as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- WALLET owns wallet profiles and wallet intelligence lifecycle for profile data.
+- RISK owns risk scoring; WALLET does not score risk.
+- INVEST owns investigation cases; WALLET does not create or manage cases.
+- ALERT owns operational alerts; WALLET does not create or manage alerts.
+- Profile changes publish through WALLET-FR-007; this requirement does not invent additional Version 2 publish events.
+- External transaction inputs are consumed through WALLET-FR-006 and are not published by WALLET.
+
+---
+
+## Validation Rules
+
+- Wallet profile requests shall identify the profile, address, or permitted enrichment context sufficiently for authorized processing.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can create, maintain, retrieve, and enrich wallet profiles.
+- Unauthorized or out-of-scope profile actions are denied.
+- Eligible profile changes publish `WalletProfileUpdated` through WALLET-FR-007.
+- Profile management does not score risk, create alerts, create cases, or orchestrate AI agents.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); WALLET-FR-006; WALLET-FR-007; WALLET-FR-009; WALLET-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS WALLET domain.
+
+---
+
+## Related Events
+
+Publishes `WalletProfileUpdated` through WALLET-FR-007 when eligible.
+
+May use permitted external inputs via WALLET-FR-006.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; WALLET does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Wallet-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Primary WI-BR-001 wallet profile capability.
+
+
+## 2. Address Reputation
+
+# WALLET-FR-002 — Assess Address Reputation
+
+## Summary
+
+The system shall maintain and assess address reputation within WALLET ownership.
+
+---
+
+## Description
+
+The system shall maintain and assess address reputation information and reputation signals for authorized wallet intelligence workflows, publishing eligible reputation changes through WALLET-FR-007, without redefining enterprise risk scoring owned by RISK or operational alert lifecycle owned by ALERT.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Financial Crime Intelligence Team
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted reputation assessment outcomes)
+
+---
+
+## Business Requirement Reference
+
+WI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002
+
+---
+
+## FDS Domain Reference
+
+WALLET — Wallet Intelligence (Address Reputation)
+
+---
+
+## Preconditions
+
+- Wallet profile capabilities exist or are active (WALLET-FR-001).
+- The actor is authenticated and authorized where user-initiated actions apply.
+- Organization scope is available where required (ORG contextual).
+
+---
+
+## Trigger
+
+An authorized actor requests reputation assessment or maintenance; or a permitted reputation assessment outcome occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives a reputation assessment or maintenance request.
+2. The system authorizes the request within permitted organization scope (WALLET-FR-010).
+3. The system evaluates or updates address reputation information using authorized inputs and owned reputation records.
+4. The system records the outcome for audit handling (WALLET-FR-009).
+5. Eligible reputation changes publish `AddressReputationChanged` through WALLET-FR-007.
+
+---
+
+## Alternative Flow
+
+If reputation signals are partially available:
+- The system retains or presents the best available authorized reputation outcome according to policy without inventing RISK scores or ALERT outcomes.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- The reputation action is denied.
+
+If required inputs are missing or invalid:
+- The system rejects the reputation action.
+
+---
+
+## Postconditions
+
+- Address reputation is assessed or maintained as authorized; or the action is denied or rejected.
+
+---
+
+## Business Rules
+
+- WALLET owns address reputation records and reputation assessment within wallet intelligence scope.
+- RISK owns enterprise risk scoring; WALLET reputation assessment does not substitute for RISK scoring.
+- Reputation changes publish through WALLET-FR-007; no additional Version 2 publish events are introduced.
+- Downstream consumption of `AddressReputationChanged` is not a frozen Version 2 cross-domain obligation.
+
+---
+
+## Validation Rules
+
+- Reputation requests shall identify the address or wallet context sufficiently for authorized processing.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can assess and maintain address reputation within WALLET ownership.
+- Eligible reputation changes publish `AddressReputationChanged` through WALLET-FR-007.
+- Reputation assessment does not score risk, create alerts, or orchestrate AI agents.
+- Unauthorized reputation actions are denied.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); WALLET-FR-001; WALLET-FR-007; WALLET-FR-009; WALLET-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS WALLET domain.
+
+---
+
+## Related Events
+
+Publishes `AddressReputationChanged` through WALLET-FR-007 when eligible.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; WALLET does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Wallet-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Primary WI-BR-001 address reputation capability.
+
+
+## 3. Transaction History
+
+# WALLET-FR-003 — Present Wallet Transaction History
+
+## Summary
+
+The system shall present wallet transaction history associated with wallet intelligence.
+
+---
+
+## Description
+
+The system shall maintain and present authorized wallet transaction history data associated with wallet intelligence within WALLET ownership, using permitted external transaction inputs where applicable (WALLET-FR-006), without creating DASH presentation requirements or owning upstream transaction sources.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Financial Crime Intelligence Team
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted history enrichment outcomes)
+
+---
+
+## Business Requirement Reference
+
+WI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002
+
+---
+
+## FDS Domain Reference
+
+WALLET — Wallet Intelligence (Transaction History)
+
+---
+
+## Preconditions
+
+- Wallet profile capabilities exist or are active (WALLET-FR-001).
+- The actor is authenticated and authorized where user-initiated actions apply.
+- Permitted external transaction inputs may be available through WALLET-FR-006.
+
+---
+
+## Trigger
+
+An authorized actor requests wallet transaction history; or a permitted history enrichment outcome occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives a transaction history request or permitted enrichment input.
+2. The system authorizes the request within permitted organization scope (WALLET-FR-010).
+3. The system retrieves or assembles authorized wallet transaction history from owned wallet activity timelines and permitted external inputs.
+4. The system presents authorized transaction history data to the requesting consumer within WALLET domain boundaries.
+5. The system records relevant access or enrichment outcomes for audit handling (WALLET-FR-009) when policy requires.
+
+---
+
+## Alternative Flow
+
+If history spans multiple authorized wallet contexts:
+- The system returns only authorized history segments within permitted organization scope.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- History access is denied.
+
+If no authorized history exists:
+- The system returns an empty or not-found outcome according to policy without inventing transaction data.
+
+---
+
+## Postconditions
+
+- Authorized wallet transaction history is presented; or access is denied or empty according to policy.
+
+---
+
+## Business Rules
+
+- WALLET owns wallet activity timelines and domain transaction history presentation data.
+- DASH owns workspace and dashboard presentation; this requirement does not define dashboard UI behavior.
+- Transaction-oriented inputs originate through the external ingestion boundary (WALLET-FR-006).
+- WALLET does not publish `TransactionReceived`.
+
+---
+
+## Validation Rules
+
+- History requests shall identify the wallet, address, or permitted context sufficiently for authorized retrieval.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can retrieve wallet transaction history within WALLET ownership.
+- History presentation remains within WALLET domain data boundaries and does not define DASH UI requirements.
+- Unauthorized history access is denied.
+- External transaction inputs are consumed through WALLET-FR-006 and are not published by WALLET.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); WALLET-FR-001; WALLET-FR-006; WALLET-FR-009; WALLET-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS WALLET domain.
+
+---
+
+## Related Events
+
+None required as a direct publish event from this requirement. Eligible profile or enrichment outcomes may publish through WALLET-FR-007 when applicable.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; WALLET does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Wallet-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Primary WI-BR-001 transaction history capability.
+
+
+## 4. Relationship Graph
+
+# WALLET-FR-004 — Expose Wallet Relationship Graph
+
+## Summary
+
+The system shall expose wallet relationship graph data for authorized wallet intelligence workflows.
+
+---
+
+## Description
+
+The system shall maintain and expose authorized relationship graph data linking wallets, addresses, transactions, and relevant wallet intelligence within WALLET ownership, describing graph capability functionally without prescribing implementation technology, and without authoring Version 3 cluster detection or cross-exchange correlation behavior.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Financial Crime Intelligence Team
+
+---
+
+## Actor
+
+Authenticated User; System (for permitted graph maintenance outcomes)
+
+---
+
+## Business Requirement Reference
+
+WI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002
+
+---
+
+## FDS Domain Reference
+
+WALLET — Wallet Intelligence (Relationship Graph)
+
+---
+
+## Preconditions
+
+- Wallet profile capabilities exist or are active (WALLET-FR-001).
+- The actor is authenticated and authorized where user-initiated actions apply.
+- Permitted wallet intelligence inputs may be available from profiles, history, reputation, or external ingestion boundaries.
+
+---
+
+## Trigger
+
+An authorized actor requests wallet relationship graph data; or a permitted relationship graph maintenance outcome occurs according to policy.
+
+---
+
+## Normal Flow
+
+1. The system receives a relationship graph request or permitted maintenance input.
+2. The system authorizes the request within permitted organization scope (WALLET-FR-010).
+3. The system retrieves or assembles authorized relationship graph data from owned wallet relationship graphs and permitted sources.
+4. The system exposes authorized graph relationships to the requesting consumer within WALLET domain boundaries.
+5. The system records relevant access or maintenance outcomes for audit handling (WALLET-FR-009) when policy requires.
+
+---
+
+## Alternative Flow
+
+If relationship edges are uncertain or policy-limited:
+- The system presents authorized relationship data with applicable confidence or scope limits without inventing unsupported links.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- Graph access is denied.
+
+If requested relationships exceed authorized scope:
+- The system denies or filters the response according to policy.
+
+---
+
+## Postconditions
+
+- Authorized relationship graph data is exposed; or access is denied or filtered according to policy.
+
+---
+
+## Business Rules
+
+- WALLET owns wallet relationship graphs within wallet intelligence scope.
+- Cluster Detection and Cross-Exchange Correlation are Version 3/Future and are not part of this requirement.
+- DASH owns workspace presentation; this requirement does not define dashboard UI behavior.
+- Graph exposure remains functional and technology-neutral.
+
+---
+
+## Validation Rules
+
+- Graph requests shall identify the wallet, address, or permitted investigation context sufficiently for authorized retrieval.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can retrieve wallet relationship graph data within WALLET ownership.
+- Graph exposure does not implement Version 3 cluster detection or cross-exchange correlation.
+- Unauthorized graph access is denied.
+- Graph capability is described functionally without technology or vendor prescriptions.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); WALLET-FR-001; WALLET-FR-009; WALLET-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS WALLET domain.
+
+---
+
+## Related Events
+
+None required as a direct publish event from this requirement unless eligible outcomes publish through WALLET-FR-007 when applicable.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; WALLET does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Wallet-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Primary WI-BR-001 relationship graph capability.
+
+
+## 5. Wallet Intelligence Discovery
+
+# WALLET-FR-005 — Retrieve And Discover Wallet Intelligence
+
+## Summary
+
+The system shall retrieve and discover wallet intelligence across the WALLET domain.
+
+---
+
+## Description
+
+The system shall enable authorized actors to search, retrieve, and discover wallet intelligence across profiles, reputation, transaction history, and relationship graph information within permitted organization scope, respecting AUTH, AUTHZ, and ORG contextual boundaries, without creating DASH presentation requirements.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Financial Crime Intelligence Team
+
+---
+
+## Actor
+
+Authenticated User
+
+---
+
+## Business Requirement Reference
+
+WI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002
+
+---
+
+## FDS Domain Reference
+
+WALLET — Wallet Intelligence (Cross-feature discovery/access)
+
+---
+
+## Preconditions
+
+- WALLET feature capabilities exist or are active (WALLET-FR-001 through WALLET-FR-004).
+- The actor is authenticated (AUTH) and authorized (AUTHZ).
+- Organization scope is available where required (ORG contextual).
+
+---
+
+## Trigger
+
+An authorized actor submits a wallet intelligence retrieval or discovery request.
+
+---
+
+## Normal Flow
+
+1. The system receives a retrieval or discovery request.
+2. The system authorizes the request within permitted organization scope (WALLET-FR-010).
+3. The system searches or retrieves applicable wallet intelligence across authorized profiles, reputation, history, and relationship data.
+4. The system returns authorized results within WALLET domain boundaries.
+5. The system records relevant access outcomes for audit handling (WALLET-FR-009) when policy requires.
+
+---
+
+## Alternative Flow
+
+If the request matches multiple authorized wallet intelligence records:
+- The system returns the authorized result set according to policy.
+
+If upstream investigation or risk context is relevant (WALLET-FR-008):
+- The system may use permitted context to refine authorized discovery without redefining INVEST or RISK behavior.
+
+---
+
+## Exception Flow
+
+If the actor is not authorized:
+- Discovery or retrieval is denied.
+
+If no authorized matches exist:
+- The system returns an empty outcome according to policy.
+
+---
+
+## Postconditions
+
+- Authorized wallet intelligence is retrieved or discovered; or access is denied or empty according to policy.
+
+---
+
+## Business Rules
+
+- Discovery spans WALLET-owned data only; WALLET does not discover ALERT, RISK scoring, INVEST case lifecycle, or COMP compliance records on behalf of those domains.
+- DASH owns workspace presentation; this requirement does not define dashboard widgets or workspace UI.
+- Retrieval respects tenant and authorization boundaries.
+
+---
+
+## Validation Rules
+
+- Discovery requests shall include sufficient authorized search or retrieval criteria.
+
+---
+
+## Acceptance Criteria
+
+- Authorized actors can retrieve and discover wallet intelligence across WALLET-owned capabilities.
+- Unauthorized discovery or retrieval is denied.
+- Results remain within WALLET domain ownership boundaries.
+- DASH presentation requirements are not introduced by this requirement.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual); WALLET-FR-001; WALLET-FR-002; WALLET-FR-003; WALLET-FR-004; WALLET-FR-008; WALLET-FR-009; WALLET-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS WALLET domain.
+
+---
+
+## Related Events
+
+None required as a direct publish event from this requirement.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; WALLET does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Wallet-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Cross-feature discovery/access requirement analogous to RISK-FR-008 and INVEST-FR-006.
+
+
+## 6. Supporting Wallet Intelligence Requirements
+
+# WALLET-FR-006 — Ingest External Transaction Inputs For Wallet Enrichment
+
+## Summary
+
+The system shall ingest external TransactionReceived inputs for wallet enrichment.
+
+---
+
+## Description
+
+The system shall ingest permitted external transaction-oriented inputs classified as `TransactionReceived` from the Exchange Event Stream and make them available for wallet intelligence enrichment (WALLET-FR-001, WALLET-FR-003). `TransactionReceived` is an external integration input. It is not published by WALLET and is not published by any Sentinel domain in the current FDS baseline. WALLET does not invent an upstream domain publisher for this input.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Financial Crime Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+WI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002
+
+---
+
+## FDS Domain Reference
+
+WALLET — Wallet Intelligence (external Exchange Event Stream ingestion; TransactionReceived)
+
+---
+
+## Preconditions
+
+- Shared platform services are available (CORE).
+- Permitted external Exchange Event Stream inputs are available.
+- Organization scope is available where required (ORG contextual).
+
+---
+
+## Trigger
+
+The system receives a permitted external `TransactionReceived` input from the Exchange Event Stream boundary.
+
+---
+
+## Normal Flow
+
+1. The system receives a permitted external `TransactionReceived` input.
+2. The system validates the input as an authorized external transaction-oriented ingestion.
+3. The system accepts the input for wallet intelligence enrichment (WALLET-FR-001, WALLET-FR-003).
+4. Subsequent eligible enrichment outcomes may publish WALLET-owned events through WALLET-FR-007 when applicable.
+
+---
+
+## Alternative Flow
+
+If optional attributes are present on the external input:
+- The system retains available authorized attributes for enrichment without inventing missing wallet intelligence facts.
+
+---
+
+## Exception Flow
+
+If the input is missing, invalid, or not a permitted `TransactionReceived` ingestion:
+- The system rejects the input.
+
+If ingestion would exceed authorized organization scope:
+- The system denies ingestion (WALLET-FR-010).
+
+---
+
+## Postconditions
+
+- The external input is accepted for enrichment, or ingestion is rejected or denied.
+
+---
+
+## Business Rules
+
+- `TransactionReceived` is an external Exchange Event Stream input only.
+- WALLET does not publish `TransactionReceived`.
+- This requirement does not consume `HighRiskDetected`, `AlertCreated`, `CaseUpdated`, `CaseClosed`, `EvidenceAttached`, or `AIRecommendationGenerated`.
+- Ingestion does not create operational alerts (ALERT), investigation cases (INVEST), or risk scores (RISK).
+
+---
+
+## Validation Rules
+
+- External inputs shall be identifiable as permitted `TransactionReceived` ingestions within authorized scope.
+
+---
+
+## Acceptance Criteria
+
+- Permitted `TransactionReceived` inputs can be ingested for wallet enrichment.
+- `TransactionReceived` is not published by WALLET.
+- Ingestion does not create alerts, cases, or risk scores.
+- Unauthorized ingestion is denied.
+
+---
+
+## Dependencies
+
+CORE; AUTHZ; ORG (contextual); WALLET-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS WALLET domain.
+
+---
+
+## Related Events
+
+Consumes external `TransactionReceived` only. Does not publish `TransactionReceived`. Subsequent eligible outcomes may publish through WALLET-FR-007.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; WALLET does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Wallet-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+External ingestion boundary analogous to RISK-FR-009. `TransactionReceived` handling for upstream event consumption is coordinated through WALLET-FR-008.
+
+
+# WALLET-FR-007 — Enforce Wallet Event Publication Contract
+
+## Summary
+
+The system shall publish wallet intelligence events according to the FDS Version 2 contract.
+
+---
+
+## Description
+
+The system shall publish `WalletProfileUpdated`, `AddressReputationChanged`, and `SuspiciousWalletDetected` when the corresponding WALLET-owned outcomes occur, consistent with the FDS WALLET domain Version 2 event contract. This requirement is the single publication authority for Version 2 WALLET publish events.
+
+---
+
+## Type
+
+Integration
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Financial Crime Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+WI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002
+
+---
+
+## FDS Domain Reference
+
+WALLET — Wallet Intelligence (Supporting — FDS event contract integrity)
+
+---
+
+## Preconditions
+
+- A WALLET-owned outcome eligible for publication has occurred.
+- Shared platform event capabilities are available where applicable (CORE).
+
+---
+
+## Trigger
+
+An eligible WALLET profile, reputation, or suspicious-wallet detection outcome occurs.
+
+---
+
+## Normal Flow
+
+1. The system identifies the WALLET outcome eligible for publication.
+2. The system composes the event payload according to the FDS Version 2 contract.
+3. The system publishes the appropriate Version 2 WALLET event.
+4. Dependent consumers may react according to their own domain contracts without WALLET redefining their behavior.
+
+---
+
+## Alternative Flow
+
+If publication is deferred by policy for a non-critical outcome:
+- The system follows platform event policy without omitting required baseline Version 2 events when policy requires publication.
+
+---
+
+## Exception Flow
+
+If publication fails:
+- The system handles failure according to platform policy without bypassing authorization or exposing unauthorized wallet intelligence content.
+
+---
+
+## Postconditions
+
+- Required Version 2 WALLET events are published or failure is handled per platform policy.
+
+---
+
+## Business Rules
+
+- Version 2 publish set is limited to `WalletProfileUpdated`, `AddressReputationChanged`, and `SuspiciousWalletDetected`.
+- No additional Version 2 WALLET publish events are introduced.
+- `WalletProfileUpdated` may be consumed by INVEST when INVEST Version 2 wallet-context integration is authored; frozen INVEST MVP baseline defers this consumption and is not modified by this requirement.
+- No frozen downstream consumer is currently established for `AddressReputationChanged` or `SuspiciousWalletDetected`; downstream routing remains a future contract decision.
+- Feature requirements reference this contract rather than redefining event semantics independently.
+- WALLET does not publish `TransactionReceived`, alert events, risk events, investigation case events, or AI recommendation events.
+
+---
+
+## Validation Rules
+
+- Published events shall include required contract fields for the outcome type.
+
+---
+
+## Acceptance Criteria
+
+- `WalletProfileUpdated` is published for eligible profile changes (WALLET-FR-001).
+- `AddressReputationChanged` is published for eligible reputation changes (WALLET-FR-002).
+- `SuspiciousWalletDetected` is published for eligible suspicious-wallet detection outcomes.
+- Version 2 publish set is not expanded beyond the FDS contract.
+- Downstream owners are not invented for `AddressReputationChanged` or `SuspiciousWalletDetected`.
+
+---
+
+## Dependencies
+
+CORE; WALLET-FR-001; WALLET-FR-002
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS WALLET domain.
+
+---
+
+## Related Events
+
+Publishes `WalletProfileUpdated`, `AddressReputationChanged`, and `SuspiciousWalletDetected` per FDS Version 2 contract only.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; WALLET does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Wallet-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting requirement. FDS event contract integrity. Single publication authority for Version 2 WALLET events.
+
+
+# WALLET-FR-008 — Consume Upstream Investigation And Risk Context Events
+
+## Summary
+
+The system shall consume upstream investigation and risk context events without inventing INVEST or RISK behavior.
+
+---
+
+## Description
+
+The system shall consume external `TransactionReceived`, INVEST-owned `CaseCreated`, and RISK-owned `RiskCalculated` according to the FDS WALLET Version 2 consume contract, without redefining INVEST investigation lifecycle, RISK scoring, or risk-derived priority signal calculation. External `TransactionReceived` ingestion is handled through WALLET-FR-006.
+
+---
+
+## Type
+
+Integration
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Financial Crime Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+WI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002
+
+---
+
+## FDS Domain Reference
+
+WALLET — Wallet Intelligence (Supporting — consumer integrity)
+
+---
+
+## Preconditions
+
+- Wallet intelligence capabilities exist or are active.
+- An upstream input or event in the FDS Version 2 consume set is received.
+
+---
+
+## Trigger
+
+The system receives `TransactionReceived`, `CaseCreated`, or `RiskCalculated`.
+
+---
+
+## Normal Flow
+
+1. The system receives an upstream input or event in the Version 2 consume set.
+2. For external `TransactionReceived`, the system delegates ingestion handling to WALLET-FR-006.
+3. For `CaseCreated`, the system applies permitted investigation context for wallet enrichment only.
+4. For `RiskCalculated`, the system applies permitted risk context for wallet enrichment only.
+5. The system applies authorization boundaries after processing (WALLET-FR-010).
+6. Permitted contextual enrichment may invoke WALLET feature requirements without transferring case, risk, or alert ownership to WALLET.
+
+---
+
+## Alternative Flow
+
+If upstream context is temporarily unavailable:
+- The system retains or indicates stale wallet intelligence context according to policy without inventing INVEST or RISK outcomes.
+
+---
+
+## Exception Flow
+
+If processing would expose unauthorized wallet intelligence content:
+- The system does not expose protected information as part of context consumption handling.
+
+---
+
+## Postconditions
+
+- Authorized wallet intelligence workflows reflect permitted upstream context when applicable.
+
+---
+
+## Business Rules
+
+- Version 2 consume set is limited to external `TransactionReceived`, `CaseCreated`, and `RiskCalculated`.
+- WALLET does not consume `HighRiskDetected`, `AlertCreated`, `CaseUpdated`, `CaseClosed`, `EvidenceAttached`, `AIRecommendationGenerated`, or WALLET self-publication events in Version 2 baseline.
+- INVEST owns investigation cases; WALLET consumes `CaseCreated` for context only.
+- RISK owns risk scoring; WALLET consumes `RiskCalculated` for context only and does not score risk.
+- ALERT owns alert lifecycle; WALLET does not consume alert events in Version 2 baseline.
+- `TransactionReceived` is not published by WALLET.
+
+---
+
+## Validation Rules
+
+- Consumption handling shall remain within authorized organization and wallet intelligence scope.
+
+---
+
+## Acceptance Criteria
+
+- Each FDS Version 2 consume input/event can trigger permitted wallet intelligence context behavior.
+- Processing does not invent INVEST case lifecycle behavior or RISK scoring behavior.
+- `HighRiskDetected`, `AlertCreated`, `CaseUpdated`, `CaseClosed`, `EvidenceAttached`, and `AIRecommendationGenerated` are not consumed in this baseline.
+- External `TransactionReceived` is handled through WALLET-FR-006 and is not published by WALLET.
+
+---
+
+## Dependencies
+
+CORE; AUTHZ; RISK (upstream publisher for `RiskCalculated`); INVEST (upstream publisher for `CaseCreated`); WALLET-FR-006; WALLET-FR-001; WALLET-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS WALLET domain.
+
+---
+
+## Related Events
+
+Consumes external `TransactionReceived` (via WALLET-FR-006), `CaseCreated`, and `RiskCalculated` per FDS Version 2 contract only.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; WALLET does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Wallet-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting consumer integrity requirement. Single upstream consumption authority for Version 2 WALLET inputs/events.
+
+
+# WALLET-FR-009 — Record Wallet Intelligence Audit Outcomes
+
+## Summary
+
+The system shall record audit outcomes for relevant wallet intelligence actions.
+
+---
+
+## Description
+
+The system shall record audit outcomes for relevant wallet intelligence actions, including profile, reputation, history, relationship, retrieval, enrichment, access-denial, and event-publication-related outcomes, using shared CORE audit-context capabilities where applicable. This requirement does not invent a separate platform audit framework.
+
+---
+
+## Type
+
+Functional
+
+---
+
+## Priority
+
+High
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Financial Crime Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+WI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002
+
+---
+
+## FDS Domain Reference
+
+WALLET — Wallet Intelligence (Supporting — audit integrity)
+
+---
+
+## Preconditions
+
+- A relevant WALLET management action or access attempt occurs.
+- Shared audit context capabilities are available where applicable (CORE).
+
+---
+
+## Trigger
+
+A wallet intelligence action completes, fails authorization, or is otherwise auditable under WALLET policy.
+
+---
+
+## Normal Flow
+
+1. The system identifies the wallet intelligence action or outcome to audit.
+2. The system composes an audit record using shared platform audit capabilities.
+3. The system stores or forwards the audit outcome according to platform policy.
+4. Audit records remain wallet-intelligence outcomes and do not substitute for alert records, risk assessments, investigation cases, or compliance records owned by other domains.
+
+---
+
+## Alternative Flow
+
+If audit context is partially available:
+- The system records the best available authorized audit outcome according to platform policy.
+
+---
+
+## Exception Flow
+
+If audit recording fails:
+- The system handles failure according to platform policy without bypassing authorization or exposing unauthorized wallet intelligence content.
+
+---
+
+## Postconditions
+
+- Relevant wallet intelligence audit outcomes are recorded or failure is handled per platform policy.
+
+---
+
+## Business Rules
+
+- WALLET uses shared CORE audit capabilities; WALLET does not own platform audit infrastructure.
+- Audit records shall not become a substitute for operational alert records (ALERT), risk assessments (RISK), or investigation cases (INVEST).
+- Full wallet intelligence auditability is required by FDS NFR expectations.
+
+---
+
+## Validation Rules
+
+- Audit records shall identify the wallet intelligence action, actor or system source, and outcome sufficiently for authorized audit review.
+
+---
+
+## Acceptance Criteria
+
+- Relevant wallet intelligence actions produce audit outcomes.
+- Audit recording does not redefine CORE audit infrastructure ownership.
+- Unauthorized access attempts relevant to WALLET can be audited when policy requires.
+
+---
+
+## Dependencies
+
+CORE; WALLET-FR-001; WALLET-FR-002; WALLET-FR-003; WALLET-FR-004; WALLET-FR-005; WALLET-FR-006; WALLET-FR-007; WALLET-FR-010
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS WALLET domain.
+
+---
+
+## Related Events
+
+None required as a baseline WALLET publish event.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; WALLET does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Wallet-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Primary WI-BR-001 audit support for wallet intelligence actions.
+
+
+# WALLET-FR-010 — Restrict Wallet Data Access To Authorized Actors
+
+## Summary
+
+The system shall restrict wallet intelligence data access to authorized actors.
+
+---
+
+## Description
+
+The system shall prevent unauthorized actors from retrieving, discovering, creating, updating, enriching, or otherwise accessing wallet profiles, reputation records, transaction history, relationship graph data, and related wallet intelligence outcomes outside permitted authorization and organization scope.
+
+---
+
+## Type
+
+Security
+
+---
+
+## Priority
+
+Critical
+
+---
+
+## Release
+
+Version 2
+
+---
+
+## Status
+
+Draft
+
+---
+
+## Owner
+
+Financial Crime Intelligence Team
+
+---
+
+## Actor
+
+System
+
+---
+
+## Business Requirement Reference
+
+WI-BR-001
+
+---
+
+## Business Objective Reference
+
+BO-002
+
+---
+
+## FDS Domain Reference
+
+WALLET — Wallet Intelligence (Supporting — AUTHZ boundary integrity)
+
+---
+
+## Preconditions
+
+- A wallet intelligence access or management action is attempted.
+- Authentication and authorization services are available (AUTH, AUTHZ).
+
+---
+
+## Trigger
+
+Any wallet intelligence retrieval, discovery, enrichment, or management action is attempted.
+
+---
+
+## Normal Flow
+
+1. The system identifies the actor and requested wallet intelligence action.
+2. The system evaluates authentication context (AUTH) and authorization decisions (AUTHZ).
+3. The system applies permitted organization scope (ORG contextual).
+4. If authorized, the action proceeds within permitted scope.
+5. If not authorized, the action is denied and may be audited (WALLET-FR-009).
+
+---
+
+## Alternative Flow
+
+If organization scope limits the visible wallet intelligence set:
+- The system filters results to authorized tenant boundaries without exposing cross-tenant data.
+
+---
+
+## Exception Flow
+
+If authorization services are unavailable:
+- The system denies access according to platform fail-closed policy.
+
+---
+
+## Postconditions
+
+- Only authorized actors access wallet intelligence within permitted scope, or access is denied.
+
+---
+
+## Business Rules
+
+- AUTHZ owns authorization decisions; WALLET applies authorization outcomes and does not redefine AUTHZ.
+- USER provides authenticated actor identity; WALLET does not own user lifecycle.
+- ORG provides tenant context; WALLET does not own organization lifecycle.
+- Investigator-only wallet intelligence access is required by FDS security expectations.
+
+---
+
+## Validation Rules
+
+- Access decisions shall evaluate actor identity, role/permission outcomes, and organization scope before exposing wallet intelligence.
+
+---
+
+## Acceptance Criteria
+
+- Unauthorized wallet intelligence access is denied.
+- Authorized investigators and permitted roles can access wallet intelligence within scope.
+- WALLET does not create a separate authorization system.
+- Tenant isolation boundaries are enforced for wallet intelligence access.
+
+---
+
+## Dependencies
+
+CORE; AUTH; AUTHZ; USER (contextual); ORG (contextual)
+
+---
+
+## Related APIs
+
+To be defined in System Architecture / API Specification.
+
+---
+
+## Related Database Tables
+
+To be defined in Database Design. Data ownership is defined in the FDS WALLET domain.
+
+---
+
+## Related Events
+
+None required as a baseline WALLET publish event.
+
+---
+
+## Related AI Agents
+
+N/A — AI Platform owns and orchestrates agents; WALLET does not own or orchestrate AI agents.
+
+---
+
+## Related UI Screens
+
+Wallet-intelligence-related UI screens — to be defined in UI documentation.
+
+---
+
+## Test Cases
+
+To be defined in Testing Strategy / Test Plan.
+
+---
+
+## Notes
+
+Supporting AUTHZ boundary integrity requirement for all WALLET feature and supporting requirements.
+
+
+## Intentionally Deferred WALLET Scope
+
+| Capability | Release | Status |
+|------------|---------|--------|
+| Multi-Chain Expansion | V3/Future | Deferred — not authored in WALLET-FR-001–010 |
+| Cluster Detection | V3/Future | Deferred — not authored in WALLET-FR-001–010 |
+| Cross-Exchange Correlation | V3/Future | Deferred — not authored in WALLET-FR-001–010 |
+| Platform MVP hooks | MVP | None / Not applicable — no platform-MVP WALLET FRs |
+| AI agent ownership/orchestration | Platform AI | Not owned by WALLET — AI Platform owns agents |
+| Autonomous alert/case creation | Future / prohibited boundary | Not WALLET-owned — ALERT and INVEST remain owners |
+| INVEST `WalletProfileUpdated` consumption | INVEST Version 2 | Deferred in frozen INVEST MVP baseline — not a WALLET FR obligation |
+| Downstream routing for `AddressReputationChanged` | Future contract | Unspecified — not a frozen Version 2 cross-domain obligation |
+| Downstream routing for `SuspiciousWalletDetected` | Future contract | Unspecified — not a frozen Version 2 cross-domain obligation |
+| RISK wallet-event consumption | RISK Version 2+ | Deferred — remains RISK scope aligned with WALLET |
+| DASH wallet presentation widgets | DASH | Not WALLET-owned — DASH owns workspace presentation |
+| COMP compliance workflows | COMP | Not WALLET-owned |
+| REPORT report definitions | REPORT | Not WALLET-owned |
+| Legacy BRS refs `FR-071 – FR-079` | Legacy | Superseded by `WALLET-FR-001 – WALLET-FR-010`; BRS not migrated in this phase |
+
+## WALLET Baseline Status
+
+WALLET-FR-001 – WALLET-FR-010 are the approved WALLET requirements for the current Version 2 draft baseline.
+
+No WALLET-FR-011 is defined.
+
+The Version 2 WALLET baseline comprises exactly 4 feature FRs, 1 discovery FR, and 5 supporting FRs.
+
+Version 2 WALLET publishes exactly `WalletProfileUpdated`, `AddressReputationChanged`, and `SuspiciousWalletDetected`. Version 2 WALLET consumes exactly external `TransactionReceived`, INVEST-owned `CaseCreated`, and RISK-owned `RiskCalculated`. WALLET does not consume `HighRiskDetected`.
+
+WALLET does not own operational alert lifecycle, risk scoring, investigation case lifecycle, dashboard presentation, compliance records, user lifecycle, organization lifecycle, AI agent orchestration, or reporting definitions. AI Platform owns AI agents and orchestration.
+
+WALLET has no platform-MVP Functional Requirements. Multi-Chain Expansion, Cluster Detection, and Cross-Exchange Correlation remain Version 3/Future scope.
