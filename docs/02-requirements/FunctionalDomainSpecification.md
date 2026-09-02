@@ -6,7 +6,7 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Domain Specification |
-| Version | 1.0 (Draft) |
+| Version | 1.1 (Draft) |
 | Status | Draft |
 | Owner | Product & Engineering Team |
 | Last Updated | 2026-09-02 |
@@ -27,6 +27,7 @@
 | 0.8 | 2026-09-02 | Product Team | ALERT: MVP feature/roadmap/event alignment; RISK/INVEST/ORG boundaries; matrix reconciled; escalation and SEC/compliance inputs deferred; consumer sequencing rule |
 | 0.9 | 2026-09-02 | Product Team | RISK: MVP feature/roadmap/event alignment; ALERT/DASH producer boundaries; external TransactionReceived ingest; wallet/AI/alert consume deferred; ORG contextual dependency |
 | 1.0 | 2026-09-02 | Product Team | INVEST domain correction: MVP/V2 event and BR traceability reconciliation, frozen downstream contract alignment, AI ownership clarification, and dependency/roadmap boundary cleanup |
+| 1.1 | 2026-09-02 | Product Team | WALLET: Version 2 event/boundary correction; interaction matrix reconciled; USER/ORG contextual dependencies; AI ownership clarified; platform MVP hooks none; FR planning baseline ~10; downstream consumer deferral for `AddressReputationChanged` and `SuspiciousWalletDetected` |
 
 ---
 
@@ -131,14 +132,14 @@ This document intentionally excludes:
 | ALERT | Alert Management | Risk Operations Engineering | 20 (planning guideline; not a forced count) | High | MVP | RI-BR-001, RI-BR-002 |
 | RISK | Risk Intelligence | Risk Intelligence Team | 45 (planning guideline; not a forced count) | Critical | MVP | RI-BR-001, RI-BR-002, RI-BR-003 |
 | INVEST | Investigation Management | Investigation Platform Team | 50 (planning guideline; not a forced count) | Critical | MVP | FI-BR-001, FI-BR-002 (MVP); FI-BR-003 (V2) |
-| WALLET | Wallet Intelligence | Financial Crime Intelligence Team | 25 | Medium | Version 2 | WI-BR-001 |
+| WALLET | Wallet Intelligence | Financial Crime Intelligence Team | ~10 (planning guideline; not a forced count) | Medium | Version 2 | WI-BR-001 |
 | COMP | Compliance & Travel Rule | Compliance Engineering | 40 | High | MVP | CP-BR-001, CP-BR-002 |
 | SEC | Security Intelligence | Security Engineering | 30 | Medium | Version 2 | SEC-BR-001, SEC-BR-002 |
 | AI | AI Platform | AI Platform Team | 60 | High | MVP | AI-BR-001, AI-BR-002 |
 | REPORT | Reporting & Analytics | Analytics & Insights Team | 20 | Medium | Version 2 | RA-BR-001 |
 | ADMIN | Administration | Platform Engineering | 20 | High | MVP | ADM-BR-001 |
 | OPS | Platform Operations | Platform Operations / SRE | 20 | Medium | Version 2 | OPS-BR-001 |
-| | **Total** | | **450** | | | |
+| | **Total** | | **435** | | | |
 
 ---
 
@@ -157,7 +158,7 @@ This matrix is the blueprint for architecture, data ownership, events, APIs, and
 | ALERT | Alerts, Alert Assignments, Alert Operational Priorities | AlertCreated, AlertAssigned, AlertClosed | RiskCalculated, HighRiskDetected | Alert Triage Assistant |
 | RISK | Risk Scores, Rules, Explanations, Priority Signals | RiskCalculated, HighRiskDetected | TransactionReceived | Risk Analysis Agent |
 | INVEST | Cases, Evidence, Assignments, Notes, Timeline | CaseCreated, CaseUpdated, CaseClosed, CaseAssigned, EvidenceAttached | AlertCreated, RiskCalculated | — |
-| WALLET | Wallet Profiles, Reputation, Graphs | WalletProfileUpdated | TransactionReceived, CaseCreated | Wallet Analysis Agent |
+| WALLET | Wallet Profiles, Reputation, Graphs | WalletProfileUpdated, AddressReputationChanged, SuspiciousWalletDetected | TransactionReceived, CaseCreated, RiskCalculated | — |
 | COMP | Compliance Records, Travel Rule Results | ComplianceReviewed, TravelRuleValidated | CaseClosed, RiskCalculated | Compliance Agent |
 | SEC | Security Events, Threat Detections | ThreatDetected, ApiAbuseDetected | UserLoggedIn, AlertCreated | Security Investigation Assistant |
 | AI | Prompts, Evaluations, Recommendations | AIRecommendationGenerated | CaseUpdated, RiskCalculated | Multi-Agent Orchestration |
@@ -1764,9 +1765,9 @@ Investigation access shall be restricted by role and assignment (AUTHZ evaluates
 | Related Business Requirements | WI-BR-001 |
 | Related Business Objectives | BO-002 |
 | Primary Users | Fraud Investigators, Risk Analysts, Financial Crime Investigators |
-| Dependencies | CORE, AUTH, AUTHZ, RISK, INVEST |
+| Dependencies | CORE, AUTH, AUTHZ, USER (contextual — authenticated actor identity; lifecycle owned by USER), ORG (contextual — tenant/organization scope; lifecycle owned by ORG), RISK, INVEST |
 | Dependent Domains | AI, REPORT, COMP |
-| Estimated Functional Requirements | 25 |
+| Estimated Functional Requirements | ~10 (planning guideline; not a forced count) |
 | Priority | Medium |
 | Release | Version 2 |
 | FR Prefix | `WALLET-FR` |
@@ -1774,6 +1775,10 @@ Investigation access shall be restricted by role and assignment (AUTHZ evaluates
 ### Domain Overview
 
 The Wallet Intelligence domain analyzes blockchain wallet activity, address reputation, transaction history, and relationships to support financial crime investigations and risk assessment.
+
+WALLET is a **Version 2 domain only**. It has **no platform-MVP capabilities, foundational hooks, or MVP Functional Requirements**. All WALLET features and event contracts defined in this specification apply to Version 2 release scope.
+
+WALLET owns wallet intelligence data — profiles, reputation records, activity timelines, and relationship graphs. It does not own risk scoring (RISK), investigation case lifecycle (INVEST), operational alert lifecycle (ALERT), dashboard/workspace presentation (DASH), compliance records (COMP), reporting definitions (REPORT), user lifecycle (USER), organization lifecycle (ORG), or AI agent orchestration (AI Platform). WALLET may consume permitted upstream context from RISK and INVEST without redefining their behavior.
 
 ### Responsibilities
 
@@ -1783,19 +1788,41 @@ The domain is responsible for:
 - Assess address reputation
 - Present transaction history
 - Expose relationship graphs for investigation
+- Consume upstream investigation and risk context for enrichment without redefining INVEST or RISK lifecycle behavior
 
-### Features
+WALLET does not create or own operational alerts, calculate risk scores, create or manage investigation cases, own sanctions/compliance workflows, own dashboard presentation, or orchestrate AI agents.
+
+### Features (Version 2)
 
 - Wallet Profiles
 - Address Reputation
 - Transaction History
 - Relationship Graph
 
-### Future Features
+### Future Features (Version 3 — not Version 2)
 
 - Multi-Chain Expansion
 - Cluster Detection
-- Cross-Exchange Wallet Correlation
+- Cross-Exchange Correlation
+
+These future capabilities are explicitly deferred beyond Version 2 and shall not be authored as Version 2 Functional Requirements.
+
+### Functional Requirements Planning Baseline
+
+The intended Version 2 FRS inventory is approximately 10 requirements (`WALLET-FR-001` through `WALLET-FR-010`), determined from locked Version 2 capabilities rather than a mandatory count:
+
+- `WALLET-FR-001` — Manage Wallet Profiles
+- `WALLET-FR-002` — Assess Address Reputation
+- `WALLET-FR-003` — Present Wallet Transaction History
+- `WALLET-FR-004` — Expose Wallet Relationship Graph
+- `WALLET-FR-005` — Retrieve And Discover Wallet Intelligence
+- `WALLET-FR-006` — Ingest External Transaction Inputs For Wallet Enrichment
+- `WALLET-FR-007` — Enforce Wallet Event Publication Contract
+- `WALLET-FR-008` — Consume Upstream Investigation And Risk Context Events
+- `WALLET-FR-009` — Record Wallet Intelligence Audit Outcomes
+- `WALLET-FR-010` — Restrict Wallet Data Access To Authorized Actors
+
+Detailed Functional Requirement authoring is deferred to the FRS phase. This baseline is a planning guide only.
 
 ### Domain Data Ownership
 
@@ -1806,19 +1833,33 @@ This domain owns:
 - Wallet Relationship Graphs
 - Wallet Activity Timelines
 
+WALLET does not own risk scores, investigation cases, operational alerts, compliance records, AI recommendation records, or reporting definitions. Those remain owned by RISK, INVEST, ALERT, COMP, AI, and REPORT respectively.
+
 ### Domain Events
 
-**Publishes**
+**Publishes (Version 2)**
 
 - `WalletProfileUpdated`
 - `AddressReputationChanged`
 - `SuspiciousWalletDetected`
 
-**Consumes**
+**Consumes (Version 2)**
 
-- `TransactionReceived`
-- `CaseCreated`
-- `RiskCalculated`
+- `TransactionReceived` — classified as an external integration input via Exchange Event Stream. It is not published by WALLET or by any Sentinel domain in the current FDS baseline.
+- `CaseCreated` — INVEST-owned publication consumed by WALLET for investigation context enrichment only
+- `RiskCalculated` — RISK-owned publication consumed by WALLET for risk context enrichment only
+
+**Explicit exclusions (not WALLET Version 2 baseline consumption)**
+
+WALLET does not consume `HighRiskDetected`, `AlertCreated`, `CaseUpdated`, `CaseClosed`, `EvidenceAttached`, `AIRecommendationGenerated`, or any WALLET self-publication events in Version 2 baseline.
+
+**Downstream consumption (deferred / unspecified)**
+
+- `WalletProfileUpdated` — INVEST may consume when INVEST Version 2 wallet-context integration is authored (frozen INVEST baseline defers this consumption until WALLET Version 2). No other frozen downstream consumer is currently established.
+- `AddressReputationChanged` — WALLET-owned Version 2 publication. No frozen downstream consumer is currently established; downstream routing remains a future contract decision.
+- `SuspiciousWalletDetected` — WALLET-owned Version 2 publication. No frozen downstream consumer is currently established; downstream routing remains a future contract decision. This is not a platform-MVP or Version 2 cross-domain obligation until explicitly contracted.
+
+WALLET does not publish `TransactionReceived`. Upstream transaction-oriented inputs are external integration boundaries only.
 
 ### Non-Functional Characteristics
 
@@ -1834,19 +1875,17 @@ This domain owns:
 ### External Integrations
 
 - Blockchain Analytics Providers
-- Exchange Wallet Event Sources
+- Exchange Wallet Event Sources (external ingestion boundary; may include transaction-oriented inputs such as `TransactionReceived` classified as external integration events)
 
 ### Related AI Agents
 
-**Primary Agent:** Wallet Analysis Agent
+No AI agents are owned or orchestrated by WALLET.
 
-**Supporting Agents:**
-- Explanation Agent
-- Evidence Retrieval Agent
+AI Platform owns agent lifecycle and orchestration, including Wallet Analysis Agent, Explanation Agent, and Evidence Retrieval Agent capabilities where applicable. WALLET may integrate assistive AI Platform outputs in authorized wallet intelligence workflows when applicable. AI assistance does not replace human decision authority for investigation disposition, enforcement, or wallet intelligence conclusions.
 
 ### Security Considerations
 
-Wallet intelligence data shall be accessed only by authorized investigators and shall not expose unnecessary customer PII beyond investigation need.
+Wallet intelligence data shall be accessed only by authorized investigators and shall not expose unnecessary customer PII beyond investigation need. WALLET shall respect organization scope through contextual ORG tenant boundaries without managing organization lifecycle. AUTHZ evaluates access; USER provides authenticated actor identity context.
 
 ### Success Criteria
 
@@ -1868,9 +1907,9 @@ Wallet intelligence data shall be accessed only by authorized investigators and 
 
 ### Domain Roadmap
 
-**MVP**
+**MVP (platform release)**
 
-- — (Version 2 domain; foundational hooks only in MVP if needed)
+- None. WALLET is a Version 2 domain with no platform-MVP Functional Requirements, event contracts, or foundational hooks.
 
 **Version 2**
 
@@ -1887,9 +1926,31 @@ Wallet intelligence data shall be accessed only by authorized investigators and 
 
 ### Domain Relationships
 
-**Depends on:** CORE, AUTH, AUTHZ, RISK, INVEST
+**Depends on:** CORE, AUTH, AUTHZ, USER (contextual — authenticated actor identity; lifecycle owned by USER), ORG (contextual — tenant/organization scope; lifecycle owned by ORG), RISK, INVEST
 
 **Supports:** AI, REPORT, COMP
+
+**Risk boundary:** RISK owns risk scoring, rules, and risk-derived priority signals. WALLET consumes `RiskCalculated` for contextual enrichment only. WALLET does not score risk, does not publish `RiskCalculated` or `HighRiskDetected`, and does not consume `HighRiskDetected`.
+
+**Investigation boundary:** INVEST owns investigation cases and investigation workflow. WALLET consumes `CaseCreated` for investigation context enrichment only. WALLET does not create or manage investigation cases and does not consume `CaseUpdated`, `CaseClosed`, or `EvidenceAttached` in Version 2 baseline.
+
+**Alert boundary:** ALERT owns operational alert records, lifecycle, and operational alert priority. WALLET does not create or manage alerts and does not publish alert events.
+
+**Presentation boundary:** DASH owns workspace/dashboard presentation. WALLET owns wallet intelligence data and does not own dashboard UI or workspace widgets.
+
+**Compliance boundary:** COMP owns compliance records and regulatory workflows. WALLET supports investigations through owned wallet intelligence outcomes without duplicating compliance processing.
+
+**Reporting boundary:** REPORT owns reporting definitions and report presentation. WALLET may supply data for downstream reporting without owning report definitions.
+
+**AI boundary:** AI Platform owns agent orchestration and recommendation generation. WALLET owns wallet intelligence data and enrichment authority. AI assistance is assistive only and does not own WALLET lifecycle.
+
+**Authorization and tenant scope:** AUTHZ owns authorization decisions. ORG provides tenant context. USER provides authenticated actor identity. WALLET applies authorized outcomes within permitted scope without managing USER or ORG lifecycle.
+
+**External ingestion:** `TransactionReceived` is an external integration input only. WALLET does not invent an upstream Sentinel domain publisher for it and does not publish `TransactionReceived`.
+
+**Producer/downstream contract:** Version 2 WALLET publishes `WalletProfileUpdated`, `AddressReputationChanged`, and `SuspiciousWalletDetected`. INVEST may consume `WalletProfileUpdated` when INVEST Version 2 wallet-context integration is authored. No frozen downstream consumer is currently established for `AddressReputationChanged` or `SuspiciousWalletDetected`; downstream routing remains a future contract decision.
+
+**Platform scope:** WALLET has no platform-MVP Functional Requirements. All WALLET capabilities in this specification are Version 2 scope.
 
 ---
 
@@ -2815,6 +2876,24 @@ MVP ALERT publishes `AlertCreated`, `AlertAssigned`, and `AlertClosed`. Version 
 RISK owns risk scoring, rules/configuration, explanations (embedded in MVP `RiskCalculated`), and risk-derived priority signals. ALERT owns operational alert records, lifecycle, and operational alert priority. DASH owns workspace/dashboard presentation and consumes `RiskCalculated` (frozen DASH-FR-011). INVEST owns investigation cases.
 
 MVP RISK publishes `RiskCalculated` and `HighRiskDetected`. MVP RISK consumes external `TransactionReceived` only. Wallet-event consumption, `AlertCreated` consumption, `DeviceSignalReceived`, `RiskUpdated`, and separate `RiskExplanationGenerated` are deferred. COMP owns sanctions workflow. AI assistance is contextual and assistive; critical scoring is not mandatory-AI-dependent.
+
+### Wallet Intelligence Boundaries
+
+WALLET is a Version 2 domain only. It has no platform-MVP Functional Requirements, foundational hooks, or MVP event contracts.
+
+CORE owns shared platform and audit primitives. AUTH authenticates actors. AUTHZ determines authorization. USER provides user identity context; WALLET does not own user lifecycle. ORG provides tenant/organizational context; WALLET does not own organization lifecycle. RISK owns risk scoring; WALLET does not score risk and does not publish `RiskCalculated` or `HighRiskDetected`. INVEST owns investigation case lifecycle; WALLET does not create or manage cases. ALERT owns alert lifecycle; WALLET does not create or manage alerts. DASH owns presentation and workspace concerns; WALLET does not own dashboard UI. COMP owns compliance workflows and records; WALLET does not own them. AI Platform owns AI agents and orchestration; WALLET does not own or orchestrate agents. REPORT owns reporting definitions and presentation.
+
+WALLET owns wallet intelligence data: wallet profiles, address reputation records, wallet activity timelines, and wallet relationship graphs.
+
+Version 2 WALLET publishes exactly `WalletProfileUpdated`, `AddressReputationChanged`, and `SuspiciousWalletDetected`. Version 2 WALLET consumes exactly external `TransactionReceived`, INVEST-owned `CaseCreated`, and RISK-owned `RiskCalculated`. WALLET does not publish `TransactionReceived`. WALLET does not consume `HighRiskDetected`, `AlertCreated`, `CaseUpdated`, `CaseClosed`, `EvidenceAttached`, or `AIRecommendationGenerated` in Version 2 baseline.
+
+`TransactionReceived` is an external upstream integration input consumed by WALLET for enrichment. `WalletProfileUpdated`, `AddressReputationChanged`, and `SuspiciousWalletDetected` are WALLET-owned publications. `CaseCreated` is an INVEST-owned publication consumed by WALLET for context. `RiskCalculated` is a RISK-owned publication consumed by WALLET for context.
+
+INVEST may consume `WalletProfileUpdated` when INVEST Version 2 wallet-context integration is authored (frozen INVEST baseline defers this until WALLET Version 2). No frozen downstream consumer is currently established for `AddressReputationChanged` or `SuspiciousWalletDetected`; downstream routing remains a future contract decision.
+
+Version 2 WALLET features are exactly Wallet Profiles, Address Reputation, Transaction History, and Relationship Graph. Multi-Chain Expansion, Cluster Detection, and Cross-Exchange Correlation are Version 3 and shall not become Version 2 Functional Requirements.
+
+Wallet Risk Scoring and RISK wallet-event consumption remain Version 2+ RISK scope aligned with WALLET; they are not WALLET requirements.
 
 ### AI Assistive Role
 
