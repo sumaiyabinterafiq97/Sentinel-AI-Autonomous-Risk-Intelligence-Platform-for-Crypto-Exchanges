@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/alert/AlertClosed.v1.schema.json",
+  "title": "AlertClosedPayload",
+  "type": "object",
+  "required": ["alertId", "closedAt", "closedBy"],
+  "properties": {
+    "alertId": { "type": "string", "format": "uuid" },
+    "closedAt": { "type": "string", "format": "date-time" },
+    "closedBy": { "type": "string", "format": "uuid" },
+    "dispositionReason": { "type": "string" }
+  },
+  "additionalProperties": false
+}

@@ -6,10 +6,10 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Domain Specification |
-| Version | 1.3 (Draft) |
-| Status | Draft |
+| Version | 1.4 (Draft) |
+| Status | Draft — Phase 2 aligned |
 | Owner | Product & Engineering Team |
-| Last Updated | 2026-09-02 |
+| Last Updated | 2026-09-03 |
 
 ---
 
@@ -30,6 +30,7 @@
 | 1.1 | 2026-09-02 | Product Team | WALLET: Version 2 event/boundary correction; interaction matrix reconciled; USER/ORG contextual dependencies; AI ownership clarified; platform MVP hooks none; FR planning baseline ~10; downstream consumer deferral for `AddressReputationChanged` and `SuspiciousWalletDetected` |
 | 1.2 | 2026-09-02 | Product Team | COMP: MVP event/boundary correction; interaction matrix reconciled; USER/ORG contextual dependencies; AI assistive-only (not hard dependency); AI ownership clarified; FR planning baseline ~11; downstream consumer deferral; `EvidenceAttached` excluded from MVP consume set |
 | 1.3 | 2026-09-02 | Product Team | SEC: Version 2 event/boundary correction; interaction matrix reconciled; USER/ORG contextual dependencies; AI assistive-only (not hard dependency); AI ownership clarified; FR planning baseline ~10; downstream consumer deferral; `DeviceSignalReceived` excluded from SEC V2 contract |
+| 1.4 | 2026-09-03 | Architecture Team | Phase 2 alignment note; pending domain FRs authored in FRS v2.0; frozen domain specifications unchanged |
 
 ---
 
@@ -3106,4 +3107,8 @@ Domains describe capabilities, not implementation stacks. Choices such as messag
 
 This Functional Domain Specification establishes the capability map, ownership model, event boundaries, and data ownership for Sentinel AI.
 
-Next step: author Functional Requirements domain-by-domain in the dependency order defined above, beginning with `CORE`.
+### Phase 2 Alignment (2026-09-03)
+
+Pending domain functional requirements are now authored in FRS v2.0 (AI, ADMIN, REPORT, OPS). Architecture foundations are documented in `docs/03-architecture/` and NFR baseline in `NonFunctionalRequirements.md`. **Frozen domain specifications in this document (CORE through SEC) are unchanged.**
+
+Next step: API design, database design, and implementation planning per Project Roadmap.

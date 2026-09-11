@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/invest/CaseAssigned.v1.schema.json",
+  "title": "CaseAssignedPayload",
+  "description": "Published by INVEST when case assignment changes.",
+  "type": "object",
+  "required": ["caseId", "assignedTo", "assignedAt"],
+  "properties": {
+    "caseId": { "type": "string", "format": "uuid" },
+    "assignedTo": { "type": "string", "format": "uuid" },
+    "assignedBy": { "type": "string", "format": "uuid" },
+    "assignedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

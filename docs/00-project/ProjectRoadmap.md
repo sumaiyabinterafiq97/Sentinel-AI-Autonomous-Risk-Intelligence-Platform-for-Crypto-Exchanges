@@ -818,9 +818,19 @@ Until then:
 
 ### 10.3 Current gate status
 
-**Application Development Gate: NOT SATISFIED**
+**Application Development Gate: SATISFIED**
 
-Reason: Product discovery reconciliation incomplete; NFR/PRD/architecture/design phases not complete; four FRS domains pending; no implementation plan.
+**Phase 12 Application Development: AUTHORIZED** (begin at milestone **M0**).
+
+| Field | Value |
+|-------|-------|
+| Decision record | [ApplicationDevelopmentGateDecision.md](ApplicationDevelopmentGateDecision.md) |
+| Approver | Project Owner — approved |
+| Date | 2026-09-11 |
+| M0 kickoff | [Phase12M0Kickoff.md](Phase12M0Kickoff.md) |
+| Stack | ADR-019 Accepted |
+
+Historical note: Earlier drafts recorded NOT SATISFIED due to missing human approvals and incomplete design track; those blockers were cleared by Project Owner approval and Phases 8–11 technical exits.
 
 ---
 
@@ -1179,3 +1189,239 @@ The repository has established **domain-level functional requirements** for twel
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-09-03 | Product & Engineering Team | Initial master project roadmap and phase control document |
+| 1.1 | 2026-09-03 | Product & Engineering Team | Appendix C — governance-track Phase 4 completion overlay |
+
+---
+
+## Appendix C — Governance Track Execution Overlay
+
+This appendix records progress on the **documentation governance track** (Phases 1–4 as executed in product/engineering sessions). It does **not** renumber or replace Sections 5–12 phase definitions; it reconciles actual deliverables against the Application Development Gate.
+
+### Governance track status
+
+| Governance Phase | Focus | Status | Key deliverables |
+|------------------|-------|--------|------------------|
+| Phase 1 | Product Discovery | Complete (uncommitted) | Vision, Scope, Personas, Principles, ProductDiscovery |
+| Phase 2 | NFR + Architecture Foundations | Complete (uncommitted) | NFR.md, architecture docs, ADR-001–008, Phase2Report |
+| Phase 3 | API & Data Design | Complete (uncommitted) | APIInventory, EventContracts, partial OpenAPI, data docs, Phase3Report |
+| **Phase 4** | **Contract Hardening & Implementation Foundations** | **Complete (uncommitted)** | Full MVP OpenAPI, APIContractGovernance, MessageBrokerArchitecture, SchemaRegistryGovernance, MigrationStrategy, InitialMigrationSpecifications (CORE/AUTH), ContractValidationCI design, ADR-015–018, Phase4Report |
+| Phase 5 (recommended) | PRD consolidation + extended migrations | **Complete (uncommitted)** | PRD.md, DataRetention.md, event schemas, AUTHZ/USER/ORG migrations, Phase5Report |
+| Phase 6 (recommended) | Operational data + events + UX foundations | **Complete (uncommitted)** | RISK/ALERT/INVEST migrations, event schemas, UX docs, Phase6Report |
+| Phase 7 (recommended) | Remaining MVP migrations + retention/UX/PRD workflow | **Complete (uncommitted) — PASS WITH OPEN ITEMS** | COMP/AI/ADMIN/DASH migrations, RetentionJurisdictionGovernance, DashboardScreens, ComponentLibrary, GD-002/003, Phase7Report |
+| Phase 8 (recommended) | AI architecture completion + PRD R0–R8 docs review | **Complete (uncommitted) — PASS WITH OPEN ITEMS** | AIArchitecture, AIAgents, AISecurityModel, PRDReviewRecord, RetentionDecisionMatrix, Phase8GateAssessment, Phase8Handoff, Phase8Report |
+| Phase 9 (recommended) | API/Event formal exit review | **Complete (uncommitted) — PASS WITH OPEN ITEMS** | Phase9ContractExitMatrix, Phase9APIContractExitReport, Phase9GapRegister, Phase9Traceability, Phase9Handoff, Phase9Report; inventory arithmetic fix |
+| Phase 10 (recommended) | Frontend / UX Design formal exit | **Complete (uncommitted) — PASS WITH OPEN ITEMS** | FrontendUXArchitecture, AIInteractionPatterns, UXSecuritySpecification, UXStateModel, expanded IA/Screens/Workflows/Components, Phase10Traceability, Phase10Handoff, Phase10Report |
+| Phase 11 (recommended) | Implementation planning + Application Development Gate prep | **Complete (uncommitted) — PASS WITH OPEN ITEMS** | ImplementationPlan + full Phase 11 package; Phase11GateAssessment (gate still BLOCKED); Phase11Handoff; Phase11Report |
+| Phase 12 (recommended) | Application Development | **AUTHORIZED** — Gate SATISFIED; begin **M0** | ApplicationDevelopmentGateDecision.md; Phase12M0Kickoff.md |
+
+### Phase 4 exit summary
+
+| Criterion | Met? |
+|-----------|------|
+| MVP OpenAPI 100% inventory coverage | Yes |
+| API governance documented | Yes |
+| Event/messaging architecture hardened | Yes |
+| Schema governance documented | Yes |
+| Message broker ADR | Yes (ADR-015) |
+| P3-OQ-001/002/003 resolved | Yes (ADR-016–018) |
+| BQ-4 documented (REPORT V2, non-MVP gate) | Yes — human sign-off pending |
+| CORE/AUTH migration specs | Yes (logical) |
+| CI contract validation design | Yes (design only) |
+| MVP traceability | Yes |
+| No application code | Yes |
+| Frozen domains unchanged | Yes |
+
+### Remaining blockers (post–Phase 4)
+
+| Blocker | Classification |
+|---------|----------------|
+| Application Development Gate (Section 10) | **BLOCKING** — not satisfied |
+| PRD consolidation (roadmap Phase 5) | **BLOCKING** for full gate |
+| BQ-4 explicit product owner sign-off | NON-BLOCKING (governance recorded) |
+| NFR-OQ-002 jurisdiction retention | NON-BLOCKING |
+| V2 OpenAPI completion (21 ops) | NON-BLOCKING (V2) |
+| Executable CI workflows | NON-BLOCKING until Phase 11 |
+
+### Phase 5 exit summary
+
+| Criterion | Met? |
+|-----------|------|
+| PRD consolidated (48 sections) | Yes (draft v0.1) |
+| Data retention documented | Yes |
+| Event JSON schemas formalized | Yes (MVP core + SEC V2 publish) |
+| MVP data ownership hardened | Yes |
+| AUTHZ/USER/ORG migration specs | Yes |
+| API inventory ↔ OpenAPI reconciled | Yes (67 MVP incl. SSE) |
+| BQ-4 accurately recorded | Yes — human sign-off pending |
+| MVP traceability | Yes (Phase5Traceability.md) |
+| Frozen domains unchanged | Yes |
+| No application code | Yes |
+
+### Phase 5 recommendation
+
+Proceed with RISK/ALERT/INVEST migration specifications, formal PRD approval, BQ-4 human sign-off, and frontend design phase.
+
+### Phase 6 exit summary
+
+| Criterion | Met? |
+|-----------|------|
+| RISK/ALERT/INVEST migration specs | Yes |
+| MVP event schemas (required set) | Yes |
+| Event coverage matrix | Yes |
+| Data retention governance strengthened | Yes |
+| PRD approval record (no false approval) | Yes — status PENDING |
+| UX foundations (docs/07-ui/) | Yes |
+| Phase 6 traceability | Yes |
+| Frozen domains unchanged | Yes |
+| No application code | Yes |
+
+### Phase 7 exit summary
+
+| Criterion | Met? |
+|-----------|------|
+| COMP/AI/ADMIN/DASH migration specs | Yes (logical only) |
+| Full MVP migration path 001–012 documented | Yes |
+| Deferred event governance (GD-002) | Yes — schemas not invented |
+| Retention jurisdiction framework (NFR-OQ-002) | Yes — durations still OPEN |
+| DashboardScreens + ComponentLibrary | Yes (docs-only) |
+| PRD formal review workflow | Yes — **FORMAL APPROVAL PENDING** |
+| BQ-4 remains V2 / non-MVP gate | Yes — human sign-off pending |
+| Phase 7 traceability | Yes |
+| Frozen domains unchanged | Yes |
+| No application code | Yes |
+
+### Phase 7 open items
+
+| Item | Classification |
+|------|----------------|
+| PRD formal signatures | PENDING HUMAN DECISION |
+| BQ-4 product-owner sign-off | PENDING HUMAN DECISION |
+| NFR-OQ-002 jurisdiction durations | OPEN |
+| Implementation plan / coding gate prerequisites | BLOCKING for Application Development Gate |
+
+### Phase 8 exit summary
+
+| Criterion | Met? |
+|-----------|------|
+| AIArchitecture.md complete (draft) | Yes |
+| MVP agents = AI-FR-001–009 only | Yes |
+| AI security + evaluation docs | Yes |
+| AI assistive-only validated | Yes |
+| PRD R0–R8 documentation review | Yes — **PENDING HUMAN APPROVAL** |
+| BQ-4 accurate (REPORT V2) | Yes — **PENDING HUMAN SIGN-OFF** |
+| NFR-OQ-002 formal disposition | Yes — remains **PENDING COMPLIANCE / LEGAL** |
+| Gate assessment explicit | Yes — gate **BLOCKED** |
+| Phase 9/10/11 handoff | Yes |
+| Frozen domains unchanged | Yes |
+| No application code | Yes |
+
+### Phase 8 open items
+
+| Item | Classification |
+|------|----------------|
+| PRD formal signatures | PENDING HUMAN APPROVAL — BLOCKING for gate |
+| BQ-4 product-owner sign-off | PENDING HUMAN DECISION |
+| NFR-OQ-002 jurisdiction durations | PENDING COMPLIANCE / LEGAL |
+| Implementation plan (Phase 11) | NOT STARTED — BLOCKING |
+| Human Phase 8/9/10 exit approvals | PENDING HUMAN APPROVAL |
+
+### Phase 8 recommendation
+
+Proceed to Phase 9 formal API/event contract exit review per Phase8Handoff.md. Obtain human PRD/BQ-4 approvals in parallel. **Do not open Application Development Gate.**
+
+**Application Development Gate: NOT SATISFIED** (unchanged).
+
+### Phase 9 exit summary
+
+| Criterion | Met? |
+|-----------|------|
+| Formal API inventory ↔ OpenAPI audit | Yes — **68/68 MVP** |
+| OpenAPI structural validation (YAML parse, unique operationIds) | Yes |
+| Event catalog ↔ JSON Schema coverage | Yes — **27/27** (GD-002 deferred) |
+| SEC event lock | Yes — **PASS** |
+| AI assistive API/event boundaries | Yes |
+| Domain ownership / MVP·V2·V3 | Yes |
+| DASH SSE (API-DASH-007) | Yes |
+| Contract exit matrix + gap register | Yes |
+| Human Phase 9 exit approval | **PENDING HUMAN APPROVAL** |
+| Frozen FRS/FDS unchanged | Yes |
+| No application code | Yes |
+
+### Phase 9 open items
+
+| Item | Classification |
+|------|----------------|
+| Human Phase 9 exit signatures | PENDING HUMAN APPROVAL — BLOCKING for gate item #10 |
+| PRD / BQ-4 / NFR-OQ-002 | PENDING (unchanged from Phase 8) |
+| V2 OpenAPI full expansion / AsyncAPI / GD-002 schemas | DEFERRED |
+| Phase 10 UX formal exit | NOT STARTED |
+| Implementation plan (Phase 11) | NOT STARTED — BLOCKING |
+
+### Phase 9 recommendation
+
+Proceed to **Phase 10 — Frontend / UX Design** formal exit review per Phase9Handoff.md. Obtain human Phase 9/PRD approvals in parallel. **Do not open Application Development Gate.**
+
+**Application Development Gate: NOT SATISFIED** (unchanged).
+
+### Phase 10 exit summary
+
+| Criterion | Met? |
+|-----------|------|
+| Frontend UX architecture documented | Yes |
+| MVP screens SCR-00–15 specified | Yes (16) |
+| WF-1–8 fully specified; API IDs reconciled | Yes |
+| Role-based IA / navigation | Yes |
+| Component library expanded | Yes |
+| AI UX patterns (assistive-only) | Yes |
+| UX security + state model | Yes |
+| Accessibility design targets (not certified) | Yes |
+| V2 SEC/REPORT/OPS/WALLET excluded from MVP nav | Yes |
+| Human Phase 10 exit approval | **PENDING HUMAN APPROVAL** |
+| Frozen FRS/FDS unchanged | Yes |
+| No application code | Yes |
+
+### Phase 10 open items
+
+| Item | Classification |
+|------|----------------|
+| Human Phase 10 exit signatures | PENDING HUMAN APPROVAL — BLOCKING for gate item #11 |
+| COMP list GET / global search API | NON-BLOCKING gaps — do not invent |
+| PRD / BQ-4 / NFR-OQ-002 | PENDING (unchanged) |
+| Implementation plan (Phase 11) | NOT STARTED — BLOCKING |
+
+### Phase 10 recommendation
+
+Proceed to **Phase 11 — Development Roadmap & Implementation Planning** per Phase10Handoff.md. Obtain human Phase 10/PRD approvals in parallel. **Do not open Application Development Gate.**
+
+**Application Development Gate: NOT SATISFIED** (unchanged).
+
+### Phase 11 exit summary
+
+| Criterion | Met? |
+|-----------|------|
+| Implementation plan package (docs/08-development) | Yes |
+| Sequenced milestones M0–M12 | Yes |
+| Deployable blueprint (3–6) | Yes |
+| Backend/AI/Frontend/Data/Event/Security/Test/Obs/DevOps plans | Yes |
+| Implementation traceability + dependencies + risks | Yes |
+| First milestone entry/exit criteria | Yes (M0/M1 in Handoff) |
+| Human Phase 11 exit approval | **PENDING HUMAN APPROVAL** |
+| Application Development Gate §10 | **NOT SATISFIED** |
+| Frozen FRS/FDS unchanged | Yes |
+| No application code | Yes |
+
+### Phase 11 open items
+
+| Item | Classification |
+|------|----------------|
+| Human approvals (PRD, Phases 8–11 exits, gate meeting) | PENDING HUMAN APPROVAL — BLOCKING |
+| Stack implementation ADRs | PENDING (recommended) |
+| BQ-4 / NFR-OQ-002 | PENDING (soft) |
+| COMP list API / search API gaps | NON-BLOCKING |
+| Phase 12 coding | **BLOCKED** |
+
+### Phase 11 recommendation
+
+Hold **Application Development Gate review** with human sign-offs. Until §10 is satisfied, **do not start Phase 12 application development.** Use Phase11Handoff.md when authorized.
+
+**Application Development Gate: NOT SATISFIED** (unchanged).

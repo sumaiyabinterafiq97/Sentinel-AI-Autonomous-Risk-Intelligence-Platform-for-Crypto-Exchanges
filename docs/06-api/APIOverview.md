@@ -4,6 +4,12 @@
 
 Provide an overview of Sentinel AI API surfaces, consumers, and design principles.
 
+> **Phase 3 (2026-09-03):** Authoritative API documentation:
+> - [APIStandards.md](APIStandards.md)
+> - [APIInventory.md](APIInventory.md)
+> - [OpenAPI.yaml](OpenAPI.yaml)
+> - [EventContracts.md](EventContracts.md)
+
 ## Status
 
 Draft

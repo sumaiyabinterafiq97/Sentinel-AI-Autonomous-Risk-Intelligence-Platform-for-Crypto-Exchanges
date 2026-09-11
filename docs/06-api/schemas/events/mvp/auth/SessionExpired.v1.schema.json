@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/auth/SessionExpired.v1.schema.json",
+  "title": "SessionExpiredPayload",
+  "description": "Published by AUTH. Consumer: SEC (V2).",
+  "type": "object",
+  "required": ["sessionId", "expiredAt"],
+  "properties": {
+    "sessionId": { "type": "string", "format": "uuid" },
+    "userId": { "type": "string", "format": "uuid" },
+    "expiredAt": { "type": "string", "format": "date-time" },
+    "reason": { "type": "string" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/ai/PromptUpdated.v1.schema.json",
+  "title": "PromptUpdatedPayload",
+  "type": "object",
+  "required": ["promptId", "version", "updatedAt"],
+  "properties": {
+    "promptId": { "type": "string", "format": "uuid" },
+    "agentType": { "type": "string" },
+    "version": { "type": "integer" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "updatedBy": { "type": ["string", "null"], "format": "uuid" }
+  },
+  "additionalProperties": false
+}

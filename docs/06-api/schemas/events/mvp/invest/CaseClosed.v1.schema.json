@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/invest/CaseClosed.v1.schema.json",
+  "title": "CaseClosedPayload",
+  "type": "object",
+  "required": ["caseId", "closedAt", "closedBy"],
+  "properties": {
+    "caseId": { "type": "string", "format": "uuid" },
+    "closedAt": { "type": "string", "format": "date-time" },
+    "closedBy": { "type": "string", "format": "uuid" },
+    "outcome": { "type": "string" }
+  },
+  "additionalProperties": false
+}

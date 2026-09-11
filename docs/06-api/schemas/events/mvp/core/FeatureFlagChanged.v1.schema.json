@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/core/FeatureFlagChanged.v1.schema.json",
+  "title": "FeatureFlagChangedPayload",
+  "type": "object",
+  "required": ["flagKey", "enabled", "updatedAt"],
+  "properties": {
+    "flagKey": { "type": "string" },
+    "organizationId": { "type": ["string", "null"], "format": "uuid" },
+    "enabled": { "type": "boolean" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "updatedBy": { "type": ["string", "null"], "format": "uuid" }
+  },
+  "additionalProperties": false
+}

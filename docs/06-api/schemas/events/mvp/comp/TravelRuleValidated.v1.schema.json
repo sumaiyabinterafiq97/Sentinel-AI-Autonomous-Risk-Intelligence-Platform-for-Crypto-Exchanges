@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/comp/TravelRuleValidated.v1.schema.json",
+  "title": "TravelRuleValidatedPayload",
+  "type": "object",
+  "required": ["validationId", "transactionRef", "status", "validatedAt"],
+  "properties": {
+    "validationId": { "type": "string", "format": "uuid" },
+    "transactionRef": { "type": "string" },
+    "status": { "type": "string" },
+    "validationResult": { "type": "object" },
+    "validatedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
