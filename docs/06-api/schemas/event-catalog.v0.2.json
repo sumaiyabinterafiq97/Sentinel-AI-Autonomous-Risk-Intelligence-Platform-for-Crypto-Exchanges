@@ -1,0 +1,350 @@
+{
+  "version": "0.2",
+  "lastUpdated": "2026-09-03",
+  "authority": "FDS/FRS frozen event contracts; EventContracts.md",
+  "events": [
+    {
+      "eventType": "RiskCalculated",
+      "producer": "RISK",
+      "consumers": [
+        "ALERT",
+        "DASH",
+        "INVEST",
+        "COMP",
+        "AI"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/risk/RiskCalculated.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "assessmentId",
+      "classification": "confidential"
+    },
+    {
+      "eventType": "HighRiskDetected",
+      "producer": "RISK",
+      "consumers": [
+        "ALERT"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/risk/HighRiskDetected.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "assessmentId",
+      "classification": "confidential"
+    },
+    {
+      "eventType": "AlertCreated",
+      "producer": "ALERT",
+      "consumers": [
+        "INVEST",
+        "DASH",
+        "AI",
+        "SEC"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/alert/AlertCreated.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "alertId",
+      "classification": "confidential"
+    },
+    {
+      "eventType": "AlertAssigned",
+      "producer": "ALERT",
+      "consumers": [
+        "DASH"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/alert/AlertAssigned.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "alertId:assignedAt",
+      "classification": "confidential"
+    },
+    {
+      "eventType": "AlertClosed",
+      "producer": "ALERT",
+      "consumers": [
+        "DASH"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/alert/AlertClosed.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "alertId",
+      "classification": "confidential"
+    },
+    {
+      "eventType": "CaseCreated",
+      "producer": "INVEST",
+      "consumers": [
+        "DASH",
+        "COMP",
+        "SEC",
+        "WALLET"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/invest/CaseCreated.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "caseId",
+      "classification": "restricted"
+    },
+    {
+      "eventType": "CaseUpdated",
+      "producer": "INVEST",
+      "consumers": [
+        "DASH",
+        "COMP",
+        "AI"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/invest/CaseUpdated.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "caseId:updatedAt",
+      "classification": "restricted"
+    },
+    {
+      "eventType": "CaseClosed",
+      "producer": "INVEST",
+      "consumers": [
+        "COMP",
+        "REPORT"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/invest/CaseClosed.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "caseId",
+      "classification": "restricted"
+    },
+    {
+      "eventType": "EvidenceAttached",
+      "producer": "INVEST",
+      "consumers": [
+        "AI"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/invest/EvidenceAttached.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "evidenceId",
+      "classification": "restricted",
+      "notes": "SEC explicitly excluded from consumption per SEC-FR-007"
+    },
+    {
+      "eventType": "ComplianceReviewed",
+      "producer": "COMP",
+      "consumers": [
+        "REPORT"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/comp/ComplianceReviewed.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "reviewId",
+      "classification": "restricted"
+    },
+    {
+      "eventType": "UserLoggedIn",
+      "producer": "AUTH",
+      "consumers": [
+        "SEC"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/auth/UserLoggedIn.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "sessionId:loggedInAt",
+      "classification": "internal"
+    },
+    {
+      "eventType": "SessionExpired",
+      "producer": "AUTH",
+      "consumers": [
+        "SEC"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/auth/SessionExpired.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "sessionId:expiredAt",
+      "classification": "internal"
+    },
+    {
+      "eventType": "ConfigurationUpdated",
+      "producer": "CORE",
+      "consumers": [
+        "ADMIN"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/core/ConfigurationUpdated.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "configKey:version",
+      "classification": "internal"
+    },
+    {
+      "eventType": "AIRecommendationGenerated",
+      "producer": "AI",
+      "consumers": [
+        "DASH"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/ai/AIRecommendationGenerated.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "recommendationId",
+      "classification": "confidential"
+    },
+    {
+      "eventType": "ThreatDetected",
+      "producer": "SEC",
+      "consumers": [
+        "DASH",
+        "INVEST"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/v2/sec/ThreatDetected.v1.schema.json",
+      "release": "V2",
+      "idempotencyKey": "signalId",
+      "classification": "confidential"
+    },
+    {
+      "eventType": "SuspiciousSessionDetected",
+      "producer": "SEC",
+      "consumers": [
+        "DASH",
+        "INVEST"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/v2/sec/SuspiciousSessionDetected.v1.schema.json",
+      "release": "V2",
+      "idempotencyKey": "signalId",
+      "classification": "confidential"
+    },
+    {
+      "eventType": "ApiAbuseDetected",
+      "producer": "SEC",
+      "consumers": [
+        "DASH",
+        "INVEST"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/v2/sec/ApiAbuseDetected.v1.schema.json",
+      "release": "V2",
+      "idempotencyKey": "signalId",
+      "classification": "confidential"
+    },
+    {
+      "eventType": "CaseAssigned",
+      "producer": "INVEST",
+      "consumers": [
+        "DASH"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/invest/CaseAssigned.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "caseId:assignedAt",
+      "classification": "restricted"
+    },
+    {
+      "eventType": "FeatureFlagChanged",
+      "producer": "CORE",
+      "consumers": [],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/core/FeatureFlagChanged.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "flagKey:updatedAt",
+      "classification": "internal"
+    },
+    {
+      "eventType": "TravelRuleValidated",
+      "producer": "COMP",
+      "consumers": [],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/comp/TravelRuleValidated.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "validationId",
+      "classification": "restricted"
+    },
+    {
+      "eventType": "SanctionsHitDetected",
+      "producer": "COMP",
+      "consumers": [],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/comp/SanctionsHitDetected.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "screeningId",
+      "classification": "restricted"
+    },
+    {
+      "eventType": "AuditPackagePrepared",
+      "producer": "COMP",
+      "consumers": [],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/comp/AuditPackagePrepared.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "packageId",
+      "classification": "restricted"
+    },
+    {
+      "eventType": "PromptUpdated",
+      "producer": "AI",
+      "consumers": [],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/ai/PromptUpdated.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "promptId:version",
+      "classification": "internal"
+    },
+    {
+      "eventType": "AdminSettingUpdated",
+      "producer": "ADMIN",
+      "consumers": [
+        "OPS"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/admin/AdminSettingUpdated.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "settingKey:updatedAt",
+      "classification": "internal"
+    },
+    {
+      "eventType": "IntegrationConfigured",
+      "producer": "ADMIN",
+      "consumers": [
+        "OPS"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/admin/IntegrationConfigured.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "integrationId",
+      "classification": "internal"
+    },
+    {
+      "eventType": "AdminActionPerformed",
+      "producer": "ADMIN",
+      "consumers": [
+        "Audit"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/admin/AdminActionPerformed.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "action:performedAt",
+      "classification": "internal"
+    },
+    {
+      "eventType": "UserUpdated",
+      "producer": "USER",
+      "consumers": [
+        "COMP"
+      ],
+      "schemaVersion": "1.0",
+      "schemaPath": "events/mvp/user/UserUpdated.v1.schema.json",
+      "release": "MVP",
+      "idempotencyKey": "userId:updatedAt",
+      "classification": "restricted"
+    }
+  ],
+  "secConsumptionLock": {
+    "consumes": [
+      "UserLoggedIn",
+      "SessionExpired",
+      "AlertCreated",
+      "CaseCreated"
+    ],
+    "explicitlyExcluded": [
+      "DeviceSignalReceived",
+      "EvidenceAttached"
+    ]
+  }
+}

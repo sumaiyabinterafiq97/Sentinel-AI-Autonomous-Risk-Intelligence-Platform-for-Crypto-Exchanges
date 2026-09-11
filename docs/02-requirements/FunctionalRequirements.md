@@ -6,10 +6,10 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Functional Requirements Specification |
-| Version | 1.9 (Draft) |
+| Version | 2.0 (Draft) |
 | Status | Draft |
 | Owner | Product & Engineering Team |
-| Last Updated | 2026-09-02 |
+| Last Updated | 2026-09-03 |
 
 ---
 
@@ -36,6 +36,7 @@
 | 1.7 | 2026-09-02 | Product Team | Complete WALLET domain functional requirements (WALLET-FR-001 – WALLET-FR-010); FDS v1.1 Version 2 baseline; no platform MVP hooks; exact 3 publish / 3 consume event contract; AI agent ownership excluded; V3 capabilities deferred |
 | 1.8 | 2026-09-02 | Product Team | COMP MVP functional requirements authored — COMP-FR-001 through COMP-FR-010, event contracts and traceability added |
 | 1.9 | 2026-09-02 | Product Team | SEC V2 functional requirements authored — SEC-FR-001 through SEC-FR-009, event contracts and traceability added |
+| 2.0 | 2026-09-03 | Architecture Team | Phase 2 pending domains — AI, ADMIN (MVP); REPORT, OPS (V2); frozen domains unchanged |
 
 ---
 
@@ -31240,3 +31241,1312 @@ Version 2 SEC publishes exactly `ThreatDetected`, `SuspiciousSessionDetected`, a
 SEC does not own authentication, session lifecycle, operational alert lifecycle, investigation case lifecycle, risk scoring, dashboard presentation, compliance workflows, wallet intelligence, user lifecycle, organization lifecycle, AI agent orchestration, or reporting definitions. AI Platform owns AI agents and orchestration; Version 2 SEC workflows remain operable without AI.
 
 SEC has no platform-MVP Functional Requirements. Insider Threat Patterns, Automated Containment Recommendations, and SIEM Bi-Directional Sync remain Version 3 deferred scope.
+
+# Chapter — AI Domain Requirements
+
+> Domain reference: [Functional Domain Specification — AI](FunctionalDomainSpecification.md#domain--ai-ai-platform)
+>
+> Related Business Requirements: `AI-BR-001`, `AI-BR-002`
+> Related Business Objectives: `BO-001`, `BO-004`, `BO-008`
+> Depends on: `CORE`, `AUTH`, `AUTHZ`, `USER`, `RISK`, `INVEST`, `WALLET` (contextual V2), `COMP`
+
+This chapter defines Functional Requirements for the AI (AI Platform) domain.
+
+AI is a **platform MVP domain**. AI owns agent orchestration, prompts, recommendation records, and evaluation metadata. AI does **not** own alert lifecycle (ALERT), risk scoring (RISK), investigation cases (INVEST), compliance workflows (COMP), or any enforcement action.
+
+AI assistance is **assistive only**. MVP business domains remain operable without AI (frozen domain posture preserved).
+
+MVP AI agents: Investigation Agent, Risk Agent, Retrieval Agent. MVP capabilities: Prompt Management, Explainability Controls.
+
+Version 2 deferred in this baseline: Compliance Agent, Report Agent, Agent Evaluation Framework (see deferred table).
+
+## AI Domain Requirement Index
+
+### Feature-covering requirements
+
+| ID | Title | Priority | Release | FDS Feature Coverage |
+|----|-------|----------|---------|----------------------|
+| AI-FR-001 | Provide Investigation Assistance | High | MVP | Investigation Agent |
+| AI-FR-002 | Provide Risk Explanation Assistance | High | MVP | Risk Agent |
+| AI-FR-003 | Retrieve Contextual Evidence | High | MVP | Retrieval Agent |
+| AI-FR-004 | Manage Prompts And Versions | High | MVP | Prompt Management |
+| AI-FR-005 | Enforce Explainability Controls | Critical | MVP | Explainability Controls |
+
+### Supporting AI requirements
+
+| ID | Title | Priority | Release | Classification |
+|----|-------|----------|---------|----------------|
+| AI-FR-006 | Enforce AI Event Publication Contract | High | MVP | Supporting — event contract integrity |
+| AI-FR-007 | Consume Upstream Domain Context Events | High | MVP | Supporting — consumer integrity |
+| AI-FR-008 | Authorize AI Tool Invocations | Critical | MVP | Supporting — AUTHZ/tool boundary |
+| AI-FR-009 | Record AI Recommendation Audit Outcomes | High | MVP | Supporting — audit integrity |
+
+# AI-FR-001 — Provide Investigation Assistance
+
+## Summary
+
+The system shall provide assistive investigation analysis and summaries through the Investigation Agent without owning investigation case lifecycle.
+
+## Description
+
+The system shall generate investigation assistance outputs (summaries, contextual analysis, suggested follow-ups) for authorized investigation workflows by consuming permitted INVEST and related context through AI-FR-007 and authorized tools (AI-FR-008), publishing eligible `AIRecommendationGenerated` outcomes through AI-FR-006, and recording audit outcomes (AI-FR-009), without creating or closing investigation cases, without changing alert state, and without executing enforcement actions.
+
+## Type
+
+AI
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+AI Platform Team
+
+## Actor
+
+Authenticated User; System (agent orchestration)
+
+## Business Requirement Reference
+
+AI-BR-001
+
+## Business Objective Reference
+
+BO-001, BO-004
+
+## FDS Domain Reference
+
+AI — AI Platform (Investigation Agent)
+
+## Preconditions
+
+- Shared platform services available (CORE).
+- Actor authenticated (AUTH) and authorized (AUTHZ) for investigation assistance.
+- Applicable investigation context available via authorized read tools or AI-FR-007 events.
+
+## Trigger
+
+Authorized user requests investigation assistance for a permitted case or workflow context.
+
+## Normal Flow
+
+1. System validates authorization (AI-FR-008).
+2. System assembles permitted context via tools/events.
+3. Investigation Agent generates assistive output with explainability metadata (AI-FR-005).
+4. System records recommendation and audit outcome (AI-FR-009).
+5. System publishes `AIRecommendationGenerated` where applicable (AI-FR-006).
+6. Human investigator reviews output; INVEST owns subsequent case actions.
+
+## Alternative Flow
+
+If AI runtime unavailable: system returns explicit degraded response; INVEST workflows continue without assistance.
+
+## Acceptance Criteria
+
+- Assistance output identifies source context references where applicable.
+- No investigation case state change occurs solely from AI-FR-001 execution.
+- Unauthorized actors cannot invoke investigation assistance.
+- AI outage does not block INVEST case operations.
+
+## Depends On
+
+AI-FR-005, AI-FR-007, AI-FR-008, AI-FR-009
+
+## Related
+
+INVEST-FR-001, DASH-FR-001
+
+---
+
+# AI-FR-002 — Provide Risk Explanation Assistance
+
+## Summary
+
+The system shall provide assistive risk explanations through the Risk Agent without owning risk scoring or alert lifecycle.
+
+## Description
+
+The system shall generate narrative risk explanations and analyst-facing context for authorized risk review workflows using RISK outputs and permitted context, on a **non-critical path** separate from deterministic RISK scoring (ADR-003), without publishing `RiskCalculated`, without modifying risk scores, and without creating alerts.
+
+## Type
+
+AI
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+AI Platform Team
+
+## Actor
+
+Authenticated User; System
+
+## Business Requirement Reference
+
+AI-BR-001
+
+## Business Objective Reference
+
+BO-001, BO-008
+
+## FDS Domain Reference
+
+AI — AI Platform (Risk Agent)
+
+## Preconditions
+
+- RISK scoring may already be available; AI assistance is not required for scoring.
+- Actor authorized for risk explanation assistance.
+
+## Trigger
+
+Authorized user requests risk explanation for a permitted risk assessment context.
+
+## Normal Flow
+
+1. System validates authorization (AI-FR-008).
+2. System retrieves permitted RISK context via tools/events.
+3. Risk Agent generates explanation with provenance (AI-FR-005).
+4. System records and publishes assistive outcome (AI-FR-006, AI-FR-009).
+
+## Acceptance Criteria
+
+- Risk scoring latency is not blocked by AI-FR-002 execution.
+- Explanations reference contributing factors traceable to RISK outputs or cited evidence.
+- AI does not alter RISK-owned scores or ALERT-owned alert state.
+
+## Depends On
+
+AI-FR-005, AI-FR-007, AI-FR-008, AI-FR-009
+
+## Related
+
+RISK-FR-001, ALERT-FR-001
+
+---
+
+# AI-FR-003 — Retrieve Contextual Evidence
+
+## Summary
+
+The system shall retrieve authorized contextual evidence and knowledge through the Retrieval Agent for assistive workflows.
+
+## Description
+
+The system shall retrieve documents, records, and permitted domain context for authorized agents using tool-governed access (AI-FR-008), minimizing sensitive data exposure, without bypassing domain ownership or AUTHZ policies.
+
+## Type
+
+AI
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+AI Platform Team
+
+## Acceptance Criteria
+
+- Retrieval tools enforce domain and organization scope.
+- Retrieval failures degrade gracefully without corrupting domain state.
+- Retrieved context is logged for audit where sensitive.
+
+## Depends On
+
+AI-FR-008
+
+---
+
+# AI-FR-004 — Manage Prompts And Versions
+
+## Summary
+
+The system shall manage prompts and prompt versions for authorized AI agents with governance controls.
+
+## Description
+
+The system shall create, update, version, and activate prompts for MVP agents, restricting prompt management to authorized AI/platform roles, publishing `PromptUpdated` through AI-FR-006 when applicable.
+
+## Type
+
+Functional
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+AI Platform Team
+
+## Acceptance Criteria
+
+- Each agent run references prompt version metadata.
+- Prompt changes are audited.
+- Unauthorized users cannot modify production prompts.
+
+---
+
+# AI-FR-005 — Enforce Explainability Controls
+
+## Summary
+
+The system shall attach explainability metadata to AI outputs including provenance, confidence indicators where applicable, and model/prompt identifiers.
+
+## Description
+
+The system shall ensure AI recommendations and summaries include traceable references to source context or domain outputs sufficient for human review, supporting NFR-AI-004 and ADR-006.
+
+## Type
+
+AI
+
+## Priority
+
+Critical
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+AI Platform Team
+
+## Acceptance Criteria
+
+- Recommendations without minimum provenance metadata are rejected or flagged.
+- Model and prompt version identifiers are recorded on recommendation records.
+
+---
+
+# AI-FR-006 — Enforce AI Event Publication Contract
+
+## Summary
+
+The system shall publish AI domain events according to the locked AI event contract.
+
+## Description
+
+MVP AI publishes exactly `AIRecommendationGenerated`, `PromptUpdated`, and `AgentRunFailed`. Version 2 adds `AIEvaluationCompleted`. AI shall not publish domain lifecycle events owned by other domains.
+
+## Type
+
+Integration
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+AI Platform Team
+
+---
+
+# AI-FR-007 — Consume Upstream Domain Context Events
+
+## Summary
+
+The system shall consume authorized upstream events for assistive context assembly.
+
+## Description
+
+MVP AI consumes exactly `CaseUpdated`, `RiskCalculated`, `EvidenceAttached`, and `AlertCreated` for contextual enrichment without redefining producer lifecycle behavior.
+
+## Type
+
+Integration
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+AI Platform Team
+
+---
+
+# AI-FR-008 — Authorize AI Tool Invocations
+
+## Summary
+
+The system shall enforce authorization on every AI tool call to domain read or action APIs.
+
+## Description
+
+Each agent has an explicit tool allowlist. Tool invocations execute under service and user authorization context (AUTHZ). Tools that would mutate business lifecycle state or perform enforcement are excluded from MVP agents unless explicitly authorized by owning domain FRs (none currently).
+
+## Type
+
+Security
+
+## Priority
+
+Critical
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+AI Platform Team
+
+## Acceptance Criteria
+
+- Disallowed tools cannot be invoked by agents.
+- Tool calls produce audit telemetry.
+- Prompt injection attempts cannot escalate tool permissions.
+
+---
+
+# AI-FR-009 — Record AI Recommendation Audit Outcomes
+
+## Summary
+
+The system shall record audit outcomes for AI recommendation generation using CORE shared audit infrastructure.
+
+## Description
+
+The system shall audit agent runs, tool invocations, and recommendation issuance with actor/request context, prompt/model metadata, and correlation identifiers.
+
+## Type
+
+Security
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+AI Platform Team
+
+---
+
+## Intentionally Deferred AI Scope
+
+| Capability | Release | Status |
+|------------|---------|--------|
+| Compliance Agent | Version 2 | Deferred — not in AI-FR-001–009 |
+| Report Agent | Version 2 | Deferred |
+| Agent Evaluation Framework | Version 2 | Deferred — `AIEvaluationCompleted` not MVP |
+| Autonomous enforcement tools | — | Excluded — violates assistive posture |
+| AI-owned alert/case/compliance lifecycle | — | Excluded — business domains own lifecycles |
+
+## AI Baseline Status
+
+AI-FR-001 – AI-FR-009 are the Phase 2 MVP baseline for AI Platform. No AI-FR-010 in this delivery.
+
+# Chapter — ADMIN Domain Requirements
+
+> Domain reference: [Functional Domain Specification — ADMIN](FunctionalDomainSpecification.md#domain--admin-administration)
+>
+> Related Business Requirements: `ADM-BR-001`
+> Related Business Objectives: `BO-007`, `BO-009`
+> Depends on: `CORE`, `AUTH`, `AUTHZ`, `ORG`, `USER`
+
+This chapter defines Functional Requirements for the ADMIN (Administration) domain.
+
+ADMIN is a **platform MVP domain**. ADMIN owns admin settings, integration configurations, and administrative action records. ADMIN **orchestrates** administrative operations but does **not** own user lifecycle (USER), organization lifecycle (ORG), or authorization policy definitions (AUTHZ).
+
+## ADMIN Domain Requirement Index
+
+| ID | Title | Priority | Release | FDS Feature Coverage |
+|----|-------|----------|---------|----------------------|
+| ADMIN-FR-001 | Manage Platform Settings | Critical | MVP | Settings |
+| ADMIN-FR-002 | Govern Integration Configurations | High | MVP | Integrations |
+| ADMIN-FR-003 | Record Administrative Actions | Critical | MVP | Cross-cutting admin audit |
+| ADMIN-FR-004 | Orchestrate Administrative User And Organization Operations | High | MVP | Users / Organizations (orchestration) |
+| ADMIN-FR-005 | Enforce Admin Event Publication Contract | High | MVP | Supporting — events |
+| ADMIN-FR-006 | Consume Upstream Identity And Configuration Events | High | MVP | Supporting — consumer |
+| ADMIN-FR-007 | Restrict Administrative Access To Privileged Actors | Critical | MVP | Supporting — AUTHZ |
+| ADMIN-FR-008 | Retrieve Administrative Configuration And Audit Records | High | MVP | Supporting — discovery |
+
+# ADMIN-FR-001 — Manage Platform Settings
+
+## Summary
+
+The system shall manage ADMIN-owned platform settings separate from CORE infrastructure configuration and domain business data.
+
+## Description
+
+The system shall enable privileged administrators to view and update ADMIN-owned platform settings within authorized organization/platform scope, publishing `AdminSettingUpdated` through ADMIN-FR-005 and recording audit outcomes (ADMIN-FR-003), without redefining USER, ORG, or AUTHZ ownership.
+
+## Type
+
+Functional
+
+## Priority
+
+Critical
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Engineering
+
+## Actor
+
+Platform Administrator
+
+## Business Requirement Reference
+
+ADM-BR-001
+
+## Business Objective Reference
+
+BO-007, BO-009
+
+## Acceptance Criteria
+
+- Settings changes are audited (ADMIN-FR-003).
+- Unauthorized actors cannot modify settings (ADMIN-FR-007).
+- Settings are organization/platform scoped as applicable.
+
+---
+
+# ADMIN-FR-002 — Govern Integration Configurations
+
+## Summary
+
+The system shall govern integration configuration metadata and lifecycle for authorized external connectors.
+
+## Description
+
+The system shall create, update, disable, and view integration configurations owned by ADMIN, publishing `IntegrationConfigured` through ADMIN-FR-005, without storing secrets in plaintext in ADMIN records (secrets via secure mechanism — architectural constraint).
+
+## Type
+
+Functional
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Engineering
+
+## Acceptance Criteria
+
+- Integration changes are audited.
+- Disabled integrations cannot be used by dependent domains without explicit re-enable.
+
+---
+
+# ADMIN-FR-003 — Record Administrative Actions
+
+## Summary
+
+The system shall record durable administrative action audit outcomes for privileged operations orchestrated through ADMIN.
+
+## Description
+
+The system shall publish `AdminActionPerformed` and record audit entries via CORE shared audit infrastructure for defined sensitive admin operations.
+
+## Type
+
+Security
+
+## Priority
+
+Critical
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Engineering
+
+---
+
+# ADMIN-FR-004 — Orchestrate Administrative User And Organization Operations
+
+## Summary
+
+The system shall provide administrative orchestration interfaces for user and organization management that delegate lifecycle operations to USER and ORG domains.
+
+## Description
+
+The system shall expose admin workflows to initiate permitted user and organization operations by invoking USER-owned and ORG-owned capabilities through authorized APIs, without duplicating USER/ORG lifecycle ownership or bypassing AUTHZ policy evaluation.
+
+## Type
+
+Workflow
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Engineering
+
+## Acceptance Criteria
+
+- ADMIN does not persist authoritative user/org lifecycle state duplicated from USER/ORG.
+- All orchestrated operations require privileged authorization and audit.
+
+## Related
+
+USER-FR-001, ORG-FR-001, AUTHZ-FR-001
+
+---
+
+# ADMIN-FR-005 — Enforce Admin Event Publication Contract
+
+## Summary
+
+The system shall publish ADMIN domain events according to the FDS ADMIN contract.
+
+## Description
+
+MVP ADMIN publishes exactly `AdminSettingUpdated`, `IntegrationConfigured`, and `AdminActionPerformed`.
+
+## Type
+
+Integration
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Engineering
+
+---
+
+# ADMIN-FR-006 — Consume Upstream Identity And Configuration Events
+
+## Summary
+
+The system shall consume upstream events for administrative context synchronization.
+
+## Description
+
+MVP ADMIN consumes exactly `UserCreated`, `OrganizationUpdated`, `RoleAssigned`, and `ConfigurationUpdated` without redefining producer domains.
+
+## Type
+
+Integration
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Engineering
+
+---
+
+# ADMIN-FR-007 — Restrict Administrative Access To Privileged Actors
+
+## Summary
+
+The system shall restrict ADMIN operations to authorized privileged roles.
+
+## Description
+
+All ADMIN-FR operations require AUTHZ evaluation with deny-by-default semantics for non-privileged actors.
+
+## Type
+
+Security
+
+## Priority
+
+Critical
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Engineering
+
+---
+
+# ADMIN-FR-008 — Retrieve Administrative Configuration And Audit Records
+
+## Summary
+
+The system shall support authorized retrieval of admin settings, integration configs, and administrative audit references.
+
+## Type
+
+Functional
+
+## Priority
+
+High
+
+## Release
+
+MVP
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Engineering
+
+---
+
+## ADMIN Baseline Status
+
+ADMIN-FR-001 – ADMIN-FR-008 are the Phase 2 MVP baseline. Admin Activity Insights and Integration Health Views remain Version 2 per FDS.
+
+# Chapter — REPORT Domain Requirements
+
+> Domain reference: [Functional Domain Specification — REPORT](FunctionalDomainSpecification.md#domain--report-reporting--analytics)
+>
+> Related Business Requirements: `RA-BR-001`
+> Related Business Objectives: `BO-006`
+> Depends on: `CORE`, `AUTH`, `AUTHZ`, `USER`, `RISK`, `INVEST`, `COMP`, `AI`, `OPS`
+
+REPORT is a **Version 2 domain only**. No platform-MVP REPORT functional requirements.
+
+## REPORT Domain Requirement Index
+
+| ID | Title | Priority | Release | FDS Feature Coverage |
+|----|-------|----------|---------|----------------------|
+| REPORT-FR-001 | Generate Operational Reports | High | Version 2 | Operational Reports |
+| REPORT-FR-002 | Expose KPI Dashboards | High | Version 2 | KPI Dashboards |
+| REPORT-FR-003 | Export Authorized Report Data | High | Version 2 | Export |
+| REPORT-FR-004 | Retrieve And Discover Reports | Medium | Version 2 | Cross-feature discovery |
+| REPORT-FR-005 | Enforce Report Event Publication Contract | High | Version 2 | Supporting — events |
+| REPORT-FR-006 | Consume Upstream Domain Events For Reporting | High | Version 2 | Supporting — consumer |
+| REPORT-FR-007 | Restrict Report Access To Authorized Actors | Critical | Version 2 | Supporting — AUTHZ |
+
+# REPORT-FR-001 — Generate Operational Reports
+
+## Summary
+
+The system shall generate operational reports from authorized domain data without owning source domain lifecycles.
+
+## Description
+
+The system shall produce REPORT-owned generated reports and publish `ReportGenerated` through REPORT-FR-005 by consuming upstream events (REPORT-FR-006) and authorized read access to source domains, without mutating RISK, INVEST, COMP, or other source records.
+
+## Type
+
+Reporting
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Analytics & Insights Team
+
+## Business Requirement Reference
+
+RA-BR-001
+
+## Acceptance Criteria
+
+- Reports respect organization scope and AUTHZ.
+- Report generation failures do not affect source domains.
+- Generated reports store references to source data snapshots or queries with timestamps.
+
+---
+
+# REPORT-FR-002 — Expose KPI Dashboards
+
+## Summary
+
+The system shall expose KPI dashboards derived from authorized metrics and event snapshots.
+
+## Description
+
+The system shall maintain REPORT-owned KPI snapshots, publishing `KpiSnapshotCreated` where applicable, for consumption by DASH and authorized users.
+
+## Type
+
+Reporting
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Analytics & Insights Team
+
+---
+
+# REPORT-FR-003 — Export Authorized Report Data
+
+## Summary
+
+The system shall export authorized report data with access controls and audit.
+
+## Description
+
+The system shall support export jobs for authorized users, publishing `ReportExported` through REPORT-FR-005, preventing unauthorized disclosure of investigation or personal data.
+
+## Type
+
+Reporting
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Analytics & Insights Team
+
+---
+
+# REPORT-FR-004 — Retrieve And Discover Reports
+
+## Summary
+
+The system shall support authorized discovery and retrieval of report definitions and generated reports.
+
+## Type
+
+Functional
+
+## Priority
+
+Medium
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Analytics & Insights Team
+
+---
+
+# REPORT-FR-005 — Enforce Report Event Publication Contract
+
+## Summary
+
+The system shall publish REPORT domain events according to the FDS REPORT contract.
+
+## Description
+
+Version 2 REPORT publishes exactly `ReportGenerated`, `ReportExported`, and `KpiSnapshotCreated`.
+
+## Type
+
+Integration
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Analytics & Insights Team
+
+---
+
+# REPORT-FR-006 — Consume Upstream Domain Events For Reporting
+
+## Summary
+
+The system shall consume authorized upstream events for reporting pipelines.
+
+## Description
+
+Version 2 REPORT consumes exactly `CaseClosed`, `RiskCalculated`, `ComplianceReviewed`, `AIEvaluationCompleted`, and `PlatformUnavailable` without redefining producer behavior.
+
+## Type
+
+Integration
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Analytics & Insights Team
+
+---
+
+# REPORT-FR-007 — Restrict Report Access To Authorized Actors
+
+## Summary
+
+The system shall enforce authorization on all report and export operations.
+
+## Type
+
+Security
+
+## Priority
+
+Critical
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Analytics & Insights Team
+
+---
+
+## REPORT Baseline Status
+
+REPORT-FR-001 – REPORT-FR-007 are the Phase 2 Version 2 baseline. REPORT is not an MVP dependency (Phase 2 resolution of BQ-4).
+
+# Chapter — OPS Domain Requirements
+
+> Domain reference: [Functional Domain Specification — OPS](FunctionalDomainSpecification.md#domain--ops-platform-operations)
+>
+> Related Business Requirements: `OPS-BR-001`
+> Related Business Objectives: `BO-006`, `BO-009`
+> Depends on: `CORE`, `AUTH`, `AUTHZ`, `ADMIN`
+
+OPS is a **Version 2 domain only**. MVP platform health hooks remain CORE-owned; OPS expands operational visibility in Version 2.
+
+## OPS Domain Requirement Index
+
+| ID | Title | Priority | Release | FDS Feature Coverage |
+|----|-------|----------|---------|----------------------|
+| OPS-FR-001 | Monitor Platform Health | Critical | Version 2 | Monitoring |
+| OPS-FR-002 | Collect Operational Metrics | High | Version 2 | Metrics |
+| OPS-FR-003 | Provide Logging Visibility | High | Version 2 | Logging |
+| OPS-FR-004 | Provide Tracing Visibility | High | Version 2 | Tracing |
+| OPS-FR-005 | Surface Backup Status | High | Version 2 | Backup Status |
+| OPS-FR-006 | Enforce OPS Event Publication Contract | High | Version 2 | Supporting — events |
+| OPS-FR-007 | Consume Upstream Platform Events | High | Version 2 | Supporting — consumer |
+| OPS-FR-008 | Restrict Operations Data Access To Authorized Actors | Critical | Version 2 | Supporting — AUTHZ |
+
+# OPS-FR-001 — Monitor Platform Health
+
+## Summary
+
+The system shall monitor platform and service health status for operational visibility.
+
+## Description
+
+The system shall aggregate health signals from deployable services and CORE hooks, publishing `PlatformHealthDegraded` through OPS-FR-006 when thresholds are breached, without owning business alert lifecycle (ALERT).
+
+## Type
+
+Functional
+
+## Priority
+
+Critical
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Operations / SRE
+
+## Business Requirement Reference
+
+OPS-BR-001
+
+## Acceptance Criteria
+
+- OPS health alerts are distinct from ALERT fraud/risk alerts.
+- Health monitoring does not require REPORT or business domains to function.
+
+---
+
+# OPS-FR-002 — Collect Operational Metrics
+
+## Summary
+
+The system shall collect and expose operational metrics catalogs for platform diagnostics.
+
+## Type
+
+Functional
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Operations / SRE
+
+---
+
+# OPS-FR-003 — Provide Logging Visibility
+
+## Summary
+
+The system shall provide authorized access to aggregated application and security log views for incident diagnosis.
+
+## Type
+
+Functional
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Operations / SRE
+
+---
+
+# OPS-FR-004 — Provide Tracing Visibility
+
+## Summary
+
+The system shall provide authorized access to distributed trace views correlated by correlation ID.
+
+## Type
+
+Functional
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Operations / SRE
+
+---
+
+# OPS-FR-005 — Surface Backup Status
+
+## Summary
+
+The system shall surface backup job status and last-success timestamps for authorized operators.
+
+## Description
+
+The system shall publish `BackupStatusUpdated` through OPS-FR-006 when backup status changes.
+
+## Type
+
+Functional
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Operations / SRE
+
+---
+
+# OPS-FR-006 — Enforce OPS Event Publication Contract
+
+## Summary
+
+The system shall publish OPS domain events according to the FDS OPS contract.
+
+## Description
+
+Version 2 OPS publishes exactly `PlatformHealthDegraded`, `OperationalAlertRaised`, and `BackupStatusUpdated`.
+
+## Type
+
+Integration
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Operations / SRE
+
+---
+
+# OPS-FR-007 — Consume Upstream Platform Events
+
+## Summary
+
+The system shall consume upstream platform events for operational correlation.
+
+## Description
+
+Version 2 OPS consumes exactly `PlatformStarted`, `PlatformUnavailable`, `AgentRunFailed`, and `IntegrationConfigured`.
+
+## Type
+
+Integration
+
+## Priority
+
+High
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Operations / SRE
+
+---
+
+# OPS-FR-008 — Restrict Operations Data Access To Authorized Actors
+
+## Summary
+
+The system shall restrict OPS telemetry and diagnostic data to authorized platform and security roles.
+
+## Type
+
+Security
+
+## Priority
+
+Critical
+
+## Release
+
+Version 2
+
+## Status
+
+Draft
+
+## Owner
+
+Platform Operations / SRE
+
+---
+
+## OPS Baseline Status
+
+OPS-FR-001 – OPS-FR-008 are the Phase 2 Version 2 baseline. SLO Dashboards and Automated Runbooks remain Version 3 per FDS.

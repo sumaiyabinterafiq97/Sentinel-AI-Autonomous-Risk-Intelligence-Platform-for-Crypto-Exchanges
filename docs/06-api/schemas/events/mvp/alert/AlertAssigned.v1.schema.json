@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/alert/AlertAssigned.v1.schema.json",
+  "title": "AlertAssignedPayload",
+  "type": "object",
+  "required": ["alertId", "assignedTo", "assignedAt"],
+  "properties": {
+    "alertId": { "type": "string", "format": "uuid" },
+    "assignedTo": { "type": "string", "format": "uuid" },
+    "assignedBy": { "type": "string", "format": "uuid" },
+    "assignedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

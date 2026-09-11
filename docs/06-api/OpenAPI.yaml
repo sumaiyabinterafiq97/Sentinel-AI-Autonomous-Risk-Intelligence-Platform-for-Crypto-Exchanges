@@ -1,0 +1,3707 @@
+openapi: 3.0.3
+info:
+  title: Sentinel AI Platform API
+  description: |-
+    Contract-first REST API for Sentinel AI — Autonomous Risk Intelligence Platform for Crypto Exchanges.
+    Phase 4 — full MVP coverage per APIInventory.md. Multi-method inventory rows are expanded to
+    separate HTTP operations. V2 operations tagged explicitly.
+    Authoritative inventory: docs/06-api/APIInventory.md
+  version: 1.1.0
+  contact:
+    name: Sentinel AI Architecture Team
+servers:
+- url: https://api.example.com
+  description: Environment-neutral placeholder (replace per deployment)
+tags:
+- name: Platform
+  description: CORE platform health and configuration
+- name: Authentication
+  description: AUTH domain — sessions and login
+- name: Authorization
+  description: AUTHZ domain — roles and permissions
+- name: Users
+  description: USER domain
+- name: Organizations
+  description: ORG domain
+- name: Alerts
+  description: ALERT domain — operational alert lifecycle
+- name: Risk
+  description: RISK domain — scoring and rules
+- name: Investigations
+  description: INVEST domain — cases and evidence
+- name: Compliance
+  description: COMP domain
+- name: Workspace
+  description: DASH presentation layer
+- name: AI
+  description: AI Platform — assistive only
+- name: Administration
+  description: ADMIN domain
+- name: Security
+  description: SEC domain (V2)
+- name: Reports
+  description: REPORT domain (V2)
+security:
+- bearerAuth: []
+paths:
+  /v1/platform/health:
+    get:
+      tags:
+      - Platform
+      summary: Platform liveness and readiness check
+      operationId: getPlatformHealth
+      x-release: MVP
+      x-api-id: API-CORE-001
+      x-fr:
+      - CORE-FR-004
+      security: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /v1/platform/status:
+    get:
+      tags:
+      - Platform
+      summary: Get operational platform status
+      operationId: getPlatformStatus
+      x-release: MVP
+      x-api-id: API-CORE-002
+      x-fr:
+      - CORE-FR-024
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformStatusResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/platform/config:
+    get:
+      tags:
+      - Platform
+      summary: Read active platform configuration
+      operationId: getPlatformConfig
+      x-release: MVP
+      x-api-id: API-CORE-003
+      x-fr:
+      - CORE-FR-008
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    patch:
+      tags:
+      - Platform
+      summary: Update platform configuration
+      operationId: patchPlatformConfig
+      x-release: MVP
+      x-api-id: API-CORE-004
+      x-fr:
+      - CORE-FR-007
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigPatchRequest'
+  /v1/platform/feature-flags:
+    get:
+      tags:
+      - Platform
+      summary: List platform feature flags
+      operationId: listFeatureFlags
+      x-release: MVP
+      x-api-id: API-CORE-005
+      x-fr:
+      - CORE-FR-010
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureFlagListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/platform/feature-flags/{flagKey}:
+    patch:
+      tags:
+      - Platform
+      summary: Update a feature flag
+      operationId: patchFeatureFlag
+      x-release: MVP
+      x-api-id: API-CORE-006
+      x-fr:
+      - CORE-FR-009
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/FlagKey'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureFlagResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeatureFlagPatchRequest'
+  /v1/auth/login:
+    post:
+      tags:
+      - Authentication
+      summary: Authenticate user credentials
+      operationId: login
+      x-release: MVP
+      x-api-id: API-AUTH-001
+      x-fr:
+      - AUTH-FR-001
+      security: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+  /v1/auth/logout:
+    post:
+      tags:
+      - Authentication
+      summary: End current session
+      operationId: logout
+      x-release: MVP
+      x-api-id: API-AUTH-002
+      x-fr:
+      - AUTH-FR-003
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptyDataResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+  /v1/auth/refresh:
+    post:
+      tags:
+      - Authentication
+      summary: Refresh access token
+      operationId: refreshToken
+      x-release: MVP
+      x-api-id: API-AUTH-003
+      x-fr:
+      - AUTH-FR-002
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+  /v1/auth/session:
+    get:
+      tags:
+      - Authentication
+      summary: Get current authenticated session
+      operationId: getSession
+      x-release: MVP
+      x-api-id: API-AUTH-004
+      x-fr:
+      - AUTH-FR-004
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/auth/mfa/verify:
+    post:
+      tags:
+      - Authentication
+      summary: Verify multi-factor authentication
+      operationId: verifyMfa
+      x-release: MVP
+      x-api-id: API-AUTH-005
+      x-fr:
+      - AUTH-FR-006
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MfaVerifyResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MfaVerifyRequest'
+  /v1/authz/evaluate:
+    post:
+      tags:
+      - Authorization
+      summary: Evaluate permission for actor and resource
+      operationId: evaluatePermission
+      x-release: MVP
+      x-api-id: API-AUTHZ-001
+      x-fr:
+      - AUTHZ-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthzEvaluateResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthzEvaluateRequest'
+  /v1/authz/roles:
+    get:
+      tags:
+      - Authorization
+      summary: List authorization roles
+      operationId: listRoles
+      x-release: MVP
+      x-api-id: API-AUTHZ-002
+      x-fr:
+      - AUTHZ-FR-003
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+      - Authorization
+      summary: Create authorization role
+      operationId: createRole
+      x-release: MVP
+      x-api-id: API-AUTHZ-003
+      x-fr:
+      - AUTHZ-FR-003
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleCreateRequest'
+  /v1/authz/role-assignments:
+    post:
+      tags:
+      - Authorization
+      summary: Assign role to user
+      operationId: assignRole
+      x-release: MVP
+      x-api-id: API-AUTHZ-004
+      x-fr:
+      - AUTHZ-FR-005
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleAssignmentResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleAssignmentRequest'
+  /v1/users:
+    get:
+      tags:
+      - Users
+      summary: List users in organization
+      operationId: listUsers
+      x-release: MVP
+      x-api-id: API-USER-001
+      x-fr:
+      - USER-FR-006
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+      - Users
+      summary: Create user
+      operationId: createUser
+      x-release: MVP
+      x-api-id: API-USER-002
+      x-fr:
+      - USER-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+  /v1/users/{userId}:
+    get:
+      tags:
+      - Users
+      summary: Get user by ID
+      operationId: getUser
+      x-release: MVP
+      x-api-id: API-USER-003
+      x-fr:
+      - USER-FR-006
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Users
+      summary: Update or deactivate user
+      operationId: patchUser
+      x-release: MVP
+      x-api-id: API-USER-004
+      x-fr:
+      - USER-FR-002
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPatchRequest'
+  /v1/organizations:
+    get:
+      tags:
+      - Organizations
+      summary: List organizations
+      operationId: listOrganizations
+      x-release: MVP
+      x-api-id: API-ORG-001
+      x-fr:
+      - ORG-FR-005
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+      - Organizations
+      summary: Create organization
+      operationId: createOrganization
+      x-release: MVP
+      x-api-id: API-ORG-002
+      x-fr:
+      - ORG-FR-001
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationCreateRequest'
+  /v1/organizations/{orgId}:
+    patch:
+      tags:
+      - Organizations
+      summary: Update organization
+      operationId: patchOrganization
+      x-release: MVP
+      x-api-id: API-ORG-003
+      x-fr:
+      - ORG-FR-002
+      parameters:
+      - $ref: '#/components/parameters/OrgId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationPatchRequest'
+  /v1/alerts:
+    get:
+      tags:
+      - Alerts
+      summary: List and discover alerts
+      operationId: listAlerts
+      x-release: MVP
+      x-api-id: API-ALERT-001
+      x-fr:
+      - ALERT-FR-006
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/alerts/{alertId}:
+    get:
+      tags:
+      - Alerts
+      summary: Get alert by ID
+      operationId: getAlert
+      x-release: MVP
+      x-api-id: API-ALERT-002
+      x-fr:
+      - ALERT-FR-006
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/AlertId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Alerts
+      summary: Update alert lifecycle state
+      operationId: patchAlert
+      x-release: MVP
+      x-api-id: API-ALERT-003
+      x-fr:
+      - ALERT-FR-005
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/AlertId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertPatchRequest'
+  /v1/alerts/{alertId}/assign:
+    post:
+      tags:
+      - Alerts
+      summary: Assign alert to analyst
+      operationId: assignAlert
+      x-release: MVP
+      x-api-id: API-ALERT-004
+      x-fr:
+      - ALERT-FR-004
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/AlertId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertAssignRequest'
+  /v1/alerts/{alertId}/close:
+    post:
+      tags:
+      - Alerts
+      summary: Close alert with human disposition
+      operationId: closeAlert
+      x-release: MVP
+      x-api-id: API-ALERT-005
+      x-fr:
+      - ALERT-FR-005
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/AlertId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertCloseRequest'
+  /v1/alerts/{alertId}/priority:
+    patch:
+      tags:
+      - Alerts
+      summary: Set alert queue priority
+      operationId: patchAlertPriority
+      x-release: MVP
+      x-api-id: API-ALERT-006
+      x-fr:
+      - ALERT-FR-003
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/AlertId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertPriorityRequest'
+  /v1/alerts/{alertId}/investigation-link:
+    post:
+      tags:
+      - Alerts
+      summary: Link investigation context to alert
+      operationId: linkAlertInvestigation
+      x-release: MVP
+      x-api-id: API-ALERT-007
+      x-fr:
+      - ALERT-FR-007
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/AlertId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertInvestigationLinkRequest'
+  /v1/risk/transactions/ingest:
+    post:
+      tags:
+      - Risk
+      summary: Ingest transaction for risk evaluation
+      operationId: ingestTransaction
+      x-release: MVP
+      x-api-id: API-RISK-001
+      x-fr:
+      - RISK-FR-009
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '202':
+          description: Accepted for async processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionIngestResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionIngestRequest'
+  /v1/risk/assessments:
+    get:
+      tags:
+      - Risk
+      summary: Discover risk assessments
+      operationId: listRiskAssessments
+      x-release: MVP
+      x-api-id: API-RISK-002
+      x-fr:
+      - RISK-FR-008
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskAssessmentListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/risk/assessments/{assessmentId}:
+    get:
+      tags:
+      - Risk
+      summary: Get risk assessment with explanation
+      operationId: getRiskAssessment
+      x-release: MVP
+      x-api-id: API-RISK-003
+      x-fr:
+      - RISK-FR-006
+      - RISK-FR-008
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/AssessmentId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskAssessmentResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/risk/rules:
+    get:
+      tags:
+      - Risk
+      summary: List risk rules
+      operationId: listRiskRules
+      x-release: MVP
+      x-api-id: API-RISK-004
+      x-fr:
+      - RISK-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskRuleListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+      - Risk
+      summary: Create risk rule
+      operationId: createRiskRule
+      x-release: MVP
+      x-api-id: API-RISK-005
+      x-fr:
+      - RISK-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskRuleResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RiskRuleCreateRequest'
+  /v1/risk/rules/{ruleId}:
+    patch:
+      tags:
+      - Risk
+      summary: Update risk rule
+      operationId: patchRiskRule
+      x-release: MVP
+      x-api-id: API-RISK-006
+      x-fr:
+      - RISK-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/RuleId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskRuleResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RiskRulePatchRequest'
+  /v1/risk/evaluate:
+    post:
+      tags:
+      - Risk
+      summary: Trigger risk evaluation
+      operationId: triggerRiskEvaluation
+      x-release: MVP
+      x-api-id: API-RISK-007
+      x-fr:
+      - RISK-FR-002
+      - RISK-FR-003
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '202':
+          description: Accepted for async processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskEvaluationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RiskEvaluationRequest'
+  /v1/investigations/cases:
+    get:
+      tags:
+      - Investigations
+      summary: List investigation cases
+      operationId: listCases
+      x-release: MVP
+      x-api-id: API-INVEST-001
+      x-fr:
+      - INVEST-FR-006
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+      - Investigations
+      summary: Create investigation case
+      operationId: createCase
+      x-release: MVP
+      x-api-id: API-INVEST-002
+      x-fr:
+      - INVEST-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseCreateRequest'
+  /v1/investigations/cases/{caseId}:
+    get:
+      tags:
+      - Investigations
+      summary: Get investigation case
+      operationId: getCase
+      x-release: MVP
+      x-api-id: API-INVEST-003
+      x-fr:
+      - INVEST-FR-006
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CaseId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Investigations
+      summary: Update investigation case
+      operationId: patchCase
+      x-release: MVP
+      x-api-id: API-INVEST-004
+      x-fr:
+      - INVEST-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CaseId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CasePatchRequest'
+  /v1/investigations/cases/{caseId}/close:
+    post:
+      tags:
+      - Investigations
+      summary: Close investigation case (human authority)
+      operationId: closeCase
+      x-release: MVP
+      x-api-id: API-INVEST-005
+      x-fr:
+      - INVEST-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CaseId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseCloseRequest'
+  /v1/investigations/cases/{caseId}/assign:
+    post:
+      tags:
+      - Investigations
+      summary: Assign investigation case
+      operationId: assignCase
+      x-release: MVP
+      x-api-id: API-INVEST-006
+      x-fr:
+      - INVEST-FR-002
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CaseId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseAssignRequest'
+  /v1/investigations/cases/{caseId}/evidence:
+    post:
+      tags:
+      - Investigations
+      summary: Attach evidence to case
+      operationId: attachEvidence
+      x-release: MVP
+      x-api-id: API-INVEST-007
+      x-fr:
+      - INVEST-FR-003
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CaseId'
+      - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/Conflict'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvidenceAttachRequest'
+  /v1/investigations/cases/{caseId}/timeline:
+    get:
+      tags:
+      - Investigations
+      summary: Get case timeline
+      operationId: getCaseTimeline
+      x-release: MVP
+      x-api-id: API-INVEST-008
+      x-fr:
+      - INVEST-FR-005
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CaseId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimelineResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/investigations/cases/{caseId}/notes:
+    get:
+      tags:
+      - Investigations
+      summary: List case notes
+      operationId: listCaseNotes
+      x-release: MVP
+      x-api-id: API-INVEST-009
+      x-fr:
+      - INVEST-FR-004
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CaseId'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseNoteListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+      - Investigations
+      summary: Create case note
+      operationId: createCaseNote
+      x-release: MVP
+      x-api-id: API-INVEST-009
+      x-fr:
+      - INVEST-FR-004
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CaseId'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseNoteResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaseNoteCreateRequest'
+  /v1/compliance/kyc-reviews:
+    post:
+      tags:
+      - Compliance
+      summary: Start KYC compliance review
+      operationId: startKycReview
+      x-release: MVP
+      x-api-id: API-COMP-001
+      x-fr:
+      - COMP-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KycReviewResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KycReviewStartRequest'
+  /v1/compliance/kyc-reviews/{reviewId}:
+    patch:
+      tags:
+      - Compliance
+      summary: Complete KYC review
+      operationId: completeKycReview
+      x-release: MVP
+      x-api-id: API-COMP-002
+      x-fr:
+      - COMP-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/ReviewId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KycReviewResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KycReviewCompleteRequest'
+  /v1/compliance/aml-reviews:
+    post:
+      tags:
+      - Compliance
+      summary: Start AML compliance review
+      operationId: startAmlReview
+      x-release: MVP
+      x-api-id: API-COMP-003
+      x-fr:
+      - COMP-FR-002
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmlReviewResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmlReviewStartRequest'
+  /v1/compliance/travel-rule/validations:
+    post:
+      tags:
+      - Compliance
+      summary: Validate Travel Rule compliance
+      operationId: validateTravelRule
+      x-release: MVP
+      x-api-id: API-COMP-004
+      x-fr:
+      - COMP-FR-003
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TravelRuleValidationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TravelRuleValidationRequest'
+  /v1/compliance/sanctions-screenings:
+    post:
+      tags:
+      - Compliance
+      summary: Initiate sanctions screening
+      operationId: createSanctionsScreening
+      x-release: MVP
+      x-api-id: API-COMP-005
+      x-fr:
+      - COMP-FR-004
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SanctionsScreeningResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SanctionsScreeningRequest'
+  /v1/compliance/sanctions-screenings/{screeningId}:
+    patch:
+      tags:
+      - Compliance
+      summary: Disposition sanctions screening match
+      operationId: dispositionSanctionsMatch
+      x-release: MVP
+      x-api-id: API-COMP-006
+      x-fr:
+      - COMP-FR-004
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/ScreeningId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SanctionsScreeningResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SanctionsDispositionRequest'
+  /v1/compliance/audit-packages:
+    post:
+      tags:
+      - Compliance
+      summary: Prepare compliance audit package
+      operationId: prepareAuditPackage
+      x-release: MVP
+      x-api-id: API-COMP-007
+      x-fr:
+      - COMP-FR-005
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditPackageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditPackageRequest'
+  /v1/workspace:
+    get:
+      tags:
+      - Workspace
+      summary: Get operational workspace entry
+      operationId: getWorkspace
+      x-release: MVP
+      x-api-id: API-DASH-001
+      x-fr:
+      - DASH-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/workspace/dashboard:
+    get:
+      tags:
+      - Workspace
+      summary: Get role-based dashboard
+      operationId: getWorkspaceDashboard
+      x-release: MVP
+      x-api-id: API-DASH-002
+      x-fr:
+      - DASH-FR-002
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/workspace/queues/{queueType}:
+    get:
+      tags:
+      - Workspace
+      summary: Get work queue view
+      operationId: getWorkQueue
+      x-release: MVP
+      x-api-id: API-DASH-003
+      x-fr:
+      - DASH-FR-003
+      - DASH-FR-004
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/QueueType'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkQueueResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/workspace/widgets:
+    get:
+      tags:
+      - Workspace
+      summary: Get summary widgets
+      operationId: listWorkspaceWidgets
+      x-release: MVP
+      x-api-id: API-DASH-004
+      x-fr:
+      - DASH-FR-006
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WidgetListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/workspace/widgets/{widgetId}/interactions:
+    post:
+      tags:
+      - Workspace
+      summary: Log widget interaction
+      operationId: logWidgetInteraction
+      x-release: MVP
+      x-api-id: API-DASH-005
+      x-fr:
+      - DASH-FR-007
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/WidgetId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WidgetInteractionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WidgetInteractionRequest'
+  /v1/workspace/subscriptions/{channel}:
+    get:
+      tags:
+      - Workspace
+      summary: Subscribe to workspace refresh events (SSE)
+      description: |
+        Server-Sent Events stream for MVP DASH real-time refresh (ADR-016).
+        Polling fallback when SSE unavailable. Does not own upstream domain lifecycles.
+      operationId: subscribeWorkspaceChannel
+      x-release: MVP
+      x-api-id: API-DASH-007
+      x-fr:
+      - DASH-FR-011
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/WorkspaceChannel'
+      - $ref: '#/components/parameters/LastEventId'
+      responses:
+        '200':
+          description: SSE event stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE stream of workspace update events
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/ai/assist/investigation:
+    post:
+      tags:
+      - AI
+      summary: Request investigation assistance (assistive)
+      operationId: assistInvestigation
+      x-release: MVP
+      x-api-id: API-AI-001
+      x-fr:
+      - AI-FR-001
+      description: AI assistive-only endpoint. Does NOT create alerts, close cases, approve compliance, or change alert priority.
+        Human operators retain authority.
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      responses:
+        '202':
+          description: Accepted for async processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIRecommendationJobResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '503':
+          description: AI unavailable — core workflows unaffected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIAssistInvestigationRequest'
+  /v1/ai/assist/risk-explanation:
+    post:
+      tags:
+      - AI
+      summary: Request risk explanation assistance (assistive)
+      operationId: assistRiskExplanation
+      x-release: MVP
+      x-api-id: API-AI-002
+      x-fr:
+      - AI-FR-002
+      description: AI assistive-only endpoint. Does NOT create alerts, close cases, approve compliance, or change alert priority.
+        Human operators retain authority.
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      responses:
+        '202':
+          description: Accepted for async processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIRecommendationJobResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '503':
+          description: AI unavailable — core workflows unaffected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIAssistRiskExplanationRequest'
+  /v1/ai/assist/retrieve:
+    post:
+      tags:
+      - AI
+      summary: Request evidence retrieval assistance (assistive)
+      operationId: assistRetrieve
+      x-release: MVP
+      x-api-id: API-AI-003
+      x-fr:
+      - AI-FR-003
+      description: AI assistive-only endpoint. Does NOT create alerts, close cases, approve compliance, or change alert priority.
+        Human operators retain authority.
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIRecommendationJobResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '503':
+          description: AI unavailable — core workflows unaffected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIAssistRetrieveRequest'
+  /v1/ai/recommendations/{recommendationId}:
+    get:
+      tags:
+      - AI
+      summary: Get AI recommendation by ID (assistive)
+      operationId: getRecommendation
+      x-release: MVP
+      x-api-id: API-AI-004
+      x-fr:
+      - AI-FR-009
+      description: AI assistive-only endpoint. Does NOT create alerts, close cases, approve compliance, or change alert priority.
+        Human operators retain authority.
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/RecommendationId'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIRecommendationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/ai/prompts:
+    get:
+      tags:
+      - AI
+      summary: List AI prompts (assistive)
+      operationId: listPrompts
+      x-release: MVP
+      x-api-id: API-AI-005
+      x-fr:
+      - AI-FR-004
+      description: AI assistive-only endpoint. Does NOT create alerts, close cases, approve compliance, or change alert priority.
+        Human operators retain authority.
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromptListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+      - AI
+      summary: Create AI prompt (assistive)
+      operationId: createPrompt
+      x-release: MVP
+      x-api-id: API-AI-005
+      x-fr:
+      - AI-FR-004
+      description: AI assistive-only endpoint. Does NOT create alerts, close cases, approve compliance, or change alert priority.
+        Human operators retain authority.
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/CorrelationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromptResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '503':
+          description: AI unavailable — core workflows unaffected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromptCreateRequest'
+    patch:
+      tags:
+      - AI
+      summary: Update AI prompt (assistive)
+      operationId: patchPrompt
+      x-release: MVP
+      x-api-id: API-AI-005
+      x-fr:
+      - AI-FR-004
+      description: AI assistive-only endpoint. Does NOT create alerts, close cases, approve compliance, or change alert priority.
+        Human operators retain authority.
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromptResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromptPatchRequest'
+  /v1/admin/settings:
+    get:
+      tags:
+      - Administration
+      summary: Get platform admin settings
+      operationId: getAdminSettings
+      x-release: MVP
+      x-api-id: API-ADMIN-001
+      x-fr:
+      - ADMIN-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminSettingsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    patch:
+      tags:
+      - Administration
+      summary: Update platform admin settings
+      operationId: patchAdminSettings
+      x-release: MVP
+      x-api-id: API-ADMIN-001
+      x-fr:
+      - ADMIN-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminSettingsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminSettingsPatchRequest'
+  /v1/admin/integrations:
+    get:
+      tags:
+      - Administration
+      summary: List platform integrations
+      operationId: listIntegrations
+      x-release: MVP
+      x-api-id: API-ADMIN-002
+      x-fr:
+      - ADMIN-FR-002
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+      - Administration
+      summary: Create platform integration
+      operationId: createIntegration
+      x-release: MVP
+      x-api-id: API-ADMIN-002
+      x-fr:
+      - ADMIN-FR-002
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegrationCreateRequest'
+    patch:
+      tags:
+      - Administration
+      summary: Update platform integration
+      operationId: patchIntegration
+      x-release: MVP
+      x-api-id: API-ADMIN-002
+      x-fr:
+      - ADMIN-FR-002
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegrationPatchRequest'
+  /v1/admin/users/provision:
+    post:
+      tags:
+      - Administration
+      summary: Orchestrate user provisioning
+      operationId: provisionUser
+      x-release: MVP
+      x-api-id: API-ADMIN-003
+      x-fr:
+      - ADMIN-FR-004
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminProvisionUserRequest'
+  /v1/admin/organizations/provision:
+    post:
+      tags:
+      - Administration
+      summary: Orchestrate organization provisioning
+      operationId: provisionOrganization
+      x-release: MVP
+      x-api-id: API-ADMIN-004
+      x-fr:
+      - ADMIN-FR-004
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminProvisionOrgRequest'
+  /v1/admin/audit-records:
+    get:
+      tags:
+      - Administration
+      summary: Query admin audit records
+      operationId: listAdminAuditRecords
+      x-release: MVP
+      x-api-id: API-ADMIN-005
+      x-fr:
+      - ADMIN-FR-003
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditRecordListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/security/threats:
+    get:
+      tags:
+      - Security
+      summary: List security threats (V2)
+      operationId: listThreats
+      x-release: V2
+      x-api-id: API-SEC-001
+      x-fr:
+      - SEC-FR-004
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreatListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/reports/operational:
+    post:
+      tags:
+      - Reports
+      summary: Generate operational report (V2)
+      operationId: generateOperationalReport
+      x-release: V2
+      x-api-id: API-REPORT-001
+      x-fr:
+      - REPORT-FR-001
+      parameters:
+      - $ref: '#/components/parameters/OrganizationIdHeader'
+      responses:
+        '202':
+          description: Accepted for async processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportJobResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OperationalReportRequest'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    OrganizationIdHeader:
+      name: X-Organization-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CorrelationIdHeader:
+      name: X-Correlation-Id
+      in: header
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      schema:
+        type: string
+        format: uuid
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 50
+    AlertId:
+      name: alertId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CaseId:
+      name: caseId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    OrgId:
+      name: orgId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    AssessmentId:
+      name: assessmentId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    RuleId:
+      name: ruleId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    FlagKey:
+      name: flagKey
+      in: path
+      required: true
+      schema:
+        type: string
+    ReviewId:
+      name: reviewId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ScreeningId:
+      name: screeningId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    QueueType:
+      name: queueType
+      in: path
+      required: true
+      schema:
+        type: string
+    WidgetId:
+      name: widgetId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    WorkspaceChannel:
+      name: channel
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - workspace
+        - alerts
+        - cases
+        - queues
+      description: DASH refresh channel per DASH-FR-011
+    LastEventId:
+      name: Last-Event-ID
+      in: header
+      required: false
+      schema:
+        type: string
+      description: SSE reconnection cursor
+    RecommendationId:
+      name: recommendationId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    ResponseMeta:
+      type: object
+      required:
+      - requestId
+      - timestamp
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        correlationId:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        pagination:
+          type: object
+          properties:
+            cursor:
+              type: string
+            hasMore:
+              type: boolean
+            limit:
+              type: integer
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          required:
+          - code
+          - message
+          - requestId
+          - timestamp
+          properties:
+            code:
+              type: string
+              example: ALERT_VALIDATION_001
+            message:
+              type: string
+            requestId:
+              type: string
+              format: uuid
+            correlationId:
+              type: string
+              format: uuid
+            timestamp:
+              type: string
+              format: date-time
+            retryable:
+              type: boolean
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                  message:
+                    type: string
+    GenericRequest:
+      type: object
+    GenericDataResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    EmptyDataResponse:
+      type: object
+      properties:
+        data:
+          type: object
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    HealthResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/HealthStatus'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - healthy
+          - degraded
+          - unhealthy
+    PlatformStatusResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ConfigResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ConfigPatchRequest:
+      type: object
+      additionalProperties: true
+    FeatureFlagListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeatureFlag'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    FeatureFlagResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/FeatureFlag'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    FeatureFlag:
+      type: object
+      properties:
+        key:
+          type: string
+        enabled:
+          type: boolean
+        description:
+          type: string
+    FeatureFlagPatchRequest:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+    LoginRequest:
+      type: object
+      required:
+      - email
+      - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    LoginResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AuthTokens'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AuthTokens:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+    LogoutRequest:
+      type: object
+    RefreshTokenRequest:
+      type: object
+      required:
+      - refreshToken
+      properties:
+        refreshToken:
+          type: string
+    SessionResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Session'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Session:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        organizationId:
+          type: string
+          format: uuid
+        roles:
+          type: array
+          items:
+            type: string
+    MfaVerifyRequest:
+      type: object
+      required:
+      - code
+      properties:
+        code:
+          type: string
+    MfaVerifyResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/MfaVerifyResult'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    MfaVerifyResult:
+      type: object
+      properties:
+        verified:
+          type: boolean
+    AuthzEvaluateRequest:
+      type: object
+      required:
+      - action
+      - resource
+      properties:
+        action:
+          type: string
+        resource:
+          type: string
+        subjectId:
+          type: string
+          format: uuid
+    AuthzEvaluateResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AuthzEvaluateResult'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AuthzEvaluateResult:
+      type: object
+      properties:
+        allowed:
+          type: boolean
+    RoleListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    RoleResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Role'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+    RoleCreateRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+    RoleAssignmentRequest:
+      type: object
+      required:
+      - userId
+      - roleId
+      properties:
+        userId:
+          type: string
+          format: uuid
+        roleId:
+          type: string
+          format: uuid
+    RoleAssignmentResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RoleAssignment'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    RoleAssignment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        roleId:
+          type: string
+          format: uuid
+    UserListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    UserResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/User'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+        organizationId:
+          type: string
+          format: uuid
+    UserCreateRequest:
+      type: object
+      required:
+      - email
+      properties:
+        email:
+          type: string
+          format: email
+        roleIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+    UserPatchRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - active
+          - inactive
+        displayName:
+          type: string
+    OrganizationListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    OrganizationResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Organization'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          type: string
+    OrganizationCreateRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+    OrganizationPatchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+    AlertListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alert'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AlertResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Alert'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Alert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organizationId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - open
+          - assigned
+          - closed
+        priority:
+          type: integer
+        title:
+          type: string
+        riskAssessmentId:
+          type: string
+          format: uuid
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+    AlertPatchRequest:
+      type: object
+      properties:
+        status:
+          type: string
+    AlertAssignRequest:
+      type: object
+      required:
+      - assigneeId
+      properties:
+        assigneeId:
+          type: string
+          format: uuid
+    AlertCloseRequest:
+      type: object
+      required:
+      - dispositionReason
+      properties:
+        dispositionReason:
+          type: string
+    AlertPriorityRequest:
+      type: object
+      required:
+      - priority
+      properties:
+        priority:
+          type: integer
+    AlertInvestigationLinkRequest:
+      type: object
+      required:
+      - caseId
+      properties:
+        caseId:
+          type: string
+          format: uuid
+    RiskAssessmentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RiskAssessment'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    RiskAssessmentResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RiskAssessment'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    RiskAssessment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        entityType:
+          type: string
+        entityId:
+          type: string
+        score:
+          type: number
+        riskLevel:
+          type: string
+          enum:
+          - low
+          - medium
+          - high
+          - critical
+        explanationSummary:
+          type: string
+        evaluatedAt:
+          type: string
+          format: date-time
+    TransactionIngestRequest:
+      type: object
+      required:
+      - externalTransactionId
+      - amount
+      - asset
+      - timestamp
+      properties:
+        externalTransactionId:
+          type: string
+        amount:
+          type: string
+        asset:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+    TransactionIngestResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TransactionIngestResult'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    TransactionIngestResult:
+      type: object
+      properties:
+        assessmentId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - accepted
+          - duplicate
+    RiskRuleListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RiskRule'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    RiskRuleResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RiskRule'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    RiskRule:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        enabled:
+          type: boolean
+        definition:
+          type: object
+    RiskRuleCreateRequest:
+      type: object
+      required:
+      - name
+      - definition
+      properties:
+        name:
+          type: string
+        definition:
+          type: object
+        enabled:
+          type: boolean
+    RiskRulePatchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        definition:
+          type: object
+        enabled:
+          type: boolean
+    RiskEvaluationRequest:
+      type: object
+      required:
+      - entityType
+      - entityId
+      properties:
+        entityType:
+          type: string
+        entityId:
+          type: string
+    RiskEvaluationResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RiskEvaluationResult'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    RiskEvaluationResult:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - accepted
+          - processing
+    CaseListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Case'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    CaseResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Case'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Case:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organizationId:
+          type: string
+          format: uuid
+        status:
+          type: string
+        title:
+          type: string
+        sourceAlertId:
+          type: string
+          format: uuid
+          nullable: true
+    CaseCreateRequest:
+      type: object
+      required:
+      - title
+      properties:
+        title:
+          type: string
+        sourceAlertId:
+          type: string
+          format: uuid
+    CasePatchRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        status:
+          type: string
+    CaseCloseRequest:
+      type: object
+      required:
+      - resolutionSummary
+      properties:
+        resolutionSummary:
+          type: string
+    CaseAssignRequest:
+      type: object
+      required:
+      - assigneeId
+      properties:
+        assigneeId:
+          type: string
+          format: uuid
+    EvidenceAttachRequest:
+      type: object
+      required:
+      - evidenceRef
+      properties:
+        evidenceRef:
+          type: string
+        description:
+          type: string
+    EvidenceResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Evidence'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Evidence:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        caseId:
+          type: string
+          format: uuid
+        evidenceRef:
+          type: string
+    TimelineResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimelineEvent'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    TimelineEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+        occurredAt:
+          type: string
+          format: date-time
+        summary:
+          type: string
+    CaseNoteListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseNote'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    CaseNoteResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/CaseNote'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    CaseNote:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        caseId:
+          type: string
+          format: uuid
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    CaseNoteCreateRequest:
+      type: object
+      required:
+      - content
+      properties:
+        content:
+          type: string
+    KycReviewResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/KycReview'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    KycReview:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        subjectRef:
+          type: string
+    KycReviewStartRequest:
+      type: object
+      required:
+      - subjectRef
+      properties:
+        subjectRef:
+          type: string
+    KycReviewCompleteRequest:
+      type: object
+      required:
+      - decision
+      properties:
+        decision:
+          type: string
+          enum:
+          - approved
+          - rejected
+          - pending
+    AmlReviewResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AmlReview'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AmlReview:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+    AmlReviewStartRequest:
+      type: object
+      required:
+      - subjectRef
+      properties:
+        subjectRef:
+          type: string
+    TravelRuleValidationRequest:
+      type: object
+      required:
+      - transactionRef
+      properties:
+        transactionRef:
+          type: string
+    TravelRuleValidationResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TravelRuleValidation'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    TravelRuleValidation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        valid:
+          type: boolean
+    SanctionsScreeningRequest:
+      type: object
+      required:
+      - subjectRef
+      properties:
+        subjectRef:
+          type: string
+    SanctionsScreeningResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/SanctionsScreening'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    SanctionsScreening:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+    SanctionsDispositionRequest:
+      type: object
+      required:
+      - disposition
+      properties:
+        disposition:
+          type: string
+    AuditPackageRequest:
+      type: object
+      required:
+      - scope
+      properties:
+        scope:
+          type: string
+    AuditPackageResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AuditPackage'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AuditPackage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+    WorkspaceResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Workspace'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Workspace:
+      type: object
+      properties:
+        role:
+          type: string
+        queues:
+          type: array
+          items:
+            type: string
+    DashboardResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    WorkQueueResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkQueueItem'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    WorkQueueItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        title:
+          type: string
+        priority:
+          type: integer
+    WidgetListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Widget'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Widget:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        title:
+          type: string
+    WidgetInteractionRequest:
+      type: object
+      required:
+      - interactionType
+      properties:
+        interactionType:
+          type: string
+    WidgetInteractionResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/WidgetInteraction'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    WidgetInteraction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        logged:
+          type: boolean
+    AIAssistInvestigationRequest:
+      type: object
+      required:
+      - caseId
+      properties:
+        caseId:
+          type: string
+          format: uuid
+        query:
+          type: string
+    AIAssistRiskExplanationRequest:
+      type: object
+      required:
+      - assessmentId
+      properties:
+        assessmentId:
+          type: string
+          format: uuid
+    AIAssistRetrieveRequest:
+      type: object
+      required:
+      - query
+      properties:
+        query:
+          type: string
+        caseId:
+          type: string
+          format: uuid
+    AIRecommendationJobResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AIRecommendationJob'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AIRecommendationJob:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        recommendationId:
+          type: string
+          format: uuid
+          nullable: true
+        status:
+          type: string
+          enum:
+          - pending
+          - completed
+          - failed
+    AIRecommendationResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AIRecommendation'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AIRecommendation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        status:
+          type: string
+    PromptListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Prompt'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    PromptResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Prompt'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Prompt:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        template:
+          type: string
+    PromptCreateRequest:
+      type: object
+      required:
+      - name
+      - template
+      properties:
+        name:
+          type: string
+        template:
+          type: string
+    PromptPatchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        template:
+          type: string
+    AdminSettingsResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          additionalProperties: true
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AdminSettingsPatchRequest:
+      type: object
+      additionalProperties: true
+    IntegrationListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Integration'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    IntegrationResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Integration'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Integration:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        status:
+          type: string
+    IntegrationCreateRequest:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+        config:
+          type: object
+    IntegrationPatchRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        config:
+          type: object
+    AdminProvisionUserRequest:
+      type: object
+      required:
+      - email
+      - organizationId
+      properties:
+        email:
+          type: string
+          format: email
+        organizationId:
+          type: string
+          format: uuid
+        roleIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+    AdminProvisionOrgRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+    AuditRecordListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditRecord'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AuditRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        action:
+          type: string
+        actorId:
+          type: string
+          format: uuid
+        occurredAt:
+          type: string
+          format: date-time
+    ThreatListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Threat'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Threat:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        threatType:
+          type: string
+    OperationalReportRequest:
+      type: object
+      required:
+      - reportType
+      properties:
+        reportType:
+          type: string
+    ReportJobResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ReportJob'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ReportJob:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+          - pending
+          - processing
+          - completed
+  responses:
+    Unauthorized:
+      description: Unauthenticated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Conflict (state, idempotency, concurrency)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/risk/HighRiskDetected.v1.schema.json",
+  "title": "HighRiskDetectedPayload",
+  "description": "Published by RISK when high-risk threshold met. Consumer: ALERT (MVP).",
+  "type": "object",
+  "required": ["assessmentId", "entityType", "entityId", "score", "detectedAt"],
+  "properties": {
+    "assessmentId": { "type": "string", "format": "uuid" },
+    "entityType": { "type": "string" },
+    "entityId": { "type": "string" },
+    "score": { "type": "number" },
+    "detectedAt": { "type": "string", "format": "date-time" },
+    "prioritySignal": {
+      "type": "number",
+      "description": "Risk-derived signal for ALERT context only — ALERT owns queue priority"
+    }
+  },
+  "additionalProperties": false
+}

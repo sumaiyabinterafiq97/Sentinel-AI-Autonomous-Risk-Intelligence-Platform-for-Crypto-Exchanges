@@ -1,58 +1,74 @@
 # API Error Handling
 
-## Purpose
+## Document Information
 
-Standardize API error response formats, codes, and handling guidance.
-
-## Status
-
-Draft
-
-## Owner
-
-To Be Assigned
-
-## Last Updated
-
-2026-07-25
-
-## Revision History
-
-| Version | Date | Author | Notes |
-|---------|------|--------|-------|
-| 0.1 | 2026-07-25 | — | Initial document skeleton |
-
-## Table of Contents
-
-1. [Error Handling Goals](#error-handling-goals)
-2. [Error Model](#error-model)
-3. [Error Codes](#error-codes)
-4. [Retry Guidance](#retry-guidance)
-5. [Client Guidance](#client-guidance)
-6. [Open Questions](#open-questions)
+| Field | Value |
+|--------|-------|
+| Project | Sentinel AI |
+| Document | API Error Handling |
+| Version | 1.0 (Draft) |
+| Status | Draft — Phase 3 |
+| Last Updated | 2026-09-03 |
 
 ---
 
-## Error Handling Goals
+## Purpose
 
-_Content to be defined._
+Standardized error contract for all Sentinel AI REST APIs. Implemented in [OpenAPI.yaml](OpenAPI.yaml) `ErrorResponse` schema.
 
-## Error Model
+---
 
-_Content to be defined._
+## Error Response Shape
 
-## Error Codes
+```json
+{
+  "error": {
+    "code": "DOMAIN_CATEGORY_NNN",
+    "message": "Human-readable summary safe for clients",
+    "requestId": "uuid",
+    "correlationId": "uuid",
+    "timestamp": "2026-09-03T12:00:00Z",
+    "retryable": false,
+    "details": [
+      { "field": "priority", "message": "Must be a positive integer" }
+    ]
+  }
+}
+```
 
-_Content to be defined._
+---
 
-## Retry Guidance
+## Error Categories
 
-_Content to be defined._
+| HTTP | Category | Code prefix | retryable |
+|------|----------|-------------|-----------|
+| 400 | validation | `*_VALIDATION_*` | false |
+| 401 | authentication | `AUTH_AUTHENTICATION_*` | false |
+| 403 | authorization | `AUTHZ_FORBIDDEN_*` | false |
+| 404 | not_found | `*_NOT_FOUND_*` | false |
+| 409 | conflict | `*_CONFLICT_*` | false |
+| 422 | semantic | `*_SEMANTIC_*` | false |
+| 429 | rate_limit | `PLATFORM_RATE_LIMIT_*` | true |
+| 503 | dependency | `*_DEPENDENCY_*` | true |
+| 504 | timeout | `*_TIMEOUT_*` | true |
+| 500 | internal | `PLATFORM_INTERNAL_*` | true |
 
-## Client Guidance
+---
 
-_Content to be defined._
+## Disclosure Policy
 
-## Open Questions
+| Include | Exclude |
+|---------|---------|
+| Stable error codes | Stack traces |
+| Field validation messages | SQL errors |
+| requestId, correlationId | Internal service hostnames |
+| retryable flag | Database schema details |
 
-_Content to be defined._
+AI unavailable: return `503` with `AI_DEPENDENCY_001`, message "Assistive AI temporarily unavailable" — not platform outage.
+
+---
+
+## Related Documents
+
+- [APIStandards.md](APIStandards.md)
+- [OpenAPI.yaml](OpenAPI.yaml)

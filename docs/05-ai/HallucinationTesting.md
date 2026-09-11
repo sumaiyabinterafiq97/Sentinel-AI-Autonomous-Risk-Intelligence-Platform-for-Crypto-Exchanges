@@ -1,58 +1,44 @@
 # Hallucination Testing
 
-## Purpose
+## Document Information
 
-Define approaches for detecting and measuring hallucinations in AI outputs.
-
-## Status
-
-Draft
-
-## Owner
-
-To Be Assigned
-
-## Last Updated
-
-2026-07-25
-
-## Revision History
-
-| Version | Date | Author | Notes |
-|---------|------|--------|-------|
-| 0.1 | 2026-07-25 | — | Initial document skeleton |
-
-## Table of Contents
-
-1. [Testing Goals](#testing-goals)
-2. [Failure Modes](#failure-modes)
-3. [Test Methods](#test-methods)
-4. [Metrics](#metrics)
-5. [Remediation Workflow](#remediation-workflow)
-6. [Open Questions](#open-questions)
+| Field | Value |
+|--------|-------|
+| Project | Sentinel AI |
+| Document | Hallucination Testing |
+| Version | 0.1 (Draft) |
+| Status | Draft — Phase 8 |
+| Last Updated | 2026-09-11 |
 
 ---
 
-## Testing Goals
+## Purpose
 
-_Content to be defined._
+Define how to detect fabricated AI claims. **No executable test harness in Phase 8.**
 
-## Failure Modes
+---
 
-_Content to be defined._
+## Test Categories
 
-## Test Methods
+| Category | Example |
+|----------|---------|
+| Invented case/alert IDs | Output cites non-existent IDs |
+| Invented evidence | Claims documents not retrieved |
+| Contradicts RISK score | Explanation conflicts with assessment fields |
+| Overconfident enforcement | Suggests AI blocked a transaction |
 
-_Content to be defined._
+---
 
-## Metrics
+## Method
 
-_Content to be defined._
+1. Golden negatives with known ground truth
+2. Require source references (AI-FR-005)
+3. Human sampling for MVP simulation
+4. Automated checks deferred to CI design / V2 eval runtime
 
-## Remediation Workflow
+---
 
-_Content to be defined._
+## Related Documents
 
-## Open Questions
-
-_Content to be defined._
+- [EvaluationFramework.md](EvaluationFramework.md)
+- [AIArchitecture.md](../03-architecture/AIArchitecture.md)

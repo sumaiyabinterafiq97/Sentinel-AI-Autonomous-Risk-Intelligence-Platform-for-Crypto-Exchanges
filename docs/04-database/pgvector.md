@@ -4,6 +4,8 @@
 
 Document the intended use of pgvector for embedding storage and similarity search.
 
+> **Phase 3:** See [VectorDataArchitecture.md](VectorDataArchitecture.md) for authoritative design.
+
 ## Status
 
 Draft

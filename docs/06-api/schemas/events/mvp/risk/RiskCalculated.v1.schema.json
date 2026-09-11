@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/risk/RiskCalculated.v1.schema.json",
+  "title": "RiskCalculatedPayload",
+  "description": "Published by RISK after risk assessment commit. Consumers: ALERT, DASH, INVEST, COMP, AI.",
+  "type": "object",
+  "required": ["assessmentId", "entityType", "entityId", "score", "evaluatedAt"],
+  "properties": {
+    "assessmentId": { "type": "string", "format": "uuid" },
+    "entityType": { "type": "string", "enum": ["transaction", "user", "device", "session"] },
+    "entityId": { "type": "string" },
+    "score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "riskLevel": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+    "explanationSummary": { "type": "string" },
+    "ruleHits": { "type": "array", "items": { "type": "object" } },
+    "evaluatedAt": { "type": "string", "format": "date-time" },
+    "transactionRef": { "type": ["string", "null"] }
+  },
+  "additionalProperties": false
+}

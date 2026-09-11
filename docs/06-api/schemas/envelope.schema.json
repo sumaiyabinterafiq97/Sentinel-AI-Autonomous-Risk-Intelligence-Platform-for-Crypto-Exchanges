@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/envelope.schema.json",
+  "title": "SentinelEventEnvelope",
+  "description": "Common envelope for all Sentinel AI domain events. Phase 5 formalization.",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "schemaVersion",
+    "timestamp",
+    "producer",
+    "correlationId",
+    "organizationId",
+    "payload"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event instance identifier for idempotent consumption"
+    },
+    "eventType": {
+      "type": "string",
+      "description": "PascalCase event name matching FDS frozen contract"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Payload schema version (major.minor)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Producer commit time (UTC)"
+    },
+    "producer": {
+      "type": "string",
+      "description": "Domain service identifier (e.g. risk-service)"
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "End-to-end workflow correlation"
+    },
+    "causationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Prior event or command that caused this event"
+    },
+    "organizationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Tenant scope — mandatory for tenant-scoped events"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Domain-specific payload validated against event payload schema"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "classification": {
+          "type": "string",
+          "enum": ["public", "internal", "confidential", "restricted"]
+        },
+        "idempotencyKey": {
+          "type": "string",
+          "description": "Consumer deduplication key when distinct from eventId"
+        },
+        "actorId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "actorType": {
+          "type": "string",
+          "enum": ["user", "service", "system"]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

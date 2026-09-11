@@ -1,58 +1,40 @@
 # Prompt Versioning
 
-## Purpose
+## Document Information
 
-Establish versioning, review, and rollout practices for prompts.
-
-## Status
-
-Draft
-
-## Owner
-
-To Be Assigned
-
-## Last Updated
-
-2026-07-25
-
-## Revision History
-
-| Version | Date | Author | Notes |
-|---------|------|--------|-------|
-| 0.1 | 2026-07-25 | — | Initial document skeleton |
-
-## Table of Contents
-
-1. [Versioning Principles](#versioning-principles)
-2. [Version Naming](#version-naming)
-3. [Change Control](#change-control)
-4. [Rollout and Rollback](#rollout-and-rollback)
-5. [Audit Trail](#audit-trail)
-6. [Open Questions](#open-questions)
+| Field | Value |
+|--------|-------|
+| Project | Sentinel AI |
+| Document | Prompt Versioning |
+| Version | 0.1 (Draft) |
+| Status | Draft — Phase 8 |
+| Last Updated | 2026-09-11 |
+| Authority | AI-FR-004 |
 
 ---
 
-## Versioning Principles
+## Purpose
 
-_Content to be defined._
+Define prompt lifecycle for MVP AI agents. Documentation only.
 
-## Version Naming
+---
 
-_Content to be defined._
+## Rules
 
-## Change Control
+| Rule | Specification |
+|------|---------------|
+| Versioning | Immutable `prompt_versions` rows; monotonic version integers |
+| Activation | Explicit `active_version_id` on `prompts` |
+| Ownership | AI schema; privileged roles only |
+| Event | `PromptUpdated` on activate/update |
+| Provenance | Recommendations store `prompt_version_id` |
+| Rollback | Activate prior version; do not mutate old version content |
+| Evaluation | Compare versions offline before activation (V2 eval runtime deferred) |
 
-_Content to be defined._
+---
 
-## Rollout and Rollback
+## Related Documents
 
-_Content to be defined._
-
-## Audit Trail
-
-_Content to be defined._
-
-## Open Questions
-
-_Content to be defined._
+- [AIArchitecture.md](../03-architecture/AIArchitecture.md)
+- [AIAgents.md](AIAgents.md)
+- [InitialMigrationSpecifications.md](../04-database/InitialMigrationSpecifications.md) — migration 010

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/invest/CaseCreated.v1.schema.json",
+  "title": "CaseCreatedPayload",
+  "description": "Published by INVEST. INVEST owns case lifecycle.",
+  "type": "object",
+  "required": ["caseId", "status", "createdAt"],
+  "properties": {
+    "caseId": { "type": "string", "format": "uuid" },
+    "status": { "type": "string" },
+    "title": { "type": "string" },
+    "sourceAlertId": { "type": ["string", "null"], "format": "uuid" },
+    "priority": { "type": "integer" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "createdBy": { "type": "string", "format": "uuid" }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/v2/sec/SuspiciousSessionDetected.v1.schema.json",
+  "title": "SuspiciousSessionDetectedPayload",
+  "description": "SEC V2 publish — SEC-FR-006 authority.",
+  "type": "object",
+  "required": ["signalId", "sessionId", "detectedAt"],
+  "properties": {
+    "signalId": { "type": "string", "format": "uuid" },
+    "sessionId": { "type": "string", "format": "uuid" },
+    "userId": { "type": "string", "format": "uuid" },
+    "detectedAt": { "type": "string", "format": "date-time" },
+    "anomalyType": { "type": "string" }
+  },
+  "additionalProperties": false
+}

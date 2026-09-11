@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/comp/ComplianceReviewed.v1.schema.json",
+  "title": "ComplianceReviewedPayload",
+  "description": "Published by COMP. Human decision authority required.",
+  "type": "object",
+  "required": ["reviewId", "reviewType", "outcome", "reviewedAt"],
+  "properties": {
+    "reviewId": { "type": "string", "format": "uuid" },
+    "reviewType": { "type": "string", "enum": ["kyc", "aml", "sanctions", "travel_rule"] },
+    "outcome": { "type": "string" },
+    "reviewedBy": { "type": "string", "format": "uuid" },
+    "reviewedAt": { "type": "string", "format": "date-time" },
+    "subjectRef": { "type": "string" }
+  },
+  "additionalProperties": false
+}

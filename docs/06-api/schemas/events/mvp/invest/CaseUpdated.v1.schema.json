@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/invest/CaseUpdated.v1.schema.json",
+  "title": "CaseUpdatedPayload",
+  "type": "object",
+  "required": ["caseId", "updatedAt"],
+  "properties": {
+    "caseId": { "type": "string", "format": "uuid" },
+    "status": { "type": "string" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "updatedBy": { "type": "string", "format": "uuid" },
+    "changeSummary": { "type": "string" }
+  },
+  "additionalProperties": false
+}
