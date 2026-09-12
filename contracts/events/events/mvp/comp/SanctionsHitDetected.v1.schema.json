@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/comp/SanctionsHitDetected.v1.schema.json",
+  "title": "SanctionsHitDetectedPayload",
+  "type": "object",
+  "required": ["screeningId", "subjectRef", "matchStatus", "screenedAt"],
+  "properties": {
+    "screeningId": { "type": "string", "format": "uuid" },
+    "subjectRef": { "type": "string" },
+    "matchStatus": { "type": "string" },
+    "disposition": { "type": ["string", "null"] },
+    "screenedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

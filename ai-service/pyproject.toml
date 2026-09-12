@@ -1,0 +1,16 @@
+[project]
+name = "sentinel-ai-service"
+version = "0.8.0"
+description = "Sentinel AI Platform — assistive-only FastAPI service (M8)"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

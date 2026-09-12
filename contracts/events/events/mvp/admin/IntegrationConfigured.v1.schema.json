@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/admin/IntegrationConfigured.v1.schema.json",
+  "title": "IntegrationConfiguredPayload",
+  "type": "object",
+  "required": ["integrationId", "integrationType", "status", "configuredAt"],
+  "properties": {
+    "integrationId": { "type": "string", "format": "uuid" },
+    "integrationType": { "type": "string" },
+    "status": { "type": "string" },
+    "configuredAt": { "type": "string", "format": "date-time" },
+    "configuredBy": { "type": ["string", "null"], "format": "uuid" }
+  },
+  "additionalProperties": false
+}

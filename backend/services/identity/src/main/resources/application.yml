@@ -1,0 +1,30 @@
+server.port: ${IDENTITY_PORT:8081}
+spring:
+  application:
+    name: sentinel-identity
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sentinel}
+    username: ${SPRING_DATASOURCE_USERNAME:sentinel}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+  flyway:
+    enabled: true
+    table: identity_schema_history
+    baseline-on-migrate: true
+    baseline-version: "1"
+    locations: classpath:db/migration
+management.endpoints.web.exposure.include: health
+management.endpoint.health.probes.enabled: true
+sentinel:
+  security:
+    token-hmac-key: ${IDENTITY_TOKEN_HMAC_KEY:local-m2-simulation-hmac-key-not-for-production}
+    access-token-ttl-seconds: ${IDENTITY_ACCESS_TTL_SECONDS:900}
+    refresh-token-ttl-seconds: ${IDENTITY_REFRESH_TTL_SECONDS:28800}
+  outbox:
+    table: auth.outbox_events
+    max-attempts: 5
+    backoff-base-ms: 200
+    claim-timeout-seconds: 30
+    batch-size: 25
+    relay:
+      poll-enabled: true
+      poll-interval-ms: 1000

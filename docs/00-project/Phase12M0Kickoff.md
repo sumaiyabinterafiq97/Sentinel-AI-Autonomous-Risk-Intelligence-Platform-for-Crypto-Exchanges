@@ -46,13 +46,13 @@ Repository structure and shared libraries: contracts packaging, common types pla
 
 | ID | Task | Notes |
 |----|------|-------|
-| M0-1 | Create monorepo roots: `backend/`, `ai-service/`, `web/`, `contracts/` | Per Backend/AI/Frontend plans |
-| M0-2 | Package OpenAPI + event schemas into `contracts/` (copy or generate from docs/06-api) | Contract-first |
-| M0-3 | Gradle multi-project skeleton for Java services (no domain business logic yet) | ADR-019 |
-| M0-4 | Python/FastAPI project skeleton for AI (health only acceptable) | No agents yet |
-| M0-5 | Vite/React TS app shell skeleton (routing placeholder) | No V2 routes |
-| M0-6 | Lint/format/test baseline configs | No full CI required on day one |
-| M0-7 | README architecture map linking to ImplementationPlan | |
+| M0-1 | Create monorepo roots: `backend/`, `ai-service/`, `web/`, `contracts/` | **Done** |
+| M0-2 | Package OpenAPI + event schemas into `contracts/` | **Done** — `sync-from-docs.sh` |
+| M0-3 | Gradle multi-project skeleton for Java services (no domain business logic yet) | **Done** — health only |
+| M0-4 | Python/FastAPI project skeleton for AI (health only acceptable) | **Done** |
+| M0-5 | Vite/React TS app shell skeleton (routing placeholder) | **Done** |
+| M0-6 | Lint/format/test baseline configs | **Done** (ruff, eslint, pytest, gradle test, vitest) |
+| M0-7 | README architecture map linking to ImplementationPlan | **Done** |
 
 **Forbidden in M0:** Implementing RISK/ALERT/INVEST business logic; V2 domains; inventing APIs; SQL production migrations without following InitialMigrationSpecifications.
 
@@ -60,12 +60,14 @@ Repository structure and shared libraries: contracts packaging, common types pla
 
 ## M0 Exit Criteria
 
-- Monorepo layout exists matching ImplementationArchitecture deployables
-- Contracts consumable from build paths
-- Empty/skeleton services start (health) without domain features
-- Lint/test commands documented
-- No V2 nav/modules introduced
-- AI service has no lifecycle mutation endpoints beyond approved assist stubs (stubs may wait for M8)
+- [x] Monorepo layout exists matching ImplementationArchitecture deployables
+- [x] Contracts consumable from build paths
+- [x] Empty/skeleton services start (health) without domain features
+- [x] Lint/test commands documented
+- [x] No V2 nav/modules introduced
+- [x] AI service has no lifecycle mutation endpoints beyond approved assist stubs (stubs may wait for M8)
+
+Completion report: [Phase12M0Report.md](Phase12M0Report.md)
 
 ---
 

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/admin/AdminSettingUpdated.v1.schema.json",
+  "title": "AdminSettingUpdatedPayload",
+  "type": "object",
+  "required": ["settingKey", "updatedAt"],
+  "properties": {
+    "settingKey": { "type": "string" },
+    "organizationId": { "type": "string", "format": "uuid" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "updatedBy": { "type": ["string", "null"], "format": "uuid" }
+  },
+  "additionalProperties": false
+}

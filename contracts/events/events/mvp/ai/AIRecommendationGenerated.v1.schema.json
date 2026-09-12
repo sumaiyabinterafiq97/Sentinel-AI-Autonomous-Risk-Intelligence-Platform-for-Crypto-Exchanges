@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/ai/AIRecommendationGenerated.v1.schema.json",
+  "title": "AIRecommendationGeneratedPayload",
+  "description": "Assistive output only — does not mutate domain lifecycle.",
+  "type": "object",
+  "required": ["recommendationId", "agentType", "targetType", "targetId", "generatedAt"],
+  "properties": {
+    "recommendationId": { "type": "string", "format": "uuid" },
+    "agentType": { "type": "string" },
+    "targetType": { "type": "string" },
+    "targetId": { "type": "string" },
+    "status": { "type": "string", "enum": ["completed", "partial", "failed"] },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "promptVersionId": { "type": ["string", "null"], "format": "uuid" }
+  },
+  "additionalProperties": false
+}

@@ -14,7 +14,7 @@ To Be Assigned
 
 ## Last Updated
 
-2026-07-25
+2026-09-11
 
 ## Revision History
 
@@ -38,7 +38,9 @@ To Be Assigned
 
 ## Overview
 
-_Content to be defined._
+Sentinel AI is an autonomous **risk intelligence** platform for crypto exchanges. Product requirements and architecture live under `docs/`. Phase 12 **M0** added implementation scaffolding (buildable skeletons only).
+
+Application Development Gate: **SATISFIED**. Current coding milestone: **M0 foundations**. Do not implement M1+ domain features until M0 exit criteria are met.
 
 ## Project Vision
 
@@ -48,19 +50,26 @@ Autonomous Risk Intelligence Platform for Crypto Exchanges
 
 ### Vision Statement
 
-_Content to be defined._
+See [`docs/01-product/Vision.md`](docs/01-product/Vision.md).
 
 ## Documentation
 
-Documentation lives under [`docs/`](docs/README.md). See that index for the full catalog of product, requirements, architecture, and operational documents.
+Documentation lives under [`docs/`](docs/README.md). Implementation plans: [`docs/08-development/`](docs/08-development/). M0 setup: [`docs/08-development/M0DeveloperSetup.md`](docs/08-development/M0DeveloperSetup.md).
 
 ## Repository Structure
 
-_Content to be defined._
+```text
+backend/       Java 21 / Spring Boot Gradle multi-project (platform, identity, ops, dash)
+ai-service/    Python FastAPI AI Platform (assistive-only; health in M0)
+web/           React + TypeScript + Vite SPA (placeholder shell in M0)
+contracts/     Packaged OpenAPI + event JSON Schemas (source: docs/06-api)
+docs/          Authoritative product, architecture, and contract documentation
+scripts/       Validation helpers (m0-validate.sh)
+```
 
 ## Getting Started
 
-_Content to be defined._
+See [`docs/08-development/M0DeveloperSetup.md`](docs/08-development/M0DeveloperSetup.md) or run `./scripts/m0-validate.sh`.
 
 ## Contributing
 

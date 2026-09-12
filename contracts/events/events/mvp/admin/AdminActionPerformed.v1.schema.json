@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/admin/AdminActionPerformed.v1.schema.json",
+  "title": "AdminActionPerformedPayload",
+  "description": "Published for audit trail; consumed by CORE audit integration.",
+  "type": "object",
+  "required": ["action", "targetType", "performedAt"],
+  "properties": {
+    "action": { "type": "string" },
+    "targetType": { "type": "string" },
+    "targetId": { "type": ["string", "null"], "format": "uuid" },
+    "actorId": { "type": "string", "format": "uuid" },
+    "performedAt": { "type": "string", "format": "date-time" },
+    "outcome": { "type": "string" }
+  },
+  "additionalProperties": false
+}
