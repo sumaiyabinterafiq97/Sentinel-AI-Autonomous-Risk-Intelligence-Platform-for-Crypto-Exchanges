@@ -7,11 +7,11 @@
 | Project Name | Sentinel AI |
 | Product Type | Enterprise AI Platform |
 | Domain | Cryptocurrency Exchange Risk Intelligence |
-| Version | 0.5 (Draft) |
-| Status | Draft |
-| Owner | To Be Assigned |
+| Version | 1.0 (Draft) |
+| Status | Draft — Phase 1 reconciled |
+| Owner | Product & Engineering Team |
 | Authors | Product & Engineering Team |
-| Last Updated | 2026-07-28 |
+| Last Updated | 2026-09-03 |
 
 ## Purpose
 
@@ -32,6 +32,20 @@ It intentionally does not define detailed functional requirements, system archit
 | 0.3 | 2026-07-28 | — | Positioning rename; Vision Pillars; Non-Goals; Quality Attributes; Strategy clarity |
 | 0.4 | 2026-07-28 | — | Document Scope; Strategic/Engineering Goals; personas; MVP Scope; Security Metrics; Long-Term Vision order |
 | 0.5 | 2026-07-28 | — | Reduced Out of Scope; detailed boundaries live in Product Scope |
+| 1.0 | 2026-09-03 | Product Team | Phase 1 reconciliation: MVP/V2/V3 aligned to FDS/FRS; AI assistive posture clarified; insider-threat scope corrected; business objective IDs aligned to BRS |
+
+## Phase 1 Reconciliation Note
+
+This vision predates the mature Functional Domain Specification (FDS v1.3) and Functional Requirements Specification (FRS v1.9) baseline. **Authoritative release scope and domain ownership** are defined in:
+
+- [Functional Domain Specification](../02-requirements/FunctionalDomainSpecification.md)
+- [Functional Requirements Specification](../02-requirements/FunctionalRequirements.md)
+- [Product Discovery](ProductDiscovery.md) (Phase 1 reconciliation report)
+- [Product Scope](ProductScope.md) (release strategy addendum)
+
+Where this document's MVP list or capability descriptions differ from frozen domain requirements, **FDS/FRS govern behavior**. Product-level language may be broader; implemented scope is bounded by delivered requirements.
+
+Sentinel AI is designed to resemble an internal enterprise platform for cryptocurrency exchanges. It is **not** a claim of production deployment, Binance integration, or exchange-scale proven performance until validated in later phases.
 
 ## Table of Contents
 
@@ -176,7 +190,7 @@ Assist compliance teams by automating repetitive verification tasks, validating 
 
 ### Goal 4 — Secure Exchange Infrastructure
 
-Continuously monitor API activity, authentication events, user behavior, and operational signals to identify potential account compromise, API abuse, and insider threats.
+Continuously monitor API activity, authentication events, user behavior, and operational signals to identify potential account compromise, API abuse, and operational security anomalies. Advanced insider-threat pattern detection is deferred beyond Version 2 SEC scope (see FDS SEC domain).
 
 ### Goal 5 — Increase Analyst Productivity
 
@@ -194,29 +208,31 @@ Sentinel AI aims to deliver measurable business value to cryptocurrency exchange
 
 The primary business objectives include:
 
-### BO-01
+### BO-001 — Reduce Investigation Time
 
-Reduce fraud investigation time by at least 60%.
+**Target:** materially reduce time required to investigate suspicious activity through unified workspace, evidence context, and assistive workflows. Specific percentage targets are proposed in [Product Discovery](ProductDiscovery.md) and must be validated during implementation—not claimed as achieved results.
 
-### BO-02
+### BO-002 — Improve Fraud Detection Effectiveness
 
-Reduce false-positive investigation alerts through contextual risk analysis.
+**Target:** improve detection quality and reduce false-positive burden through contextual risk analysis, behavioral signals, and explainable outcomes.
 
-### BO-03
+### BO-003 — Strengthen Regulatory Readiness
 
-Increase analyst productivity by automating repetitive investigation tasks.
+**Target:** improve consistency and auditability of compliance investigations through standardized workflows and evidence-backed review.
 
-### BO-04
+### BO-004 — Improve Operational Decision Quality
 
-Improve consistency of compliance investigations through standardized workflows and AI-assisted evidence collection.
+**Target:** improve analyst decision quality through explainable recommendations and evidence visibility.
 
-### BO-05
+### BO-005 — Increase Cross-Functional Collaboration
 
-Provide a centralized operational platform for Risk, Compliance, and Security teams.
+**Target:** provide a centralized operational platform for Risk, Compliance, Investigation, and Security teams.
 
-### BO-06
+### BO-006 — Improve Operational Visibility
 
-Support scalable growth by adopting a modular architecture capable of handling increasing transaction volumes.
+**Target:** support scalable operational visibility as transaction and alert volumes grow through modular domain architecture.
+
+> Full business objective definitions: [Business Requirements](BusinessRequirements.md).
 
 ---
 
@@ -341,9 +357,9 @@ Metrics, structured logs, traces, and health signals are required for operationa
 
 New agents, rules, and investigation modules should be addable without fundamental architectural rewrites.
 
-### AP-07 Cloud Native
+### AP-07 Deployable and Scalable
 
-All services should support containerized deployment, horizontal scaling, and cloud-native infrastructure.
+Services should support repeatable deployment, horizontal scaling where appropriate, and operational independence. Specific cloud, container, or orchestration choices are deferred to architecture phases—not fixed in product discovery.
 
 ---
 
@@ -493,63 +509,43 @@ Responsibilities:
 
 ## MVP Scope
 
-Version 1 (MVP) of Sentinel AI focuses on providing an intelligent investigation platform for cryptocurrency exchange operations.
+Version 1 (MVP) focuses on a **usable platform baseline** for cryptocurrency exchange risk, investigation, compliance, and operational workspace workflows.
 
-The MVP includes the following capabilities:
+**Authoritative MVP boundary:** FDS domain catalog and frozen FRS chapters. See [Product Discovery](ProductDiscovery.md) Section 12 for the reconciled product-level MVP definition.
 
-### Risk Intelligence
+### MVP platform domains (requirements delivered or in baseline)
 
-- Transaction risk scoring
-- Behavioral analysis
-- Rule-based detection
-- AI-assisted investigation
-- Risk explanations
+| Domain | MVP role (summary) |
+|--------|-------------------|
+| CORE | Shared platform services, configuration, audit context, health |
+| AUTH / AUTHZ / USER / ORG | Identity, authorization, user and tenant context |
+| RISK | Transaction/device/behavioral risk scoring, explanations, risk-derived signals |
+| ALERT | Operational alert lifecycle and queue priority (not risk scoring) |
+| INVEST | Investigation case lifecycle, evidence, assignment, timeline |
+| DASH | Operational workspace and work queues (presentation; not lifecycle owner) |
+| COMP | KYC, AML, Travel Rule, sanctions screening, audit preparation (MVP) |
+| AI Platform | Assistive agents and evaluation (**assistive only**; domains retain ownership) |
+| ADMIN | Administration capabilities per FDS (FRS pending) |
 
-### Fraud Investigation
+### Explicitly not MVP (Version 2 or later per FDS/FRS)
 
-- Investigation workspace
-- Evidence aggregation
-- Case management
-- Investigation timeline
-- AI-generated summaries
+| Capability | Release | Notes |
+|------------|---------|-------|
+| Wallet Intelligence (WALLET) | Version 2 | Delivered in FRS; not platform MVP |
+| Security Intelligence (SEC) | Version 2 | API/session/device/threat monitoring; delivered in FRS |
+| Reporting & Analytics (REPORT) | Version 2 | FRS pending |
+| Platform Operations (OPS) | Version 2 | FRS pending |
+| SEC insider-threat patterns, SIEM bi-directional sync, automated containment | Version 3 | Deferred in FDS SEC domain |
 
-### Compliance
+### MVP product outcomes (capability-level)
 
-- KYC verification workflow
-- Travel Rule validation
-- Sanctions screening
-- Compliance reporting
-- Audit logging
+- Risk analysts can review risk assessments, alerts, and investigation cases in a unified workspace.
+- Investigators can manage cases, evidence, and timelines with auditability.
+- Compliance analysts can execute MVP compliance workflows (KYC, AML, Travel Rule, sanctions, audit prep).
+- AI can assist with explanation, retrieval, and summarization **without owning domain lifecycles or enforcement**.
+- Critical workflows remain operable without mandatory AI runtime dependency where frozen FRs require it.
 
-### API Security
-
-- API usage monitoring
-- API key anomaly detection
-- Suspicious access detection
-- Device anomaly detection
-
-### Wallet Intelligence
-
-- Wallet reputation
-- Address investigation
-- Transaction relationship analysis
-- Wallet activity timeline
-
-### AI Platform
-
-- AI Investigation Agent
-- Evidence Retrieval Agent
-- Compliance Assistant
-- Report Generation Agent
-- AI Evaluation Framework
-
-### Operations Console
-
-- Risk Dashboard
-- Alert Dashboard
-- Investigation Dashboard
-- Compliance Dashboard
-- AI Monitoring Dashboard
+Detailed capability-to-domain mapping: [Product Scope — Release Strategy](ProductScope.md#chapter-4--release-strategy--requirements-reconciliation).
 
 ---
 

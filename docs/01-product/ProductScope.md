@@ -6,11 +6,11 @@
 |--------|-------|
 | Project Name | Sentinel AI |
 | Document | Product Scope |
-| Version | 1.0 |
-| Status | Approved |
-| Owner | To Be Assigned |
+| Version | 1.1 |
+| Status | Approved — Phase 1 reconciled addendum |
+| Owner | Product & Engineering Team |
 | Authors | Product & Engineering Team |
-| Last Updated | 2026-07-28 |
+| Last Updated | 2026-09-03 |
 
 ---
 
@@ -22,6 +22,15 @@
 | 0.2 | 2026-07-28 | — | Chapter 1 enterprise refinements |
 | 0.3 | 2026-07-28 | — | Capability map; Core Product Capabilities; Chapter 3 domains |
 | 1.0 | 2026-07-28 | — | Baseline release; domain relationships; Title Case; primary stakeholders |
+| 1.1 | 2026-09-03 | Product Team | Phase 1 reconciliation addendum (Chapter 4); ALERT/RISK boundary clarification; SEC capability mapping; no frozen FRS changes |
+
+---
+
+## Phase 1 Reconciliation Note
+
+This document describes **product capabilities** at a conceptual level. **Implemented scope, domain ownership, and release boundaries** are authoritative in [Functional Domain Specification](../02-requirements/FunctionalDomainSpecification.md), [Functional Requirements Specification](../02-requirements/FunctionalRequirements.md), and [Product Discovery](ProductDiscovery.md).
+
+Where product capability language is broader than frozen FRS (for example, five Security Intelligence capabilities versus four SEC Version 2 features), Chapter 4 distinguishes **product capability**, **domain responsibility**, and **release feature**.
 
 ---
 
@@ -239,7 +248,7 @@ The following functional domains define the core product capability model.
 - Rule-Based Risk Detection
 - Risk Scoring
 - Risk Explanation
-- Alert Prioritization
+- Risk Context for Alert Handling *(ALERT owns operational alert priority per frozen ALERT/RISK boundaries)*
 
 ---
 
@@ -270,7 +279,7 @@ The following functional domains define the core product capability model.
 - Authentication Anomaly Detection
 - Device Intelligence
 - Operational Security Monitoring
-- Account Compromise Investigation
+- Account Compromise Investigation *(support capability — SEC provides context; INVEST owns case lifecycle)*
 
 ---
 
@@ -476,7 +485,7 @@ It serves as the primary decision-support capability for detecting potentially s
 
 - Assess transaction risk
 - Calculate contextual risk scores
-- Prioritize operational alerts
+- Provide risk-derived context for alert handling *(ALERT owns queue priority)*
 - Aggregate behavioral indicators
 - Explain risk assessments
 - Support investigation initiation
@@ -488,7 +497,7 @@ It serves as the primary decision-support capability for detecting potentially s
 - Rule-Based Detection
 - Risk Scoring
 - Risk Explanation
-- Alert Prioritization
+- Risk Context for Alert Handling *(ALERT owns operational alert priority per frozen ALERT/RISK boundaries)*
 
 ### Business Value
 
@@ -581,7 +590,7 @@ The Security Intelligence domain monitors operational security events that may i
 - Authentication Anomaly Detection
 - Device Intelligence
 - Operational Security Monitoring
-- Account Compromise Investigation
+- Account Compromise Investigation *(support capability — SEC provides context; INVEST owns case lifecycle)*
 
 ### Business Value
 
@@ -761,3 +770,69 @@ Administration & Platform Operations
 ```
 
 Security Intelligence and Wallet Intelligence provide supporting context throughout investigation and compliance workflows. AI Platform capabilities assist analysts across domains while Administration and Platform Operations enable secure, reliable platform use.
+
+---
+
+# Chapter 4 — Release Strategy & Requirements Reconciliation
+
+## 4.1 Purpose
+
+This chapter reconciles product-level capability language in Chapters 1–3 with the authoritative requirements baseline (FDS v1.3, FRS v1.9). It does **not** modify frozen domain requirements.
+
+## 4.2 Release Summary
+
+| Release | Product intent | Authoritative domain scope |
+|---------|----------------|----------------------------|
+| **Version 1 (MVP)** | Usable exchange risk-intelligence platform for core operational workflows | CORE, AUTH, AUTHZ, USER, ORG, DASH, ALERT, RISK, INVEST, COMP; AI assistive; ADMIN (FRS pending) |
+| **Version 2** | Extended intelligence, security, reporting, and operations | WALLET, SEC, REPORT, OPS (FRS pending for REPORT, OPS, AI detail) |
+| **Version 3 / Future** | Advanced automation, external integrations, deferred SEC patterns | Insider-threat patterns, SIEM bi-directional sync, automated containment, advanced blockchain intelligence, production exchange integrations |
+
+## 4.3 Product Capability vs Domain Ownership
+
+| Product capability (this document) | FDS domain | Domain owns lifecycle? | Release |
+|-----------------------------------|------------|--------------------------|---------|
+| Transaction / behavioral risk | RISK | Yes | MVP |
+| Operational alerts & queue priority | ALERT | Yes | MVP |
+| Investigation cases & evidence | INVEST | Yes | MVP |
+| Compliance workflows | COMP | Yes | MVP |
+| Operational workspace / dashboards | DASH | Presentation only | MVP |
+| Wallet profiling & address intelligence | WALLET | Yes | V2 |
+| API / session / device security monitoring | SEC | Yes | V2 |
+| Reporting & analytics | REPORT | Yes | V2 |
+| Platform health & ops diagnostics | OPS | Yes | V2 |
+| AI explanation, retrieval, summarization | AI Platform | Assistive; does not own business lifecycles | MVP (FRS pending) |
+
+## 4.4 Security Intelligence Terminology Mapping
+
+| ProductScope capability name | SEC V2 feature / responsibility | Notes |
+|-----------------------------|----------------------------------|-------|
+| API Activity Monitoring | API Monitoring | Same capability; product label is broader |
+| Authentication Anomaly Detection | Authentication Monitoring | SEC consumes auth events; does not own identity |
+| Device Intelligence | Device Monitoring | Device fingerprinting and anomaly context |
+| Operational Security Monitoring | Threat Detection | Rule/signal-based threat identification |
+| Account Compromise Investigation | SEC-BR-002 support context | **Not** a fifth SEC feature; INVEST owns investigation lifecycle |
+
+## 4.5 AI Responsibility Boundary
+
+| AI may | AI must not (unless future governance explicitly changes) |
+|--------|-----------------------------------------------------------|
+| Analyze, explain, prioritize recommendations, summarize, retrieve evidence | Own alert, case, compliance, or enforcement lifecycles |
+| Assist analysts in DASH/INVEST/COMP workflows | Autonomously block users, freeze funds, or approve compliance outcomes |
+| Degrade gracefully when unavailable | Become sole authority for consequential decisions |
+
+Frozen domain FRs govern specific AI boundaries per domain.
+
+## 4.6 Known Product-vs-Requirements Gaps (flagged, not resolved by rewriting FRS)
+
+| Topic | Product language | FRS/FDS authority | Phase 1 disposition |
+|-------|------------------|-------------------|---------------------|
+| MVP includes Wallet/API Security | Vision v0.5 listed both in MVP | WALLET, SEC are V2 | MVP definition corrected in Vision and this chapter |
+| Alert prioritization | Listed under Risk Intelligence | ALERT owns priority | Terminology mapped; RISK provides context only |
+| Insider threats | Vision Goal 4 | SEC insider patterns V3 deferred | Vision updated; full capability deferred |
+| Reporting in MVP | Some stakeholder views imply reporting | REPORT is V2 | Reporting is V2 unless explicitly pulled forward via change control |
+
+## 4.7 Related Documents
+
+- [Product Discovery](ProductDiscovery.md) — full Phase 1 report, success metrics, personas, principles
+- [Vision](Vision.md) — reconciled MVP scope
+- [Project Roadmap](../00-project/ProjectRoadmap.md) — phase control
