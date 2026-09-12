@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/core/ConfigurationUpdated.v1.schema.json",
+  "title": "ConfigurationUpdatedPayload",
+  "type": "object",
+  "required": ["configKey", "updatedAt"],
+  "properties": {
+    "configKey": { "type": "string" },
+    "organizationId": { "type": ["string", "null"], "format": "uuid" },
+    "version": { "type": "integer" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "updatedBy": { "type": ["string", "null"], "format": "uuid" }
+  },
+  "additionalProperties": false
+}

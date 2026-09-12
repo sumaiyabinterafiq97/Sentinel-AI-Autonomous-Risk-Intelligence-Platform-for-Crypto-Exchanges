@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/user/UserUpdated.v1.schema.json",
+  "title": "UserUpdatedPayload",
+  "description": "Published by USER. Consumer: COMP (MVP).",
+  "type": "object",
+  "required": ["userId", "updatedAt"],
+  "properties": {
+    "userId": { "type": "string", "format": "uuid" },
+    "organizationId": { "type": "string", "format": "uuid" },
+    "status": { "type": "string" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "updatedBy": { "type": ["string", "null"], "format": "uuid" },
+    "changeFields": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

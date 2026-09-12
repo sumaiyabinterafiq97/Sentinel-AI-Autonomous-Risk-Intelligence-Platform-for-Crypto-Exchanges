@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sentinel-ai.internal/schemas/events/mvp/invest/EvidenceAttached.v1.schema.json",
+  "title": "EvidenceAttachedPayload",
+  "description": "Published by INVEST. SEC does NOT consume this event (V2 contract lock).",
+  "type": "object",
+  "required": ["caseId", "evidenceId", "attachedAt"],
+  "properties": {
+    "caseId": { "type": "string", "format": "uuid" },
+    "evidenceId": { "type": "string", "format": "uuid" },
+    "evidenceType": { "type": "string" },
+    "referenceType": { "type": "string" },
+    "referenceId": { "type": "string" },
+    "attachedBy": { "type": "string", "format": "uuid" },
+    "attachedAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
