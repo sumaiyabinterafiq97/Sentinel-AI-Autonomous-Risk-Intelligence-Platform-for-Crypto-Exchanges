@@ -432,7 +432,7 @@ Record significant architectural decisions made during Phase 2 and prior governa
 
 ## ADR-019 — MVP Implementation Technology Stack
 
-**Status:** Accepted (2026-09-11)
+**Status:** Accepted (2026-09-11); **frontend row amended 2026-09-12** (GD-007 / P11-OQ-STACK-002 closed)
 
 **Context:** ADR-007 requires vendor-neutral product requirements and delayed stack lock until implementation. Phase 11 recorded Java/Spring, Python/FastAPI, and React/TypeScript as **candidates** (P11-OQ-STACK-*). Application Development Gate is satisfied; M0 requires an explicit implementation stack ADR.
 
@@ -442,7 +442,7 @@ Record significant architectural decisions made during Phase 2 and prior governa
 |-------|-----------|
 | Backend services | Java 21, Spring Boot 3, Spring Security, Spring Data JPA/Hibernate, Gradle |
 | AI service | Python 3.11+, FastAPI; agent orchestration (LangGraph or equivalent behind interface) |
-| Frontend | React, TypeScript, Vite, Tailwind, TanStack Query, React Hook Form, Zod |
+| Frontend | React, TypeScript, Vite, Tailwind, native `fetch` (DASH BFF client) |
 | Data | PostgreSQL (schema-per-domain), Redis (non-authoritative), pgvector (AI) |
 | Events | Transactional outbox + durable log (ADR-015); broker product remains capability-level until ops ADR |
 | Observability direction | OpenTelemetry; Prometheus/Grafana (config in DevOps milestones) |
@@ -450,17 +450,20 @@ Record significant architectural decisions made during Phase 2 and prior governa
 
 **Neo4j:** Remains **V2** derived graph (ADR-011) — not MVP mandatory runtime.
 
-**Rationale:** Aligns with Phase 11 ImplementationPlan; preserves ADR-007 for product docs; enables M0 scaffolding without inventing requirements.
+**Amendment (2026-09-12):** The original frontend cell also named TanStack Query, React Hook Form, and Zod as Phase 11 **candidates**. M0–M11 did not implement them. **MVP does not adopt those libraries.** Reconsideration requires a follow-on ADR, not a silent dependency add. Backend/AI/data rows are unchanged.
+
+**Rationale:** Aligns with Phase 11 ImplementationPlan; preserves ADR-007 for product docs; enables M0 scaffolding without inventing requirements. The amendment matches the shipped SPA and closes P11-OQ-STACK-002 without speculative client libraries.
 
 **Consequences:**
 
 - (+) Clear M0 repo layout
 - (−) Provider-specific LLM/broker still need follow-on ADRs when selected
 - Product FRS/FDS remain technology-agnostic
+- MVP forms and server state use platform `fetch` + React state, not TanStack Query / RHF / Zod
 
-**Alternatives considered:** Continue indefinite candidate status — rejected once gate opened.
+**Alternatives considered:** Continue indefinite candidate status — rejected once gate opened. Adopting TanStack/RHF/Zod in M11 “to match the original cell” — rejected (GD-007); would be speculative stack expansion.
 
-**Authority:** Project Owner gate approval; Phase 11 plans; ADR-007 process.
+**Authority:** Project Owner gate approval; Phase 11 plans; ADR-007 process; GD-007.
 
 ---
 

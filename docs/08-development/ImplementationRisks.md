@@ -37,8 +37,8 @@ Realistic engineering risks for MVP implementation. Not a business threat model.
 | P11-R013 | Perf targets missed | High | Med | Early RISK/ALERT load tests | Perf dashboards | Backend | M4+ |
 | P11-R014 | Excessive microservice complexity | Med | Med | Cap 3–6 deployables | Deployable count | Architect | M0 |
 | P11-R015 | Coding before human gate approvals | Critical | Med | Gate checklist honesty | Process audit | TPM | Gate |
-| P11-R016 | COMP list API gap slows FE | Low | Med | Compose/widgets; record gap | UX-OQ-COMP-LIST | Product | M7/M11 |
-| P11-R017 | Stack choice vs ADR-007 ambiguity | Med | Med | Implementation ADR before code | Missing ADR | Architect | Gate |
+| P11-R016 | COMP list API gap slows FE | Low | Med | Accepted known-ID queue; no invented list GET | **CLOSED** GD-007 | Product | M7/M11 |
+| P11-R017 | Stack choice vs ADR-007 ambiguity | Med | Med | Implementation ADR before code | ADR-019 + GD-007 frontend lock | Architect | Gate |
 
 ---
 

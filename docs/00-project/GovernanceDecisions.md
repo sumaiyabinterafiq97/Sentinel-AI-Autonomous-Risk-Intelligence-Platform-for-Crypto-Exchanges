@@ -6,9 +6,9 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Governance Decisions Log |
-| Version | 1.3 |
+| Version | 1.4 |
 | Status | Active — Gate approvals recorded |
-| Last Updated | 2026-09-11 |
+| Last Updated | 2026-09-12 |
 
 ---
 
@@ -125,6 +125,21 @@ See ADR-018 and [RetentionJurisdictionGovernance.md](../04-database/RetentionJur
 | **Evidence** | ApplicationDevelopmentGateDecision.md |
 | **Non-blocking gaps retained** | COMP list API; global search compose; V2 OpenAPI; GD-002 events |
 | **Status** | Recorded — gate open for M0+ per ImplementationPlan |
+| **Later close-out** | COMP list GET and global search API closed as **not MVP** (GD-007). GD-002 and V2 OpenAPI remain. |
+
+---
+
+## GD-007 — M11 MVP presentation gaps (no new APIs / no extra FE libraries)
+
+| Field | Value |
+|-------|-------|
+| **Decision ID** | GD-007 |
+| **Topic** | Close UX-OQ-COMP-LIST, UX-OQ-SEARCH / CL-OQ-002, P11-OQ-STACK-002 |
+| **Decision** | **(1)** No dedicated COMP collection GET in MVP. Discovery = start-response IDs + known IDs + existing by-id COMP operations. A list API exists only after a future authorized inventory/OpenAPI/FRS amendment — **not M12**. **(2)** Composed ALERT/INVEST/RISK list GETs are sufficient for MVP search (SCR-11). A dedicated global search API is **not MVP**; CORE-FR-020 remains V2. **(3)** MVP frontend lock is React, TypeScript, Vite, Tailwind, and native `fetch`. TanStack Query, React Hook Form, and Zod are **not** MVP. |
+| **Authority** | APIInventory MVP COMP = API-COMP-001–007; FrontendUXArchitecture / DashboardScreens (no invented search); CORE-FR-020 Version 2; ADR-007; ADR-019 amendment; M11 shipped `web/` |
+| **Rationale** | Inventing list/search endpoints or adding libraries “to close the question” would contradict the gate and frozen contracts. Documenting the MVP surface matches what was authorized and shipped. |
+| **Impact** | No OpenAPI/FRS change. M11 COMP queue remains session-local known IDs. SCR-11 stays composed. No TanStack/Zod/RHF adoption in MVP. |
+| **Status** | **CLOSED** — 2026-09-12 — see [Phase12M11OpenQuestionDecisions.md](Phase12M11OpenQuestionDecisions.md) |
 
 ---
 
@@ -135,3 +150,4 @@ See ADR-018 and [RetentionJurisdictionGovernance.md](../04-database/RetentionJur
 - [PRDApprovalRecord.md](PRDApprovalRecord.md)
 - [ProductDiscovery.md](../01-product/ProductDiscovery.md)
 - [Phase4Report.md](Phase4Report.md)
+- [Phase12M11OpenQuestionDecisions.md](Phase12M11OpenQuestionDecisions.md)

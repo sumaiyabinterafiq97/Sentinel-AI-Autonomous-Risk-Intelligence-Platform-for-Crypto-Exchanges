@@ -2,7 +2,9 @@
 
 ## A. Overall result
 
-**PASS WITH OPEN ITEMS**
+**CLOSED / PASS WITH OPEN ITEMS THAT ARE EITHER DECIDED OR DEFERRED**
+
+GD-007 close-out: [Phase12M11OpenQuestionDecisions.md](Phase12M11OpenQuestionDecisions.md). COMP list GET, global search API, and TanStack/Zod/RHF are **not** carried into M12.
 
 ## B. Objective
 
@@ -68,14 +70,14 @@ M2 HMAC Bearer + `X-Organization-Id` from session (`org` claim). No second auth.
 
 | Check | Result |
 |-------|--------|
-| `./gradlew test` (JDK 21) | **PASS** (M0–M10; no Java changes in M11) |
+| `./gradlew test` (JDK 21, `backend/`) | **PASS** (M0–M10; no Java changes in M11) |
 | `python3 contracts/validate.py` | **PASS** |
-| AI pytest + ruff | **PASS** (26 tests) |
+| AI pytest + ruff (`ai-service/.venv`) | **PASS** (26 tests) |
 | web vitest | **PASS** (8 tests) |
 | web eslint | **PASS** |
 | `git diff --check` | **PASS** |
 
-Default `java` on PATH was 24 (`Type T not present` configuring Gradle). Re-ran with Temurin 21 as required by the backend toolchain.
+Re-run at M11 close-out 2026-09-12. Default `java` on PATH may be 24; Gradle used Temurin 21.
 
 ## O. M0–M10 regression
 
@@ -83,11 +85,20 @@ Gradle suite green on JDK 21. AI and contracts unchanged. Frontend tests extende
 
 ## P. Known limitations
 
-See handoff: no Playwright live-mesh E2E; COMP list GET still absent; MFA UI step even though identity login already sets `mfa_verified`; WCAG not certified; BFF upstreams must be configured for domain mutations.
+See handoff: live E2E **environment missing** (no Playwright, no compose/staging mesh) — documented, not fabricated; COMP discovery is known-ID (GD-007); MFA UI step even though identity login already sets `mfa_verified`; WCAG not certified; BFF upstreams must be configured for domain mutations.
 
 ## Q. Open questions
 
-UX-OQ-COMP-LIST, UX-OQ-SEARCH, P11-OQ-STACK-002 (TanStack/Zod not adopted), live E2E environment.
+**Closed by decision (GD-007) — no work:** UX-OQ-COMP-LIST, UX-OQ-SEARCH / CL-OQ-002, P11-OQ-STACK-002. See [Phase12M11OpenQuestionDecisions.md](Phase12M11OpenQuestionDecisions.md).
+
+**Still outstanding (not those three):**
+
+| Item | Disposition |
+|------|-------------|
+| M12 NFR measurement | M12, separately authorized |
+| Live E2E | Hardening/validation; blocked on environment (not M11 code) |
+| UX-OQ-PKG-STATUS | Remains open; do not invent |
+| GD-002 events | Deferred; do not implement unless authorized |
 
 ## R. Frozen FRS/FDS
 
@@ -103,7 +114,7 @@ AI panel has no close/assign/approve/priority/score controls. COMP decisions rem
 
 ## U. Git
 
-Uncommitted working tree. **No commit. No push.** Branch `main` HEAD `4b716f231b2cb85b95435ffeabe23aa6f7daf277`.
+M11 close-out (including [Phase12M11OpenQuestionDecisions.md](Phase12M11OpenQuestionDecisions.md) / GD-007) is committed with this documentation set. **No push.** Unrelated Phase 1 Vision/ProductScope reconciliation edits are excluded from the M11 commit.
 
 ## V. M12
 

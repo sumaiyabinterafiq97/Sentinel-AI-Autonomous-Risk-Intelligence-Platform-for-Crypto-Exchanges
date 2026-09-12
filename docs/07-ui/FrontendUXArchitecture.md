@@ -87,7 +87,7 @@ Business rules (priority ownership, case close authority, compliance approve) li
 | Cursor pagination | ADR-014 “Load more” |
 | Correlation | Propagate / display `requestId` / `correlationId` on errors |
 
-**No invented global search API** — SCR-11 composes authorized list endpoints.
+**No invented global search API** — SCR-11 composes authorized list endpoints. **GD-007:** that composition is the MVP search surface; a dedicated global search API is not MVP.
 
 ---
 

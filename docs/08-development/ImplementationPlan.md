@@ -173,7 +173,7 @@ Roadmap §10.2 all 12 items **APPROVED** with human sign-off recorded — see Ph
 ## 15–17. Risks, Open Decisions, Gate Dependencies
 
 - Risks: [ImplementationRisks.md](ImplementationRisks.md)
-- Open decisions: stack lock ADR (ADR-007); COMP list API gap; NFR-OQ-002; BQ-4; human approvals
+- Open decisions: NFR-OQ-002; remaining P11-OQ-STACK-* except frontend (GD-007 closed COMP list GET, global search API, TanStack/Zod). BQ-4 and human gate approvals already recorded.
 - Gate: [Phase11GateAssessment.md](../00-project/Phase11GateAssessment.md) — **BLOCKED**
 
 ---

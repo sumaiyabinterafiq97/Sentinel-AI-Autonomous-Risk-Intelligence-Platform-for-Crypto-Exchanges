@@ -6,9 +6,9 @@
 |--------|-------|
 | Project | Sentinel AI |
 | Document | Frontend Implementation Plan |
-| Version | 0.1 (Draft) |
-| Status | Draft — Phase 11 |
-| Last Updated | 2026-09-11 |
+| Version | 0.2 |
+| Status | M11 stack lock recorded (GD-007) |
+| Last Updated | 2026-09-12 |
 | Authority | Phase 10 UX docs, OpenAPI, ADR-016/017 |
 
 ---
@@ -19,17 +19,16 @@ Plan React SPA implementation for SCR-00–15 / WF-1–8. **No React/TypeScript 
 
 ---
 
-## Implementation Direction (Candidate)
+## Implementation Direction (MVP lock — GD-007 / ADR-019 amended)
 
 | Technology | Role |
 |------------|------|
 | React + TypeScript | UI |
 | Vite | Bundler |
 | Tailwind | Styling tokens mapped from DesignSystem |
-| TanStack Query | Server state |
-| React Hook Form + Zod | Forms/validation aligned to API schemas |
+| Native `fetch` | Server I/O via DASH BFF |
 
-Stack confirmation: **P11-OQ-STACK-002** (ADR-007).
+**Not MVP:** TanStack Query, React Hook Form, Zod. Reconsideration requires a follow-on ADR.
 
 ---
 
@@ -109,11 +108,11 @@ Component tests; workflow tests; a11y checks; API contract consumer tests — Te
 
 ## Open Questions
 
-| ID | Item |
-|----|------|
-| UX-OQ-COMP-LIST | COMP queue without list GET |
-| UX-OQ-SEARCH | No global search API |
-| P11-OQ-STACK-002 | Confirm React stack ADR |
+| ID | Item | Status |
+|----|------|--------|
+| UX-OQ-COMP-LIST | COMP queue without list GET | **CLOSED** — no list GET in MVP (GD-007) |
+| UX-OQ-SEARCH | No global search API | **CLOSED** — composed list GETs sufficient for MVP (GD-007) |
+| P11-OQ-STACK-002 | Confirm React stack ADR | **CLOSED** — lock shipped stack; no TanStack/RHF/Zod (ADR-019 amendment) |
 
 ---
 
@@ -122,3 +121,4 @@ Component tests; workflow tests; a11y checks; API contract consumer tests — Te
 - [../07-ui/FrontendUXArchitecture.md](../07-ui/FrontendUXArchitecture.md)
 - [../07-ui/DashboardScreens.md](../07-ui/DashboardScreens.md)
 - [../07-ui/MVPWorkflows.md](../07-ui/MVPWorkflows.md)
+- [../00-project/Phase12M11OpenQuestionDecisions.md](../00-project/Phase12M11OpenQuestionDecisions.md)

@@ -159,7 +159,7 @@ ApplicationShell, Sidebar, TopNavigation, TenantSelector, UserMenu, Search, Data
 | ID | Question | Status |
 |----|----------|--------|
 | CL-OQ-001 | Bulk alert actions in MVP? | Default **no** |
-| CL-OQ-002 | Global SearchBar backend | Compose domain APIs |
+| CL-OQ-002 | Global SearchBar backend | **CLOSED** — compose domain list GETs; no global search API in MVP (GD-007) |
 
 ---
 
@@ -169,3 +169,4 @@ ApplicationShell, Sidebar, TopNavigation, TenantSelector, UserMenu, Search, Data
 - [DashboardScreens.md](DashboardScreens.md)
 - [AIInteractionPatterns.md](AIInteractionPatterns.md)
 - [Accessibility.md](Accessibility.md)
+- [../00-project/Phase12M11OpenQuestionDecisions.md](../00-project/Phase12M11OpenQuestionDecisions.md)

@@ -44,7 +44,9 @@ M9 already delivered an SPA shell against DASH. M10 wired ADMIN screens. **M11 d
 
 ## 3. Out of scope
 
-M12 hardening, perf/SLO gates, Kafka, Docker/K8s/CI, WebSocket, API-ADMIN-006, API-AI-006/007, SEC/REPORT/OPS/WALLET screens, global search API, COMP list GET, GD-002 events, TanStack Query / RHF/Zod (P11-OQ-STACK-002 / ADR-007 **unconfirmed** — keep existing fetch + React). Formal WCAG certification. Production E2E against a live mesh.
+M12 hardening, perf/SLO gates, Kafka, Docker/K8s/CI, WebSocket, API-ADMIN-006, API-AI-006/007, SEC/REPORT/OPS/WALLET screens, GD-002 events. Formal WCAG certification. Production E2E against a live mesh.
+
+**Later close-out (2026-09-12, GD-007):** global search API, COMP list GET, and TanStack Query / RHF/Zod were decided **not MVP** rather than implemented. See [Phase12M11OpenQuestionDecisions.md](Phase12M11OpenQuestionDecisions.md).
 
 ---
 
@@ -102,7 +104,7 @@ Existing `web/src/shared/api.ts`, session HMAC decode, DASH screens, BFF filter,
 |----|-----|----------|
 | M11-G1 | Login OpenAPI has no `mfaRequired`; identity login sets `mfa_verified=true` immediately | After login, UI still runs SCR-00 MFA (`API-AUTH-005` simulation 6-digit) then `API-AUTH-004` before workspace |
 | M11-G2 | Overview spec route `/workspace` vs current `/` | Add `/workspace`; keep `/` as alias |
-| M11-G3 | COMP list GET missing | Session-local known IDs after start (UX-OQ-COMP-LIST) |
+| M11-G3 | COMP list GET missing | Session-local known IDs after start. **Later (GD-007): no list GET in MVP** |
 | M11-G4 | No staging E2E runner | Vitest workflow tests with fetch mocks; live mesh E2E remains M12/ops |
 | M11-G5 | GET recommendation returns `content` text not layer object | Render text in AI layer; keep four-layer chrome |
 | M11-G6 | Collection PATCH integrations (M10-G2) | Unchanged |
@@ -111,7 +113,7 @@ Existing `web/src/shared/api.ts`, session HMAC decode, DASH screens, BFF filter,
 
 ## 17. Risks
 
-P11-R010 FE/BE mismatch — mitigate with OpenAPI-aligned payloads. P11-R016 COMP list — compose, do not invent. Unconfigured BFF still 503 — ErrorState + retry.
+P11-R010 FE/BE mismatch — mitigate with OpenAPI-aligned payloads. P11-R016 COMP list — known-ID queue, do not invent (**GD-007 closed as not MVP**). Unconfigured BFF still 503 — ErrorState + retry.
 
 ---
 

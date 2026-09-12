@@ -75,7 +75,7 @@ Map Product Goal → Persona → Workflow → Screen → Component → API → E
 | APIs | API-COMP-001–007; context API-INVEST-003 / API-RISK-003 | COMPLETE |
 | Events | ComplianceReviewed, Sanctions*, TravelRule*, AuditPackagePrepared | COMPLETE |
 | AI approve | Prohibited MVP | COMPLETE |
-| COMP list GET | Not in inventory | PARTIAL — UX-OQ-COMP-LIST |
+| COMP list GET | Not in inventory | **CLOSED** — not MVP (GD-007) |
 | Package status GET | Shape via OpenAPI | PARTIAL |
 | A11y | Confirm decisions | COMPLETE (design target) |
 
@@ -119,9 +119,9 @@ Map Product Goal → Persona → Workflow → Screen → Component → API → E
 
 | Layer | Reference | Status |
 |-------|-----------|--------|
-| Screen | SCR-11 | PARTIAL |
-| APIs | Composed list GETs | ASSUMPTION — no global search API |
-| Gap | UX-OQ-SEARCH / CL-OQ-002 | UNRESOLVED (non-blocking) |
+| Screen | SCR-11 | COMPLETE (composed) |
+| APIs | Composed list GETs | **CLOSED** — sufficient for MVP (GD-007); no global search API |
+| Gap | UX-OQ-SEARCH / CL-OQ-002 | **CLOSED** (GD-007) |
 
 ---
 
@@ -130,8 +130,8 @@ Map Product Goal → Persona → Workflow → Screen → Component → API → E
 | Item | Classification |
 |------|----------------|
 | Human Phase 10 approval | PENDING HUMAN APPROVAL |
-| COMP dedicated list API | UNRESOLVED — do not invent |
-| Global search API | DEFERRED / compose |
+| COMP dedicated list API | **CLOSED** — not MVP (GD-007) |
+| Global search API | **CLOSED** — composed lists sufficient for MVP (GD-007) |
 | V2 SEC/REPORT/OPS/WALLET UX | DEFERRED |
 | Formal a11y certification | DEFERRED (design target only) |
 | Claim→nav binding table | ASSUMPTION until Phase 11 AUTHZ detail |

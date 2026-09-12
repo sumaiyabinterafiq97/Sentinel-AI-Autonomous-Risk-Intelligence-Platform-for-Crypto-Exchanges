@@ -59,7 +59,7 @@ AI-FR-001 → API-AI-001/004 → AIRecommendationGenerated → ai schema → sen
 
 COMP-FR → API-COMP-* → Comp events → 009 → ops → SCR-08/09 → audit tests → NFR-AUD → audit metrics
 
-**Status:** PARTIAL — UX-OQ-COMP-LIST unresolved
+**Status:** COMPLETE for authorized APIs; COMP discovery is known-ID / start-response (GD-007 — no list GET in MVP)
 
 ---
 
@@ -75,11 +75,11 @@ COMP-FR → API-COMP-* → Comp events → 009 → ops → SCR-08/09 → audit t
 
 | Item | Classification |
 |------|----------------|
-| COMP list GET | UNRESOLVED |
-| Global search API | UNRESOLVED (compose) |
+| COMP list GET | **CLOSED** — not MVP (GD-007) |
+| Global search API | **CLOSED** — composed lists sufficient for MVP (GD-007) |
 | GD-002 events | DEFERRED |
 | Human gate approvals | PENDING HUMAN APPROVAL |
-| Stack ADRs | PENDING (P11-OQ-STACK-*) |
+| Stack ADRs | **CLOSED** for frontend MVP lock (ADR-019 amendment); other P11-OQ-STACK-* unchanged if still pending |
 
 ---
 
@@ -88,3 +88,4 @@ COMP-FR → API-COMP-* → Comp events → 009 → ops → SCR-08/09 → audit t
 - [Phase10Traceability.md](Phase10Traceability.md)
 - [Phase9Traceability.md](Phase9Traceability.md)
 - [ModuleImplementationPlan.md](ModuleImplementationPlan.md)
+- [../00-project/Phase12M11OpenQuestionDecisions.md](../00-project/Phase12M11OpenQuestionDecisions.md)

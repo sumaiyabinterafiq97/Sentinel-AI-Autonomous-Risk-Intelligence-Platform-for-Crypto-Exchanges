@@ -8,7 +8,7 @@
 | Document | PRD Approval Record |
 | Version | 1.0 |
 | Status | **APPROVED** |
-| Last Updated | 2026-09-11 |
+| Last Updated | 2026-09-12 |
 | PRD Reference | [PRD.md](../01-product/PRD.md) v0.1 Draft |
 | Phase 8 review | [PRDReviewRecord.md](PRDReviewRecord.md) — R0–R8 |
 | Gate decision | [ApplicationDevelopmentGateDecision.md](ApplicationDevelopmentGateDecision.md) |
@@ -64,8 +64,8 @@
 |----|------|----------------|
 | BQ-4 / GD-001 | REPORT V2 | HUMAN-DECISION-RESOLVED |
 | NFR-OQ-002 | Jurisdiction retention | HUMAN-DECISION-RESOLVED (non-blocking for MVP; defaults remain) |
-| UX-OQ-COMP-LIST | COMP list API | NON-BLOCKING — per Phase 9–11 plan |
-| UX-OQ-SEARCH | Global search | NON-BLOCKING — compose list APIs |
+| UX-OQ-COMP-LIST | COMP list API | **CLOSED** — not MVP (GD-007) |
+| UX-OQ-SEARCH | Global search | **CLOSED** — composed list GETs sufficient for MVP (GD-007) |
 
 ---
 

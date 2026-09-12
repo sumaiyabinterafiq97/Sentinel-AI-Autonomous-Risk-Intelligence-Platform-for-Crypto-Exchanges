@@ -147,7 +147,7 @@ Per-domain MVP implementation mapping: responsibility, deployable, APIs, events,
 | UI | SCR-08–10 |
 | AI | No approve; API-AI-006 V2 |
 | Order | M7 |
-| Verify | Human decisions; gap UX-OQ-COMP-LIST |
+| Verify | Human decisions; COMP list GET closed as not MVP (GD-007) |
 
 ### AI
 
@@ -215,7 +215,7 @@ Per-module: unit + API contract + event schema + security tenant tests per Testi
 | ID | Item |
 |----|------|
 | P11-OQ-MOD-001 | ADMIN co-location |
-| UX-OQ-COMP-LIST | COMP list API gap (non-blocking) |
+| UX-OQ-COMP-LIST | **CLOSED** — no COMP list GET in MVP (GD-007) |
 
 ---
 

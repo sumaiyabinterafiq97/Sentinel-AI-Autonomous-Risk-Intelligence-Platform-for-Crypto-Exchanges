@@ -90,8 +90,8 @@ The Project Owner / authorized human approver explicitly approved (2026-09-11):
 |------|----------------|
 | BQ-4 / GD-001 | **HUMAN-DECISION-RESOLVED** |
 | NFR-OQ-002 jurisdiction durations | **HUMAN-DECISION-RESOLVED** (non-blocking for MVP; legal fill remains future work) |
-| COMP list GET API gap | **NON-BLOCKING** |
-| Global search API gap | **NON-BLOCKING** |
+| COMP list GET API gap | **NON-BLOCKING** at gate; **CLOSED not-MVP** 2026-09-12 (GD-007) |
+| Global search API gap | **NON-BLOCKING** at gate; **CLOSED** composed lists sufficient for MVP 2026-09-12 (GD-007) |
 | V2 OpenAPI full expansion (21 IDs) | **DEFERRED** / **FUTURE** (V2) |
 | GD-002 event schemas | **DEFERRED** |
 | AsyncAPI optional | **DEFERRED** |
@@ -120,3 +120,4 @@ The Project Owner / authorized human approver explicitly approved (2026-09-11):
 - [Phase11Handoff.md](Phase11Handoff.md)
 - [Phase12M0Kickoff.md](Phase12M0Kickoff.md)
 - [ADR-019 in ArchitectureDecisionRecords.md](../03-architecture/ArchitectureDecisionRecords.md)
+- [GD-007 / Phase12M11OpenQuestionDecisions.md](Phase12M11OpenQuestionDecisions.md)

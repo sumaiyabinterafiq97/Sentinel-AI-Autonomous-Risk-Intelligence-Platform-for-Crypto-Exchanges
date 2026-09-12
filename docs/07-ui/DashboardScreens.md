@@ -273,7 +273,7 @@ Each screen answers: who, why, data, actions, prohibitions, loading/empty/error/
 | Domain | COMP |
 | Route | `/compliance` |
 | APIs | API-COMP-001–006 as entry actions (start/list via create+known IDs — list-all may be composed from known reviews; **do not invent list API**) |
-| Open item | If dedicated COMP list GET is absent from inventory, queue UX uses operator-known review IDs / dashboard widgets until FR adds list — record gap UX-OQ-COMP-LIST |
+| Open item | **Closed (GD-007):** no COMP list GET in MVP. Queue UX uses start-response IDs / operator-known IDs / existing by-id COMP operations. |
 | Actions | Start review types; open detail |
 | Permissions | `comp:*` |
 | FR | COMP-FR-001–004 |
@@ -324,7 +324,7 @@ Each screen answers: who, why, data, actions, prohibitions, loading/empty/error/
 | Permissions | Intersection of domain reads |
 | Components | Search, DataTable, EmptyState |
 | NFR | NFR-PERF-005 (simulation target) |
-| Open | CL-OQ-002 / UX-OQ-SEARCH |
+| Open | **Closed (GD-007):** composed list GETs are MVP search; no dedicated global search API |
 
 ---
 
@@ -402,8 +402,8 @@ Each screen answers: who, why, data, actions, prohibitions, loading/empty/error/
 
 | ID | Item | Classification |
 |----|------|----------------|
-| UX-OQ-COMP-LIST | Dedicated COMP list GET not in inventory | NON-BLOCKING gap — do not invent |
-| UX-OQ-SEARCH | Global search API absent | NON-BLOCKING — compose lists |
+| UX-OQ-COMP-LIST | Dedicated COMP list GET not in inventory | **CLOSED** — no list GET in MVP (GD-007) |
+| UX-OQ-SEARCH | Global search API absent | **CLOSED** — composed list GETs sufficient for MVP (GD-007) |
 | UX-OQ-PKG-STATUS | Package status GET shape | PARTIAL — OpenAPI for API-COMP-007 |
 
 ---
@@ -415,4 +415,5 @@ Each screen answers: who, why, data, actions, prohibitions, loading/empty/error/
 - [ComponentLibrary.md](ComponentLibrary.md)
 - [AIInteractionPatterns.md](AIInteractionPatterns.md)
 - [FrontendUXArchitecture.md](FrontendUXArchitecture.md)
+- [../00-project/Phase12M11OpenQuestionDecisions.md](../00-project/Phase12M11OpenQuestionDecisions.md)
 - [APIInventory.md](../06-api/APIInventory.md)
